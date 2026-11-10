@@ -65,7 +65,15 @@
             <span>27 Estados &amp; FAPs</span>
             <span class="px-2 py-0.5 text-[11px] rounded-full bg-[#f1f3f6] text-[#14181f] font-bold">31</span>
           </button>
-          <button data-tab="pipeline" class="pill-tab flex items-center gap-2">
+          <button
+            data-tab="pipeline"
+            id="headerTabPipeline"
+            ondragover="window.onPipelineTabDragOver(event)"
+            ondragleave="window.onPipelineTabDragLeave(event)"
+            ondrop="window.onPipelineTabDrop(event)"
+            class="pill-tab flex items-center gap-2"
+            title="Clique para abrir o Kanban ou arraste qualquer Edital para cá"
+          >
             <span>Submissões</span>
             <span id="badgePipelineCount" class="px-2 py-0.5 text-[11px] rounded-full bg-[#b6f53b] text-[#14181f] font-bold">3</span>
           </button>
@@ -112,58 +120,116 @@
     <!-- TOAST CONTAINER -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md"></div>
 
-    <!-- ===================== ABA 1: VISÃO GERAL (BENTO GRID FIEL À IMAGEM) ===================== -->
-    <section id="tab-dashboard" class="tab-panel space-y-6">
+    <!-- ===================== ABA 1: VISÃO GERAL (BENTO GRID INTERATIVO & PERSONALIZÁVEL) ===================== -->
+    <section id="tab-dashboard" class="tab-panel space-y-5">
 
-      <!-- TOP BENTO ROW -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <!-- BARRA INTERATIVA DE ORGANIZAÇÃO DE CARDS E LAYOUTS -->
+      <div class="bento-light px-5 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+        <div class="flex flex-wrap items-center gap-2.5 text-xs">
+          <span class="px-2.5 py-1 rounded-full bg-[#14181f] text-[#b6f53b] font-extrabold inline-flex items-center gap-1.5">
+            <span>⋮⋮</span>
+            <span>Cards Interativos</span>
+          </span>
+          <span class="text-[#5a6270] font-medium">
+            Arraste qualquer card para mudar de posição, use <strong>← →</strong> para reordenar ou <strong>↔</strong> para redimensionar.
+          </span>
+        </div>
 
-        <!-- COLUNA ESQUERDA (5 cols): Card Escuro "Graphics 2" + Pílula Rápida de Regiões -->
-        <div class="lg:col-span-5 flex flex-col justify-between gap-6">
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="btnToggleLayoutEdit"
+            onclick="window.toggleLayoutEditMode()"
+            class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#f1f3f6] text-[#14181f] hover:bg-[#14181f] hover:text-[#b6f53b] transition inline-flex items-center gap-1.5"
+          >
+            <span>✋ Organizar Layout</span>
+          </button>
+          <button
+            onclick="window.applyBentoPreset('facepe_focus')"
+            class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#f1f3f6] text-[#5a6270] hover:text-[#14181f] transition"
+            title="Destacar os editais ao vivo da FACEPE e busca rápida no topo"
+          >
+            🔬 Foco FACEPE
+          </button>
+          <button
+            onclick="window.applyBentoPreset('expanded')"
+            class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#f1f3f6] text-[#5a6270] hover:text-[#14181f] transition"
+            title="Expandir gráficos e painéis em visão ampla"
+          >
+            📐 Expandido
+          </button>
+          <button
+            onclick="window.resetBentoLayout()"
+            class="px-3 py-1.5 rounded-full text-xs font-semibold text-[#767f8e] hover:text-[#14181f] transition"
+            title="Restaurar a posição e o tamanho original de todos os cards"
+          >
+            🔄 Restaurar Padrão
+          </button>
+        </div>
+      </div>
 
-          <!-- CARD ESCURO "GRAPHICS 2" (Barras Verticais em Cápsula Verde-Lima) -->
+      <!-- BENTO DASHBOARD GRID (12 COLUNAS • TODOS OS CARDS ARRASTÁVEIS E REDIMENSIONÁVEIS) -->
+      <div id="bentoDashboardGrid" class="bento-dashboard-grid">
+
+        <!-- CARD 1: CAPTAÇÃO NACIONAL & FACEPE + PÍLULA REGIONAL (Default: 5 cols, 2 rows) -->
+        <div
+          data-bento-id="captacao"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'captacao')"
+          ondragover="window.onBentoDragOver(event, 'captacao')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'captacao')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-6 lg:col-span-5 lg:row-span-2 flex flex-col justify-between gap-4"
+        >
           <div class="bento-tray flex-1 flex flex-col">
             <div class="bento-dark p-7 flex-1 flex flex-col justify-between">
-              <!-- Topo do Card -->
-              <div class="flex items-start justify-between">
+              <!-- Topo do Card com Controles Interativos -->
+              <div class="flex items-start justify-between gap-2">
                 <div>
                   <h2 class="text-lg font-bold text-white tracking-tight">Captação Nacional &amp; FACEPE</h2>
-                  <p id="graphicsTotalSubtitle" class="text-xs text-[#7e8694] font-medium mt-0.5">70 editais monitorados • 31 agências</p>
+                  <p id="graphicsTotalSubtitle" class="text-xs text-[#7e8694] font-medium mt-0.5">86 editais monitorados • 31 agências</p>
                 </div>
-                <button onclick="window.switchTab('editais')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest px-2" title="Ver todos os editais">•••</button>
+                <div class="flex items-center gap-1.5">
+                  <div class="card-interactive-toolbar card-toolbar-dark" onclick="event.stopPropagation()">
+                    <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                    <button type="button" onclick="window.moveBentoCard('captacao', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                    <button type="button" onclick="window.moveBentoCard('captacao', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                    <button type="button" onclick="window.cycleBentoCardSize('captacao')" class="card-ctrl-btn" title="Redimensionar largura do card">↔</button>
+                    <button type="button" onclick="window.toggleMinimizeBentoCard('captacao')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
+                  </div>
+                  <button onclick="window.switchTab('editais')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest px-1" title="Ver todos os editais">•••</button>
+                </div>
               </div>
 
-              <!-- Área do Gráfico de Cápsulas Verticais -->
-              <div class="my-6 flex items-end gap-4">
-                <!-- Eixo Y -->
-                <div class="flex flex-col justify-between h-[155px] text-[11px] text-[#6c7483] font-medium pr-2 select-none">
-                  <span>100%</span>
-                  <span>75%</span>
-                  <span>50%</span>
-                  <span>25%</span>
-                  <span>0%</span>
+              <!-- Corpo do Card -->
+              <div class="bento-card-body flex-1 flex flex-col justify-between">
+                <div class="my-6 flex items-end gap-4">
+                  <div class="flex flex-col justify-between h-[155px] text-[11px] text-[#6c7483] font-medium pr-2 select-none">
+                    <span>100%</span>
+                    <span>75%</span>
+                    <span>50%</span>
+                    <span>25%</span>
+                    <span>0%</span>
+                  </div>
+                  <div id="verticalCapsuleChart" class="flex-1 flex items-end justify-between gap-2 pt-2"></div>
                 </div>
 
-                <!-- Barras Dinâmicas -->
-                <div id="verticalCapsuleChart" class="flex-1 flex items-end justify-between gap-2 pt-2"></div>
-              </div>
-
-              <!-- Rodapé "Add more data (+)" -->
-              <div class="flex items-center justify-between pt-2 border-t border-white/5">
-                <span class="text-[11px] text-[#6c7483]">Clique em uma barra para filtrar os editais</span>
-                <button onclick="window.triggerSync()" class="inline-flex items-center gap-2 text-xs font-semibold text-[#9aa2b1] hover:text-white transition">
-                  <span>Atualizar dados</span>
-                  <span class="w-5 h-5 rounded-full bg-white/15 text-white inline-flex items-center justify-center text-xs font-bold">+</span>
-                </button>
+                <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                  <span class="text-[11px] text-[#6c7483]">Clique em uma barra para filtrar os editais</span>
+                  <button onclick="window.triggerSync()" class="inline-flex items-center gap-2 text-xs font-semibold text-[#9aa2b1] hover:text-white transition">
+                    <span>Atualizar dados</span>
+                    <span class="w-5 h-5 rounded-full bg-white/15 text-white inline-flex items-center justify-center text-xs font-bold">+</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- PÍLULA HORIZONTAL DE FILTRO RÁPIDO (Idêntica à barra abaixo do Graphics 2 na imagem) -->
-          <div class="pill-nav-shell">
+          <!-- PÍLULA HORIZONTAL DE FILTRO RÁPIDO -->
+          <div class="pill-nav-shell bento-card-body">
             <div class="pill-nav-inner justify-between overflow-x-auto no-scrollbar">
-              <button onclick="window.quickDashboardRegion('ALL', this)" class="dash-pill pill-tab active flex-1 text-center !py-2.5 !px-4">
-                Brasil (70)
+              <button id="dashPillBrasil" onclick="window.quickDashboardRegion('ALL', this)" class="dash-pill pill-tab active flex-1 text-center !py-2.5 !px-4">
+                Brasil (86)
               </button>
               <button onclick="window.quickDashboardRegion('PE', this)" class="dash-pill pill-tab flex-1 text-center !py-2.5 !px-4">
                 FACEPE • PE
@@ -176,29 +242,44 @@
               </button>
             </div>
           </div>
-
         </div>
 
-        <!-- COLUNA DIREITA (7 cols): Bandeja Cinza com Card Branco Alto ("Direct messages") + Card 4 Categorias + Card Escuro Curva ("Graphics") -->
-        <div class="lg:col-span-7 bento-tray grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
-
-          <!-- Card Branco Vertical Alto ("Direct messages" -> Editais FACEPE Ao Vivo) -->
-          <div class="md:col-span-6 bento-light p-6 flex flex-col justify-between">
+        <!-- CARD 2: FACEPE • EDITAIS AO VIVO (Default: 4 cols, 2 rows) -->
+        <div
+          data-bento-id="facepe-live"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'facepe-live')"
+          ondragover="window.onBentoDragOver(event, 'facepe-live')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'facepe-live')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-6 lg:col-span-4 lg:row-span-2 bento-tray flex"
+        >
+          <div class="bento-light p-6 w-full flex flex-col justify-between">
             <div>
-              <div class="flex items-center justify-between mb-5">
+              <div class="flex items-start justify-between gap-2 mb-4">
                 <div>
                   <h3 class="text-base font-bold text-[#14181f]">FACEPE • Editais Ao Vivo</h3>
                   <p class="text-[11px] text-[#8a92a0]">Extraídos de www2.facepe.br/editais</p>
                 </div>
-                <button onclick="window.filterByFap('FACEPE')" class="text-[#8a92a0] hover:text-[#14181f] text-lg leading-none tracking-widest">•••</button>
+                <div class="flex items-center gap-1">
+                  <div class="card-interactive-toolbar card-toolbar-light" onclick="event.stopPropagation()">
+                    <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                    <button type="button" onclick="window.moveBentoCard('facepe-live', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                    <button type="button" onclick="window.moveBentoCard('facepe-live', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                    <button type="button" onclick="window.cycleBentoCardSize('facepe-live')" class="card-ctrl-btn" title="Redimensionar largura">↔</button>
+                    <button type="button" onclick="window.toggleMinimizeBentoCard('facepe-live')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
+                  </div>
+                  <button onclick="window.filterByFap('FACEPE')" class="text-[#8a92a0] hover:text-[#14181f] text-lg leading-none tracking-widest px-1">•••</button>
+                </div>
               </div>
 
               <!-- Lista de Editais estilo "Direct messages" -->
-              <div id="facepeDirectList" class="divide-y divide-[#f1f3f6]"></div>
+              <div id="facepeDirectList" class="bento-card-body divide-y divide-[#f1f3f6]"></div>
             </div>
 
-            <!-- Rodapé com Toggle Switch minimalista igual a "Allow all" -->
-            <div class="pt-4 mt-4 border-t border-[#f1f3f6] flex items-center justify-between">
+            <!-- Rodapé com Toggle Switch minimalista -->
+            <div class="bento-card-body pt-4 mt-4 border-t border-[#f1f3f6] flex items-center justify-between">
               <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="text-xs font-bold text-[#14181f] hover:underline">
                 Portal Oficial ↗
               </a>
@@ -210,40 +291,71 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Coluna Direita Interna (Card Branco 4 Linhas com Seta + Card Escuro "Graphics" Linha) -->
-          <div class="md:col-span-6 flex flex-col justify-between gap-4">
-
-            <!-- Card Branco 4 Categorias com Seta Circular (Idêntico ao topo-direito da imagem) -->
-            <div id="categoryQuickCard" class="bento-light p-5 divide-y divide-[#f1f3f6] flex-1 flex flex-col justify-center"></div>
-
-            <!-- Card Escuro "Graphics" (Curva Verde-Lima com Badge "40 PE") -->
-            <div class="bento-dark p-6 flex flex-col justify-between">
-              <div class="flex items-start justify-between">
-                <div>
-                  <h3 class="text-base font-bold text-white">Ritmo de Publicações</h3>
-                  <p id="lineChartSubtitle" class="text-xs text-[#7e8694]">40 chamadas FACEPE em 2026</p>
-                </div>
-                <button onclick="window.switchTab('alertas')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest">•••</button>
+        <!-- CARD 3: CATEGORIAS RÁPIDAS (Default: 3 cols, 1 row) -->
+        <div
+          data-bento-id="categorias"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'categorias')"
+          ondragover="window.onBentoDragOver(event, 'categorias')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'categorias')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-3 lg:col-span-3 lg:row-span-1 bento-tray flex"
+        >
+          <div class="bento-light p-5 w-full flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-[#f1f3f6]">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#8a92a0]">Linhas &amp; Atalhos</span>
+              <div class="card-interactive-toolbar card-toolbar-light" onclick="event.stopPropagation()">
+                <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                <button type="button" onclick="window.moveBentoCard('categorias', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                <button type="button" onclick="window.moveBentoCard('categorias', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                <button type="button" onclick="window.cycleBentoCardSize('categorias')" class="card-ctrl-btn" title="Redimensionar largura">↔</button>
+                <button type="button" onclick="window.toggleMinimizeBentoCard('categorias')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
               </div>
+            </div>
+            <div id="categoryQuickCard" class="bento-card-body divide-y divide-[#f1f3f6] flex-1 flex flex-col justify-center"></div>
+          </div>
+        </div>
 
-              <!-- SVG Curva Verde-Lima igual ao "Graphics 251 items / 12 u." -->
+        <!-- CARD 4: RITMO DE PUBLICAÇÕES (Default: 3 cols, 1 row) -->
+        <div
+          data-bento-id="ritmo"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'ritmo')"
+          ondragover="window.onBentoDragOver(event, 'ritmo')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'ritmo')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-3 lg:col-span-3 lg:row-span-1 bento-tray flex"
+        >
+          <div class="bento-dark p-6 w-full flex flex-col justify-between">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-white">Ritmo de Publicações</h3>
+                <p id="lineChartSubtitle" class="text-xs text-[#7e8694]">40 chamadas FACEPE em 2026</p>
+              </div>
+              <div class="card-interactive-toolbar card-toolbar-dark" onclick="event.stopPropagation()">
+                <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                <button type="button" onclick="window.moveBentoCard('ritmo', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                <button type="button" onclick="window.moveBentoCard('ritmo', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                <button type="button" onclick="window.cycleBentoCardSize('ritmo')" class="card-ctrl-btn" title="Redimensionar largura">↔</button>
+                <button type="button" onclick="window.toggleMinimizeBentoCard('ritmo')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
+              </div>
+            </div>
+
+            <div class="bento-card-body">
               <div class="my-3 relative pt-4">
                 <svg viewBox="0 0 260 95" class="w-full h-24 overflow-visible">
-                  <!-- Linha tracejada de referência -->
                   <line x1="10" y1="45" x2="250" y2="45" stroke="#2a303c" stroke-width="1.5" stroke-dasharray="4 4" />
-                  <!-- Sombra sob a curva -->
                   <path d="M 20 72 Q 65 62, 95 52 T 175 24 T 240 60 L 240 85 L 20 85 Z" fill="rgba(182, 245, 59, 0.08)" />
-                  <!-- Linha Verde-Lima -->
                   <path d="M 20 72 Q 65 62, 95 52 T 175 24 T 240 60" fill="none" stroke="#b6f53b" stroke-width="2.5" stroke-linecap="round" />
-                  <!-- Pontos -->
                   <circle cx="20" cy="72" r="3.5" fill="#14181f" stroke="#ffffff" stroke-width="2" />
                   <circle cx="95" cy="52" r="3.5" fill="#14181f" stroke="#ffffff" stroke-width="2" />
-                  <!-- Ponto de Destaque com Halo -->
                   <circle cx="175" cy="24" r="8" fill="rgba(182, 245, 59, 0.25)" />
                   <circle cx="175" cy="24" r="4" fill="#ffffff" stroke="#b6f53b" stroke-width="2.5" />
                   <circle cx="240" cy="60" r="3.5" fill="#14181f" stroke="#ffffff" stroke-width="2" />
-                  <!-- Badge Verde-Lima no Pico ("40 PE") -->
                   <rect x="148" y="0" width="54" height="18" rx="9" fill="#b6f53b" />
                   <text id="peakBadgeText" x="175" y="12.5" text-anchor="middle" fill="#14181f" font-size="10" font-weight="800">40 PE</text>
                 </svg>
@@ -264,54 +376,65 @@
                 </button>
               </div>
             </div>
-
           </div>
         </div>
 
-      </div>
-
-      <!-- BOTTOM BENTO ROW (Idêntico à metade inferior da imagem: 2 Cards de Botões + Card Largo Escuro "Form option") -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-
-        <!-- Card 1 (Claro): Atalhos FACEPE & Exportação (Estilo do card branco de botões da imagem) -->
-        <div class="lg:col-span-3 bento-tray flex">
+        <!-- CARD 5: ACESSO RÁPIDO PE (Default: 3 cols, 1 row) -->
+        <div
+          data-bento-id="acesso-pe"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'acesso-pe')"
+          ondragover="window.onBentoDragOver(event, 'acesso-pe')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'acesso-pe')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-3 lg:col-span-3 lg:row-span-1 bento-tray flex"
+        >
           <div class="bento-light p-6 w-full flex flex-col justify-between gap-4">
             <div class="space-y-3">
-              <div class="text-xs font-bold uppercase tracking-wider text-[#8a92a0]">Acesso Rápido PE</div>
-
-              <!-- Linha 1: Primary button + circle -->
-              <div class="flex items-center gap-2">
-                <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="btn-pill-dark flex-1">
-                  Portal FACEPE
-                </a>
-                <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="circle-icon-dark" title="Abrir www2.facepe.br/editais">
-                  ↗
-                </a>
+              <div class="flex items-center justify-between gap-1">
+                <div class="text-xs font-bold uppercase tracking-wider text-[#8a92a0]">Acesso Rápido PE</div>
+                <div class="card-interactive-toolbar card-toolbar-light" onclick="event.stopPropagation()">
+                  <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                  <button type="button" onclick="window.moveBentoCard('acesso-pe', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                  <button type="button" onclick="window.moveBentoCard('acesso-pe', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                  <button type="button" onclick="window.cycleBentoCardSize('acesso-pe')" class="card-ctrl-btn" title="Redimensionar largura">↔</button>
+                  <button type="button" onclick="window.toggleMinimizeBentoCard('acesso-pe')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
+                </div>
               </div>
 
-              <!-- Linha 2: Primary button com ícone + circle -->
-              <div class="flex items-center gap-2">
-                <a href="https://agil.facepe.br/" target="_blank" rel="noopener" class="btn-pill-dark flex-1">
-                  <span class="w-4 h-4 rounded-full bg-white text-[#14181f] inline-flex items-center justify-center text-[10px] font-extrabold">A</span>
-                  <span>Sistema AgilFAP</span>
-                </a>
-                <a href="https://agil.facepe.br/" target="_blank" rel="noopener" class="circle-icon-dark" title="Submeter no AgilFAP">
-                  +
-                </a>
-              </div>
+              <div class="bento-card-body space-y-3">
+                <div class="flex items-center gap-2">
+                  <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="btn-pill-dark flex-1">
+                    Portal FACEPE
+                  </a>
+                  <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="circle-icon-dark" title="Abrir www2.facepe.br/editais">
+                    ↗
+                  </a>
+                </div>
 
-              <!-- Linha 3: Secondary outline button + circle -->
-              <div class="flex items-center gap-2">
-                <button onclick="window.exportEditaisCsv()" class="btn-pill-outline-light flex-1">
-                  Exportar Planilha
-                </button>
-                <button onclick="window.exportEditaisCsv()" class="w-[34px] h-[34px] rounded-full border border-[#d5d9e0] text-[#14181f] inline-flex items-center justify-center font-bold hover:border-[#14181f]">
-                  ↓
-                </button>
+                <div class="flex items-center gap-2">
+                  <a href="https://agil.facepe.br/" target="_blank" rel="noopener" class="btn-pill-dark flex-1">
+                    <span class="w-4 h-4 rounded-full bg-white text-[#14181f] inline-flex items-center justify-center text-[10px] font-extrabold">A</span>
+                    <span>Sistema AgilFAP</span>
+                  </a>
+                  <a href="https://agil.facepe.br/" target="_blank" rel="noopener" class="circle-icon-dark" title="Submeter no AgilFAP">
+                    +
+                  </a>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button onclick="window.exportEditaisCsv()" class="btn-pill-outline-light flex-1">
+                    Exportar Planilha
+                  </button>
+                  <button onclick="window.exportEditaisCsv()" class="w-[34px] h-[34px] rounded-full border border-[#d5d9e0] text-[#14181f] inline-flex items-center justify-center font-bold hover:border-[#14181f]">
+                    ↓
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div class="pt-3 border-t border-[#f1f3f6] flex items-center justify-between">
+            <div class="bento-card-body pt-3 border-t border-[#f1f3f6] flex items-center justify-between">
               <span class="text-xs font-semibold text-[#5a6270]">Alertas PE</span>
               <span class="ui-switch" onclick="window.switchTab('alertas')">
                 <span class="ui-switch-dot"></span>
@@ -320,45 +443,62 @@
           </div>
         </div>
 
-        <!-- Card 2 (Escuro): Atalhos Agências Nacionais (Estilo do card escuro de botões da imagem) -->
-        <div class="lg:col-span-3 bento-tray flex">
+        <!-- CARD 6: AGÊNCIAS NACIONAIS (Default: 3 cols, 1 row) -->
+        <div
+          data-bento-id="agencias-nac"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'agencias-nac')"
+          ondragover="window.onBentoDragOver(event, 'agencias-nac')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'agencias-nac')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-3 lg:col-span-3 lg:row-span-1 bento-tray flex"
+        >
           <div class="bento-dark p-6 w-full flex flex-col justify-between gap-4">
             <div class="space-y-3">
-              <div class="text-xs font-bold uppercase tracking-wider text-[#7e8694]">Agências Nacionais</div>
-
-              <!-- Linha 1: White pill button + white circle -->
-              <div class="flex items-center gap-2">
-                <button onclick="window.filterByFap('CNPq')" class="bg-white text-[#14181f] rounded-full py-2.5 px-4 text-xs font-bold flex-1 hover:bg-[#b6f53b] transition">
-                  Chamadas CNPq
-                </button>
-                <a href="http://memoria2.cnpq.br/web/guest/chamadas-publicas" target="_blank" rel="noopener" class="w-[34px] h-[34px] rounded-full bg-white text-[#14181f] inline-flex items-center justify-center font-bold hover:bg-[#b6f53b] transition">
-                  ↗
-                </a>
+              <div class="flex items-center justify-between gap-1">
+                <div class="text-xs font-bold uppercase tracking-wider text-[#7e8694]">Agências Nacionais</div>
+                <div class="card-interactive-toolbar card-toolbar-dark" onclick="event.stopPropagation()">
+                  <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                  <button type="button" onclick="window.moveBentoCard('agencias-nac', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                  <button type="button" onclick="window.moveBentoCard('agencias-nac', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                  <button type="button" onclick="window.cycleBentoCardSize('agencias-nac')" class="card-ctrl-btn" title="Redimensionar largura">↔</button>
+                  <button type="button" onclick="window.toggleMinimizeBentoCard('agencias-nac')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
+                </div>
               </div>
 
-              <!-- Linha 2: White pill with dark badge + circle -->
-              <div class="flex items-center gap-2">
-                <button onclick="window.filterByFap('FINEP')" class="bg-white text-[#14181f] rounded-full py-2.5 px-4 text-xs font-bold flex-1 inline-flex items-center justify-center gap-2 hover:bg-[#b6f53b] transition">
-                  <span class="w-4 h-4 rounded-full bg-[#14181f] text-white inline-flex items-center justify-center text-[10px] font-bold">F</span>
-                  <span>Editais FINEP</span>
-                </button>
-                <a href="http://www.finep.gov.br/chamadas-publicas?situacao=aberta" target="_blank" rel="noopener" class="w-[34px] h-[34px] rounded-full bg-white text-[#14181f] inline-flex items-center justify-center font-bold hover:bg-[#b6f53b] transition">
-                  +
-                </a>
-              </div>
+              <div class="bento-card-body space-y-3">
+                <div class="flex items-center gap-2">
+                  <button onclick="window.filterByFap('CNPq')" class="bg-white text-[#14181f] rounded-full py-2.5 px-4 text-xs font-bold flex-1 hover:bg-[#b6f53b] transition">
+                    Chamadas CNPq
+                  </button>
+                  <a href="http://memoria2.cnpq.br/web/guest/chamadas-publicas" target="_blank" rel="noopener" class="w-[34px] h-[34px] rounded-full bg-white text-[#14181f] inline-flex items-center justify-center font-bold hover:bg-[#b6f53b] transition">
+                    ↗
+                  </a>
+                </div>
 
-              <!-- Linha 3: Outline dark button + circle -->
-              <div class="flex items-center gap-2">
-                <button onclick="window.switchTab('faps')" class="btn-pill-outline-dark flex-1">
-                  Todas as 27 FAPs
-                </button>
-                <button onclick="window.switchTab('faps')" class="w-[34px] h-[34px] rounded-full border border-white/25 text-white inline-flex items-center justify-center font-bold hover:border-[#b6f53b] hover:text-[#b6f53b]">
-                  →
-                </button>
+                <div class="flex items-center gap-2">
+                  <button onclick="window.filterByFap('FINEP')" class="bg-white text-[#14181f] rounded-full py-2.5 px-4 text-xs font-bold flex-1 inline-flex items-center justify-center gap-2 hover:bg-[#b6f53b] transition">
+                    <span class="w-4 h-4 rounded-full bg-[#14181f] text-white inline-flex items-center justify-center text-[10px] font-bold">F</span>
+                    <span>Editais FINEP</span>
+                  </button>
+                  <a href="http://www.finep.gov.br/chamadas-publicas?situacao=aberta" target="_blank" rel="noopener" class="w-[34px] h-[34px] rounded-full bg-white text-[#14181f] inline-flex items-center justify-center font-bold hover:bg-[#b6f53b] transition">
+                    +
+                  </a>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button onclick="window.switchTab('faps')" class="btn-pill-outline-dark flex-1">
+                    Todas as 27 FAPs
+                  </button>
+                  <button onclick="window.switchTab('faps')" class="w-[34px] h-[34px] rounded-full border border-white/25 text-white inline-flex items-center justify-center font-bold hover:border-[#b6f53b] hover:text-[#b6f53b]">
+                    →
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+            <div class="bento-card-body pt-3 border-t border-white/10 flex items-center justify-between">
               <span class="text-xs font-semibold text-[#8a92a0]">Coleta Auto</span>
               <span class="w-[38px] h-[20px] rounded-full bg-white p-[3px] inline-flex items-center cursor-pointer" onclick="window.triggerSync()">
                 <span class="w-[14px] h-[14px] rounded-full bg-[#14181f] translate-x-[18px]"></span>
@@ -367,66 +507,88 @@
           </div>
         </div>
 
-        <!-- Card 3 (Escuro Largo 6 cols): "Form option" -> Busca Inteligente & Comunicados FACEPE -->
-        <div class="lg:col-span-6 bento-dark p-7 flex flex-col justify-between">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h3 class="text-base font-bold text-white">Busca Rápida &amp; Enquadramento de Editais</h3>
-              <p class="text-xs text-[#7e8694] mt-1">
-                Filtre instantaneamente os 70 editais abertos e em andamento na FACEPE e nas 27 FAPs do país.
-              </p>
-            </div>
-            <button onclick="window.switchTab('editais')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest">•••</button>
-          </div>
-
-          <form onsubmit="event.preventDefault(); window.runQuickFormSearch();" class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
-            <div>
-              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Tema, palavra-chave ou nº do edital</label>
-              <input
-                id="quickFormKeyword"
-                type="text"
-                placeholder="Ex: 35/2026, Pós-Graduação, Startups, IA..."
-                class="input-well-dark w-full"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Estado (UF) ou Esfera</label>
-              <select id="quickFormUf" class="input-well-dark w-full">
-                <option value="ALL">Todos os 27 Estados + Federal</option>
-                <option value="PE">PE — Pernambuco (FACEPE)</option>
-                <option value="BR">BR — Federal (CNPq / FINEP / CAPES)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Linha de Fomento</label>
-              <select id="quickFormArea" class="input-well-dark w-full">
-                <option value="ALL">Todas as Linhas de Fomento</option>
-                <option value="Pesquisa Científica (APQ / Missões)">Pesquisa Científica (APQ / Missões)</option>
-                <option value="Inovação & Startups">Inovação &amp; Startups</option>
-                <option value="Bolsas & Pós-Graduação">Bolsas &amp; Pós-Graduação</option>
-                <option value="Governo & Gestão Pública">Governo &amp; Gestão Pública</option>
-                <option value="Cooperação Internacional">Cooperação Internacional</option>
-              </select>
-            </div>
-
-            <div class="flex flex-col justify-end">
-              <div class="flex items-center justify-between gap-3">
-                <label class="flex items-center gap-2 text-xs text-[#9aa2b1] cursor-pointer select-none">
-                  <input id="quickFormOnlyOpen" type="checkbox" checked class="accent-[#b6f53b] w-4 h-4 rounded" />
-                  <span>Somente editais abertos</span>
-                </label>
-                <button type="submit" class="btn-pill-lime">
-                  <span>Explorar</span>
-                  <span>→</span>
-                </button>
+        <!-- CARD 7: BUSCA RÁPIDA & ENQUADRAMENTO DE EDITAIS (Default: 6 cols, 1 row) -->
+        <div
+          data-bento-id="busca-rapida"
+          draggable="true"
+          ondragstart="window.onBentoDragStart(event, 'busca-rapida')"
+          ondragover="window.onBentoDragOver(event, 'busca-rapida')"
+          ondragleave="window.onBentoDragLeave(event)"
+          ondrop="window.onBentoDrop(event, 'busca-rapida')"
+          ondragend="window.onBentoDragEnd(event)"
+          class="bento-widget md:col-span-6 lg:col-span-6 lg:row-span-1 bento-tray flex"
+        >
+          <div class="bento-dark p-7 w-full flex flex-col justify-between">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-base font-bold text-white">Busca Rápida &amp; Enquadramento de Editais</h3>
+                <p id="quickSearchSubtitle" class="text-xs text-[#7e8694] mt-1">
+                  Filtre instantaneamente os 86 editais abertos e em andamento na FACEPE e nas 27 FAPs do país.
+                </p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="card-interactive-toolbar card-toolbar-dark" onclick="event.stopPropagation()">
+                  <span class="card-drag-grip" title="Arraste para mover este card">⋮⋮</span>
+                  <button type="button" onclick="window.moveBentoCard('busca-rapida', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                  <button type="button" onclick="window.moveBentoCard('busca-rapida', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+                  <button type="button" onclick="window.cycleBentoCardSize('busca-rapida')" class="card-ctrl-btn" title="Redimensionar largura">↔</button>
+                  <button type="button" onclick="window.toggleMinimizeBentoCard('busca-rapida')" class="card-ctrl-btn" title="Minimizar/Expandir">−</button>
+                </div>
+                <button onclick="window.switchTab('editais')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest">•••</button>
               </div>
             </div>
-          </form>
 
-          <!-- Último comunicado oficial da FACEPE em rodapé elegante -->
-          <div id="latestFacepeTicker" class="pt-3 border-t border-white/10 flex items-center justify-between gap-3 text-xs"></div>
+            <div class="bento-card-body">
+              <form onsubmit="event.preventDefault(); window.runQuickFormSearch();" class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+                <div>
+                  <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Tema, palavra-chave ou nº do edital</label>
+                  <input
+                    id="quickFormKeyword"
+                    type="text"
+                    placeholder="Ex: 35/2026, Pós-Graduação, Startups, IA..."
+                    class="input-well-dark w-full"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Estado (UF) ou Esfera</label>
+                  <select id="quickFormUf" class="input-well-dark w-full">
+                    <option value="ALL">Todos os 27 Estados + Federal</option>
+                    <option value="PE">PE — Pernambuco (FACEPE)</option>
+                    <option value="BR">BR — Federal (CNPq / FINEP / CAPES)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Linha de Fomento</label>
+                  <select id="quickFormArea" class="input-well-dark w-full">
+                    <option value="ALL">Todas as Linhas de Fomento</option>
+                    <option value="Pesquisa Científica (APQ / Missões)">Pesquisa Científica (APQ / Missões)</option>
+                    <option value="Inovação & Startups">Inovação &amp; Startups</option>
+                    <option value="Bolsas & Pós-Graduação">Bolsas &amp; Pós-Graduação</option>
+                    <option value="Governo & Gestão Pública">Governo &amp; Gestão Pública</option>
+                    <option value="Cooperação Internacional">Cooperação Internacional</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col justify-end">
+                  <div class="flex items-center justify-between gap-3">
+                    <label class="flex items-center gap-2 text-xs text-[#9aa2b1] cursor-pointer select-none">
+                      <input id="quickFormOnlyOpen" type="checkbox" checked class="accent-[#b6f53b] w-4 h-4 rounded" />
+                      <span>Somente editais abertos</span>
+                    </label>
+                    <button type="submit" class="btn-pill-lime">
+                      <span>Explorar</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Último comunicado oficial da FACEPE em rodapé elegante -->
+              <div id="latestFacepeTicker" class="pt-3 border-t border-white/10 flex items-center justify-between gap-3 text-xs"></div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -510,6 +672,7 @@
                 <option value="recentes">Recentes</option>
                 <option value="prazo">Prazo</option>
                 <option value="valor">Valor</option>
+                <option value="custom">Personalizada (⋮⋮)</option>
               </select>
             </div>
           </div>

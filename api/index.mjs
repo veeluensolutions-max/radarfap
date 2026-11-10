@@ -56,7 +56,11 @@ export default async function handler(req, res) {
     }
 
     const urlObj = new URL(req.url, `https://${req.headers.host || 'localhost'}`);
-    const pathname = urlObj.pathname;
+    const rewrittenSubpath = urlObj.searchParams.get('__path');
+    const rawPathname = rewrittenSubpath
+      ? `/api/${rewrittenSubpath.replace(/^\/+/, '')}`
+      : urlObj.pathname;
+    const pathname = rawPathname === '/api/index.mjs' ? '/api/state' : rawPathname.replace(/\/+$/, '');
 
     if (pathname === '/api/events' && req.method === 'GET') {
       res.writeHead(200, {

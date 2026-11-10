@@ -235,15 +235,11 @@ function mergeWorkspaceBackup() {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) return;
     const backup = JSON.parse(raw);
-    if (Array.isArray(backup.favoritos) && backup.favoritos.length > 0) {
-      appState.favoritos = [...new Set([...(appState.favoritos || []), ...backup.favoritos])];
+    if (Array.isArray(backup.favoritos)) {
+      appState.favoritos = backup.favoritos;
     }
     if (Array.isArray(backup.pipeline) && backup.pipeline.length > 0) {
-      const pipeMap = new Map((appState.pipeline || []).map(p => [p.id, p]));
-      for (const bp of backup.pipeline) {
-        pipeMap.set(bp.id, bp);
-      }
-      appState.pipeline = Array.from(pipeMap.values());
+      appState.pipeline = backup.pipeline;
     }
     if (backup.researcherProfile && typeof backup.researcherProfile === 'object') {
       appState.researcherProfile = {
@@ -262,12 +258,47 @@ function mergeWorkspaceBackup() {
 }
 
 async function fetchInitialState() {
-  const res = await fetch('/api/state');
-  appState = await res.json();
+  let loadedState = null;
+  try {
+    const res = await fetch('/api/state');
+    if (res.ok) {
+      const json = await res.json();
+      if (json && Array.isArray(json.editais) && json.editais.length > 0) {
+        loadedState = json;
+      }
+    }
+  } catch {}
+
+  if (!loadedState) {
+    try {
+      const fallbackRes = await fetch('/data/initial-state.json');
+      if (fallbackRes.ok) {
+        loadedState = await fallbackRes.json();
+      }
+    } catch {}
+  }
+
+  if (loadedState) {
+    appState = {
+      ...appState,
+      ...loadedState,
+      editais: Array.isArray(loadedState.editais) ? loadedState.editais : [],
+      faps: Array.isArray(loadedState.faps) ? loadedState.faps : [],
+      favoritos: Array.isArray(loadedState.favoritos) ? loadedState.favoritos : [],
+      pipeline: Array.isArray(loadedState.pipeline) ? loadedState.pipeline : [],
+      alerts: Array.isArray(loadedState.alerts) ? loadedState.alerts : [],
+      noticiasFacepe: Array.isArray(loadedState.noticiasFacepe) ? loadedState.noticiasFacepe : [],
+      syncHistory: Array.isArray(loadedState.syncHistory) ? loadedState.syncHistory : []
+    };
+  }
+
   mergeWorkspaceBackup();
   recalculateClientSideMatches();
   if (appState.lastAutoSyncIso) {
     updateRealtimeBadge(appState.lastAutoSyncIso);
+  }
+  if (typeof window.applySavedBentoLayout === 'function') {
+    window.applySavedBentoLayout();
   }
   populateFilterSelects();
   renderAll();
@@ -372,6 +403,16 @@ function renderDashboard() {
   const subtitleEl = document.getElementById('graphicsTotalSubtitle');
   if (subtitleEl) {
     subtitleEl.textContent = `${totalEditais} editais ativos • ${facepeEditais.length} FACEPE (PE) • ${openEditais.length} abertos`;
+  }
+
+  const dashPillBrasil = document.getElementById('dashPillBrasil');
+  if (dashPillBrasil) {
+    dashPillBrasil.textContent = `Brasil (${totalEditais})`;
+  }
+
+  const quickSearchSub = document.getElementById('quickSearchSubtitle');
+  if (quickSearchSub) {
+    quickSearchSub.textContent = `Filtre instantaneamente os ${totalEditais} editais abertos e em andamento na FACEPE e nas 27 FAPs do país.`;
   }
 
   const peakBadge = document.getElementById('peakBadgeText');
@@ -637,7 +678,16 @@ function getFilteredEditais() {
     });
   }
 
-  if (sort === 'match') {
+  if (sort === 'custom') {
+    const customOrder = window.getCustomEditaisOrder ? window.getCustomEditaisOrder() : [];
+    const orderMap = new Map(customOrder.map((id, idx) => [id, idx]));
+    list.sort((a, b) => {
+      const idxA = orderMap.has(a.id) ? orderMap.get(a.id) : 99999;
+      const idxB = orderMap.has(b.id) ? orderMap.get(b.id) : 99999;
+      if (idxA !== idxB) return idxA - idxB;
+      return (Number(b.matchScore) || 0) - (Number(a.matchScore) || 0);
+    });
+  } else if (sort === 'match') {
     list.sort((a, b) => (Number(b.matchScore) || 0) - (Number(a.matchScore) || 0));
   } else if (sort === 'recentes') {
     list.sort((a, b) => (b.dataPublicacao || '').localeCompare(a.dataPublicacao || ''));
@@ -645,6 +695,16 @@ function getFilteredEditais() {
     list.sort((a, b) => (a.prazoSubmissao || '9999').localeCompare(b.prazoSubmissao || '9999'));
   } else if (sort === 'valor') {
     list.sort((a, b) => (Number(b.valorNumerico) || 0) - (Number(a.valorNumerico) || 0));
+  }
+
+  // Editais fixados no topo (📌) vêm sempre primeiro
+  const pinnedIds = window.getPinnedEditaisIds ? window.getPinnedEditaisIds() : [];
+  if (pinnedIds.length > 0) {
+    list.sort((a, b) => {
+      const pinA = pinnedIds.includes(a.id) ? 0 : 1;
+      const pinB = pinnedIds.includes(b.id) ? 0 : 1;
+      return pinA - pinB;
+    });
   }
 
   return list;
@@ -708,11 +768,22 @@ function renderEditaisTab() {
       : '';
 
     const topReason = (ed.matchRazoes && ed.matchRazoes[0]) ? ed.matchRazoes[0] : '';
+    const isPinned = (window.getPinnedEditaisIds ? window.getPinnedEditaisIds() : []).includes(ed.id);
+    const isWide = (window.getWideEditaisIds ? window.getWideEditaisIds() : []).includes(ed.id);
 
     return `
-      <article class="bento-light bento-hover p-6 flex flex-col justify-between gap-5">
+      <article
+        draggable="true"
+        data-edital-id="${ed.id}"
+        ondragstart="window.onEditalDragStart(event, '${ed.id}')"
+        ondragover="window.onEditalDragOver(event)"
+        ondragleave="window.onEditalDragLeave(event)"
+        ondrop="window.onEditalDrop(event, '${ed.id}')"
+        ondragend="window.onEditalDragEnd(event)"
+        class="interactive-card bento-light bento-hover p-6 flex flex-col justify-between gap-5 ${isWide ? 'md:col-span-2' : ''} ${isPinned ? 'ring-2 ring-[#14181f]' : ''}"
+      >
         <div class="space-y-3.5">
-          <!-- Topo do Card -->
+          <!-- Topo do Card com Controles Interativos de Movimento -->
           <div class="flex items-center justify-between gap-2">
             <div class="flex flex-wrap items-center gap-1.5">
               <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-[#14181f] text-white">
@@ -726,7 +797,14 @@ function renderEditaisTab() {
               ${matchBadge}
             </div>
 
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1">
+              <div class="card-interactive-toolbar card-toolbar-light" onclick="event.stopPropagation()">
+                <span class="card-drag-grip" title="Arraste para reorganizar ou solte na aba Submissões">⋮⋮</span>
+                <button type="button" onclick="window.moveEditalCard('${ed.id}', -1)" class="card-ctrl-btn" title="Mover card para trás">←</button>
+                <button type="button" onclick="window.moveEditalCard('${ed.id}', 1)" class="card-ctrl-btn" title="Mover card para frente">→</button>
+                <button type="button" onclick="window.toggleWideEditalCard('${ed.id}')" class="card-ctrl-btn" title="Expandir/Compactar largura do card">↔</button>
+                <button type="button" onclick="window.togglePinEdital('${ed.id}')" class="card-ctrl-btn ${isPinned ? 'bg-[#14181f] text-[#b6f53b]' : ''}" title="Fixar este edital no topo">📌</button>
+              </div>
               <button
                 onclick="window.toggleCompareEdital('${ed.id}')"
                 class="w-8 h-8 rounded-full inline-flex items-center justify-center text-xs font-bold transition ${
@@ -1006,13 +1084,32 @@ function renderFapsDirectory() {
     );
   }
 
+  const customFapsOrder = window.getCustomFapsOrder ? window.getCustomFapsOrder() : [];
+  if (customFapsOrder.length > 0) {
+    const fapOrderMap = new Map(customFapsOrder.map((sigla, idx) => [sigla, idx]));
+    faps.sort((a, b) => {
+      const idxA = fapOrderMap.has(a.sigla) ? fapOrderMap.get(a.sigla) : 9999;
+      const idxB = fapOrderMap.has(b.sigla) ? fapOrderMap.get(b.sigla) : 9999;
+      return idxA - idxB;
+    });
+  }
+
   const grid = document.getElementById('fapsGrid');
   if (!grid) return;
 
   grid.innerHTML = faps.map(fap => {
     const isFacepe = fap.sigla === 'FACEPE';
     return `
-      <div class="${isFacepe ? 'bento-dark' : 'bento-light'} bento-hover p-6 flex flex-col justify-between gap-5">
+      <div
+        draggable="true"
+        data-fap-sigla="${escapeHtml(fap.sigla)}"
+        ondragstart="window.onFapDragStart(event, '${escapeHtml(fap.sigla)}')"
+        ondragover="window.onFapDragOver(event)"
+        ondragleave="window.onFapDragLeave(event)"
+        ondrop="window.onFapDrop(event, '${escapeHtml(fap.sigla)}')"
+        ondragend="window.onFapDragEnd(event)"
+        class="interactive-card ${isFacepe ? 'bento-dark' : 'bento-light'} bento-hover p-6 flex flex-col justify-between gap-5"
+      >
         <div class="space-y-3">
           <div class="flex items-start justify-between gap-2">
             <div>
@@ -1030,11 +1127,18 @@ function renderFapsDirectory() {
                 ${escapeHtml(fap.nome)}
               </p>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-bold ${
-              isFacepe ? 'bg-white/10 text-[#b6f53b]' : 'bg-[#f1f3f6] text-[#14181f]'
-            } shrink-0">
-              ${fap.totalEditaisMonitorados} ed.
-            </span>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <div class="card-interactive-toolbar ${isFacepe ? 'card-toolbar-dark' : 'card-toolbar-light'}" onclick="event.stopPropagation()">
+                <span class="card-drag-grip" title="Arraste para organizar a ordem das FAPs">⋮⋮</span>
+                <button type="button" onclick="window.moveFapCard('${escapeHtml(fap.sigla)}', -1)" class="card-ctrl-btn" title="Mover para trás">←</button>
+                <button type="button" onclick="window.moveFapCard('${escapeHtml(fap.sigla)}', 1)" class="card-ctrl-btn" title="Mover para frente">→</button>
+              </div>
+              <span class="px-3 py-1 rounded-full text-xs font-bold ${
+                isFacepe ? 'bg-white/10 text-[#b6f53b]' : 'bg-[#f1f3f6] text-[#14181f]'
+              }">
+                ${fap.totalEditaisMonitorados} ed.
+              </span>
+            </div>
           </div>
 
           <div class="p-3.5 rounded-2xl ${isFacepe ? 'bg-[#0d1015]' : 'bg-[#f6f7f9]'} space-y-1.5 text-xs">
@@ -1109,7 +1213,13 @@ function renderPipelineKanban() {
   board.innerHTML = KANBAN_STAGES.map(stage => {
     const items = appState.pipeline.filter(p => p.estagio === stage.id);
     return `
-      <div class="bento-tray space-y-3">
+      <div
+        data-kanban-stage="${stage.id}"
+        ondragover="window.onKanbanColDragOver(event, '${stage.id}')"
+        ondragleave="window.onKanbanColDragLeave(event)"
+        ondrop="window.onKanbanColDrop(event, '${stage.id}')"
+        class="bento-tray space-y-3 transition-all"
+      >
         <div class="flex items-center justify-between px-2 pt-1">
           <span class="px-3 py-1 rounded-full text-xs font-bold ${stage.badge}">
             ${stage.label}
@@ -1119,10 +1229,10 @@ function renderPipelineKanban() {
           </span>
         </div>
 
-        <div class="space-y-3 min-h-[160px]">
+        <div class="space-y-3 min-h-[180px]">
           ${items.length === 0 ? `
-            <div class="bento-light p-6 text-center text-xs text-[#8a92a0]">
-              Nenhuma proposta nesta etapa
+            <div class="bento-light p-6 text-center text-xs text-[#8a92a0] border-2 border-dashed border-[#d5d9e0]">
+              Arraste um card para esta etapa
             </div>
           ` : items.map(item => {
             const ed = appState.editais.find(e => e.id === item.editalId) || {
@@ -1136,14 +1246,27 @@ function renderPipelineKanban() {
             const totalChecks = (item.checklist || []).length || 1;
 
             return `
-              <div class="bento-light p-4 space-y-3">
+              <div
+                draggable="true"
+                data-pipe-id="${item.id}"
+                ondragstart="window.onKanbanCardDragStart(event, '${item.id}')"
+                ondragover="window.onKanbanCardDragOver(event)"
+                ondragleave="window.onKanbanCardDragLeave(event)"
+                ondrop="window.onKanbanCardDrop(event, '${item.id}', '${stage.id}')"
+                ondragend="window.onKanbanCardDragEnd(event)"
+                class="interactive-card bento-light bento-hover p-4 space-y-3"
+              >
                 <div class="flex items-center justify-between gap-1">
-                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#14181f] text-white">
-                    ${escapeHtml(ed.agencia)} (${escapeHtml(ed.uf)}) • ${escapeHtml(ed.numero)}
-                  </span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="card-drag-grip bg-[#f1f3f6] text-[#5a6270] hover:bg-[#14181f] hover:text-[#b6f53b]" title="Arraste para outra coluna ou posição">⋮⋮</span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#14181f] text-white">
+                      ${escapeHtml(ed.agencia)} (${escapeHtml(ed.uf)}) • ${escapeHtml(ed.numero)}
+                    </span>
+                  </div>
                   <button
                     onclick="window.removePipelineItem('${item.id}')"
                     class="text-[#8a92a0] hover:text-[#14181f] text-xs font-bold"
+                    title="Remover proposta do Kanban"
                   >
                     ✕
                   </button>
@@ -1645,51 +1768,89 @@ window.triggerSync = async function triggerSync() {
 };
 
 window.toggleFavorite = async function toggleFavorite(editalId) {
-  const res = await fetch('/api/favoritos/toggle', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ editalId })
-  });
-  const data = await res.json();
-  if (data.state) {
-    appState = data.state;
-    renderAll();
-    showToast('Favoritos atualizados!');
+  appState.favoritos = appState.favoritos || [];
+  if (appState.favoritos.includes(editalId)) {
+    appState.favoritos = appState.favoritos.filter(id => id !== editalId);
+  } else {
+    appState.favoritos.push(editalId);
   }
+  saveWorkspaceBackup();
+  renderAll();
+  showToast('Favoritos atualizados!');
+
+  try {
+    await fetch('/api/favoritos/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ editalId })
+    });
+  } catch {}
 };
 
-window.addToPipeline = async function addToPipeline(editalId) {
+window.addToPipeline = async function addToPipeline(editalId, targetStage = 'analise') {
   const ed = appState.editais.find(e => e.id === editalId);
-  const res = await fetch('/api/pipeline', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+  appState.pipeline = appState.pipeline || [];
+  const existing = appState.pipeline.find(p => p.editalId === editalId);
+
+  if (existing) {
+    existing.estagio = targetStage;
+    existing.atualizadoEm = new Date().toISOString();
+  } else {
+    appState.pipeline.push({
+      id: `pipe-${Date.now()}`,
       editalId,
-      estagio: 'analise',
+      estagio: targetStage,
+      pesquisadorResponsavel: appState.researcherProfile?.nomePesquisador || 'Coordenação Principal',
+      instituicao: appState.researcherProfile?.instituicao || 'UFPE / UFRPE / UPE / ICT',
       valorPleiteado: ed?.valorNumerico && ed.valorNumerico <= 600000 ? ed.valorNumerico : 180000,
-      notas: `Submissão planejada para ${ed?.agencia || 'FAP'} (${ed?.numero || ''}) via ${ed?.plataformaSubmissao || 'portal'}.`
-    })
-  });
-  const data = await res.json();
-  if (data.state) {
-    appState = data.state;
-    renderAll();
-    showToast(`Edital ${ed?.numero || ''} adicionado ao Pipeline de Submissões!`);
+      prioridade: 'Alta',
+      notas: `Submissão planejada para ${ed?.agencia || 'FAP'} (${ed?.numero || ''}) via ${ed?.plataformaSubmissao || 'portal'}.`,
+      checklist: [
+        { texto: 'Ler edital completo e anexos/adendos', concluido: false },
+        { texto: 'Verificar elegibilidade e Currículo Lattes', concluido: false },
+        { texto: 'Elaborar proposta técnica e orçamento', concluido: false },
+        { texto: 'Submeter na plataforma oficial da FAP', concluido: false }
+      ],
+      atualizadoEm: new Date().toISOString()
+    });
   }
+
+  saveWorkspaceBackup();
+  renderAll();
+  showToast(`Edital ${ed?.numero || ''} adicionado ao Pipeline de Submissões!`);
+
+  try {
+    await fetch('/api/pipeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        editalId,
+        estagio: targetStage,
+        valorPleiteado: ed?.valorNumerico && ed.valorNumerico <= 600000 ? ed.valorNumerico : 180000,
+        notas: `Submissão planejada para ${ed?.agencia || 'FAP'} (${ed?.numero || ''}) via ${ed?.plataformaSubmissao || 'portal'}.`
+      })
+    });
+  } catch {}
 };
 
 window.movePipelineStage = async function movePipelineStage(pipeId, novoEstagio) {
-  const res = await fetch('/api/pipeline', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: pipeId, estagio: novoEstagio })
-  });
-  const data = await res.json();
-  if (data.state) {
-    appState = data.state;
-    renderAll();
-    showToast('Etapa atualizada no Kanban!');
+  const item = (appState.pipeline || []).find(p => p.id === pipeId);
+  if (item) {
+    item.estagio = novoEstagio;
+    item.atualizadoEm = new Date().toISOString();
   }
+  saveWorkspaceBackup();
+  renderAll();
+  const stageObj = KANBAN_STAGES.find(s => s.id === novoEstagio);
+  showToast(`Card movido para "${stageObj ? stageObj.label : novoEstagio}"!`);
+
+  try {
+    await fetch('/api/pipeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: pipeId, estagio: novoEstagio })
+    });
+  } catch {}
 };
 
 window.toggleChecklistItem = async function toggleChecklistItem(pipeId, checkIdx) {
@@ -1698,26 +1859,28 @@ window.toggleChecklistItem = async function toggleChecklistItem(pipeId, checkIdx
   const updatedChecklist = item.checklist.map((c, i) =>
     i === checkIdx ? { ...c, concluido: !c.concluido } : c
   );
-  const res = await fetch('/api/pipeline', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: pipeId, checklist: updatedChecklist })
-  });
-  const data = await res.json();
-  if (data.state) {
-    appState = data.state;
-    renderAll();
-  }
+  item.checklist = updatedChecklist;
+  saveWorkspaceBackup();
+  renderAll();
+
+  try {
+    await fetch('/api/pipeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: pipeId, checklist: updatedChecklist })
+    });
+  } catch {}
 };
 
 window.removePipelineItem = async function removePipelineItem(pipeId) {
-  const res = await fetch(`/api/pipeline/${encodeURIComponent(pipeId)}`, { method: 'DELETE' });
-  const data = await res.json();
-  if (data.state) {
-    appState = data.state;
-    renderAll();
-    showToast('Proposta removida do pipeline.');
-  }
+  appState.pipeline = (appState.pipeline || []).filter(p => p.id !== pipeId);
+  saveWorkspaceBackup();
+  renderAll();
+  showToast('Proposta removida do pipeline.');
+
+  try {
+    await fetch(`/api/pipeline/${encodeURIComponent(pipeId)}`, { method: 'DELETE' });
+  } catch {}
 };
 
 // ===================== FILTROS RÁPIDOS =====================
@@ -2905,3 +3068,583 @@ window.syncToSupabaseCloud = async function syncToSupabaseCloud(mode = 'push') {
     showToast(`Erro ao conectar ao Supabase: ${err.message}`);
   }
 };
+
+// ===================== MOTOR INTERATIVO DE CARDS (DRAG & DROP, REORDENAÇÃO, REDIMENSIONAMENTO E FIXAÇÃO) =====================
+const BENTO_LAYOUT_STORAGE_KEY = 'radarfap_bento_layout_v1';
+const CUSTOM_EDITAIS_STORAGE_KEY = 'radarfap_custom_editais_order_v1';
+const PINNED_EDITAIS_STORAGE_KEY = 'radarfap_pinned_editais_v1';
+const WIDE_EDITAIS_STORAGE_KEY = 'radarfap_wide_editais_v1';
+const CUSTOM_FAPS_STORAGE_KEY = 'radarfap_custom_faps_order_v1';
+
+const DEFAULT_BENTO_CONFIG = {
+  'captacao': { colSpan: 5, rowSpan: 2, minimized: false },
+  'facepe-live': { colSpan: 4, rowSpan: 2, minimized: false },
+  'categorias': { colSpan: 3, rowSpan: 1, minimized: false },
+  'ritmo': { colSpan: 3, rowSpan: 1, minimized: false },
+  'acesso-pe': { colSpan: 3, rowSpan: 1, minimized: false },
+  'agencias-nac': { colSpan: 3, rowSpan: 1, minimized: false },
+  'busca-rapida': { colSpan: 6, rowSpan: 1, minimized: false }
+};
+
+const BENTO_COL_CLASSES = [
+  'lg:col-span-3',
+  'lg:col-span-4',
+  'lg:col-span-5',
+  'lg:col-span-6',
+  'lg:col-span-8',
+  'lg:col-span-12'
+];
+
+const BENTO_ROW_CLASSES = ['lg:row-span-1', 'lg:row-span-2'];
+
+let draggedBentoId = null;
+let draggedEditalId = null;
+let draggedFapSigla = null;
+let draggedPipeId = null;
+let isLayoutEditMode = false;
+
+function getSavedBentoLayout() {
+  try {
+    const raw = localStorage.getItem(BENTO_LAYOUT_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function applyCardSpanClasses(widgetEl, colSpan, rowSpan, minimized) {
+  if (!widgetEl) return;
+  BENTO_COL_CLASSES.forEach(cls => widgetEl.classList.remove(cls));
+  BENTO_ROW_CLASSES.forEach(cls => widgetEl.classList.remove(cls));
+
+  const validCol = [3, 4, 5, 6, 8, 12].includes(Number(colSpan)) ? Number(colSpan) : 4;
+  const validRow = Number(rowSpan) === 2 && !minimized ? 2 : 1;
+
+  widgetEl.classList.add(`lg:col-span-${validCol}`);
+  widgetEl.classList.add(`lg:row-span-${validRow}`);
+  widgetEl.dataset.colSpan = String(validCol);
+  widgetEl.dataset.rowSpan = String(validRow);
+  widgetEl.classList.toggle('is-minimized', Boolean(minimized));
+}
+
+window.saveCurrentBentoLayout = function saveCurrentBentoLayout() {
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+  const widgets = Array.from(grid.querySelectorAll('.bento-widget[data-bento-id]'));
+  const order = widgets.map(w => w.dataset.bentoId);
+  const cards = {};
+
+  widgets.forEach(w => {
+    const id = w.dataset.bentoId;
+    const def = DEFAULT_BENTO_CONFIG[id] || { colSpan: 4, rowSpan: 1 };
+    cards[id] = {
+      colSpan: Number(w.dataset.colSpan) || def.colSpan,
+      rowSpan: Number(w.dataset.rowSpan) || def.rowSpan,
+      minimized: w.classList.contains('is-minimized')
+    };
+  });
+
+  try {
+    localStorage.setItem(BENTO_LAYOUT_STORAGE_KEY, JSON.stringify({ order, cards }));
+  } catch {}
+};
+
+window.applySavedBentoLayout = function applySavedBentoLayout() {
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+  const saved = getSavedBentoLayout();
+
+  const widgetsMap = new Map();
+  Array.from(grid.querySelectorAll('.bento-widget[data-bento-id]')).forEach(w => {
+    widgetsMap.set(w.dataset.bentoId, w);
+  });
+
+  const targetOrder = (saved && Array.isArray(saved.order) && saved.order.length > 0)
+    ? saved.order
+    : Object.keys(DEFAULT_BENTO_CONFIG);
+
+  targetOrder.forEach(id => {
+    const el = widgetsMap.get(id);
+    if (el) {
+      grid.appendChild(el);
+      const def = DEFAULT_BENTO_CONFIG[id] || { colSpan: 4, rowSpan: 1, minimized: false };
+      const cfg = (saved && saved.cards && saved.cards[id]) ? saved.cards[id] : def;
+      applyCardSpanClasses(el, cfg.colSpan ?? def.colSpan, cfg.rowSpan ?? def.rowSpan, Boolean(cfg.minimized));
+    }
+  });
+};
+
+window.toggleLayoutEditMode = function toggleLayoutEditMode() {
+  isLayoutEditMode = !isLayoutEditMode;
+  document.body.classList.toggle('layout-edit-mode', isLayoutEditMode);
+  const btn = document.getElementById('btnToggleLayoutEdit');
+  if (btn) {
+    if (isLayoutEditMode) {
+      btn.className = 'px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#b6f53b] text-[#14181f] shadow transition inline-flex items-center gap-1.5';
+      btn.innerHTML = '<span>✓ Concluir Organização</span>';
+      showToast('✋ Modo Organizar Ativo! Arraste qualquer card, use ← → para mover ou ↔ para redimensionar.');
+    } else {
+      btn.className = 'px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#f1f3f6] text-[#14181f] hover:bg-[#14181f] hover:text-[#b6f53b] transition inline-flex items-center gap-1.5';
+      btn.innerHTML = '<span>✋ Organizar Layout</span>';
+      showToast('✨ Layout personalizado salvo automaticamente!');
+    }
+  }
+};
+
+window.onBentoDragStart = function onBentoDragStart(event, bentoId) {
+  draggedBentoId = bentoId;
+  const el = event.currentTarget;
+  if (el) {
+    setTimeout(() => el.classList.add('card-dragging'), 10);
+  }
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', `bento:${bentoId}`);
+  }
+};
+
+window.onBentoDragOver = function onBentoDragOver(event, targetId) {
+  if (!draggedBentoId || draggedBentoId === targetId) return;
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+  event.currentTarget?.classList.add('card-drop-target');
+};
+
+window.onBentoDragLeave = function onBentoDragLeave(event) {
+  event.currentTarget?.classList.remove('card-drop-target');
+};
+
+window.onBentoDrop = function onBentoDrop(event, targetId) {
+  event.preventDefault();
+  event.stopPropagation();
+  const targetEl = event.currentTarget;
+  if (targetEl) targetEl.classList.remove('card-drop-target');
+
+  if (!draggedBentoId || draggedBentoId === targetId) return;
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+
+  const draggedEl = grid.querySelector(`.bento-widget[data-bento-id="${draggedBentoId}"]`);
+  const dropEl = grid.querySelector(`.bento-widget[data-bento-id="${targetId}"]`);
+  if (!draggedEl || !dropEl) return;
+
+  const children = Array.from(grid.children);
+  const dragIdx = children.indexOf(draggedEl);
+  const dropIdx = children.indexOf(dropEl);
+
+  if (dragIdx < dropIdx) {
+    grid.insertBefore(draggedEl, dropEl.nextSibling);
+  } else {
+    grid.insertBefore(draggedEl, dropEl);
+  }
+
+  draggedEl.classList.remove('card-dragging');
+  draggedBentoId = null;
+  window.saveCurrentBentoLayout();
+  showToast('✨ Card reposicionado e salvo no seu layout!');
+};
+
+window.onBentoDragEnd = function onBentoDragEnd(event) {
+  event.currentTarget?.classList.remove('card-dragging');
+  document.querySelectorAll('.card-drop-target').forEach(el => el.classList.remove('card-drop-target'));
+  draggedBentoId = null;
+};
+
+window.moveBentoCard = function moveBentoCard(bentoId, direction) {
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+  const widgets = Array.from(grid.querySelectorAll('.bento-widget[data-bento-id]'));
+  const idx = widgets.findIndex(w => w.dataset.bentoId === bentoId);
+  if (idx < 0) return;
+
+  const targetIdx = idx + direction;
+  if (targetIdx < 0 || targetIdx >= widgets.length) return;
+
+  const currentEl = widgets[idx];
+  const neighborEl = widgets[targetIdx];
+
+  if (direction < 0) {
+    grid.insertBefore(currentEl, neighborEl);
+  } else {
+    grid.insertBefore(currentEl, neighborEl.nextSibling);
+  }
+
+  window.saveCurrentBentoLayout();
+  showToast('Posição do card atualizada!');
+};
+
+window.cycleBentoCardSize = function cycleBentoCardSize(bentoId) {
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+  const widgetEl = grid.querySelector(`.bento-widget[data-bento-id="${bentoId}"]`);
+  if (!widgetEl) return;
+
+  const sizes = [3, 4, 5, 6, 8, 12];
+  const currentCol = Number(widgetEl.dataset.colSpan) || DEFAULT_BENTO_CONFIG[bentoId]?.colSpan || 4;
+  const nextCol = sizes[(sizes.indexOf(currentCol) + 1) % sizes.length];
+  const currentRow = Number(widgetEl.dataset.rowSpan) || DEFAULT_BENTO_CONFIG[bentoId]?.rowSpan || 1;
+  const isMin = widgetEl.classList.contains('is-minimized');
+
+  applyCardSpanClasses(widgetEl, nextCol, currentRow, isMin);
+  window.saveCurrentBentoLayout();
+  showToast(`↔ Largura do card ajustada para ${nextCol}/12 colunas!`);
+};
+
+window.toggleMinimizeBentoCard = function toggleMinimizeBentoCard(bentoId) {
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+  const widgetEl = grid.querySelector(`.bento-widget[data-bento-id="${bentoId}"]`);
+  if (!widgetEl) return;
+
+  const willMinimize = !widgetEl.classList.contains('is-minimized');
+  const currentCol = Number(widgetEl.dataset.colSpan) || DEFAULT_BENTO_CONFIG[bentoId]?.colSpan || 4;
+  const defaultRow = DEFAULT_BENTO_CONFIG[bentoId]?.rowSpan || 1;
+
+  applyCardSpanClasses(widgetEl, currentCol, willMinimize ? 1 : defaultRow, willMinimize);
+  window.saveCurrentBentoLayout();
+};
+
+window.applyBentoPreset = function applyBentoPreset(presetName) {
+  const grid = document.getElementById('bentoDashboardGrid');
+  if (!grid) return;
+
+  let preset = null;
+  if (presetName === 'facepe_focus') {
+    preset = {
+      order: ['facepe-live', 'busca-rapida', 'captacao', 'acesso-pe', 'categorias', 'ritmo', 'agencias-nac'],
+      cards: {
+        'facepe-live': { colSpan: 6, rowSpan: 2, minimized: false },
+        'busca-rapida': { colSpan: 6, rowSpan: 1, minimized: false },
+        'captacao': { colSpan: 6, rowSpan: 1, minimized: false },
+        'acesso-pe': { colSpan: 3, rowSpan: 1, minimized: false },
+        'categorias': { colSpan: 3, rowSpan: 1, minimized: false },
+        'ritmo': { colSpan: 3, rowSpan: 1, minimized: false },
+        'agencias-nac': { colSpan: 3, rowSpan: 1, minimized: false }
+      }
+    };
+  } else if (presetName === 'expanded') {
+    preset = {
+      order: ['captacao', 'facepe-live', 'busca-rapida', 'ritmo', 'categorias', 'acesso-pe', 'agencias-nac'],
+      cards: {
+        'captacao': { colSpan: 6, rowSpan: 2, minimized: false },
+        'facepe-live': { colSpan: 6, rowSpan: 2, minimized: false },
+        'busca-rapida': { colSpan: 12, rowSpan: 1, minimized: false },
+        'ritmo': { colSpan: 6, rowSpan: 1, minimized: false },
+        'categorias': { colSpan: 6, rowSpan: 1, minimized: false },
+        'acesso-pe': { colSpan: 6, rowSpan: 1, minimized: false },
+        'agencias-nac': { colSpan: 6, rowSpan: 1, minimized: false }
+      }
+    };
+  }
+
+  if (preset) {
+    localStorage.setItem(BENTO_LAYOUT_STORAGE_KEY, JSON.stringify(preset));
+    window.applySavedBentoLayout();
+    showToast(presetName === 'facepe_focus' ? '🔬 Layout "Foco FACEPE" aplicado!' : '📐 Layout "Visão Expandida" aplicado!');
+  }
+};
+
+window.resetBentoLayout = function resetBentoLayout() {
+  localStorage.removeItem(BENTO_LAYOUT_STORAGE_KEY);
+  localStorage.removeItem(CUSTOM_EDITAIS_STORAGE_KEY);
+  localStorage.removeItem(PINNED_EDITAIS_STORAGE_KEY);
+  localStorage.removeItem(WIDE_EDITAIS_STORAGE_KEY);
+  localStorage.removeItem(CUSTOM_FAPS_STORAGE_KEY);
+  window.applySavedBentoLayout();
+  renderAll();
+  showToast('🔄 Layout original restaurado em todos os painéis!');
+};
+
+// ===================== DRAG & DROP DE EDITAIS + SOLTAR NA ABA SUBMISSÕES =====================
+window.getCustomEditaisOrder = function getCustomEditaisOrder() {
+  try {
+    return JSON.parse(localStorage.getItem(CUSTOM_EDITAIS_STORAGE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+};
+
+window.getPinnedEditaisIds = function getPinnedEditaisIds() {
+  try {
+    return JSON.parse(localStorage.getItem(PINNED_EDITAIS_STORAGE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+};
+
+window.getWideEditaisIds = function getWideEditaisIds() {
+  try {
+    return JSON.parse(localStorage.getItem(WIDE_EDITAIS_STORAGE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+};
+
+window.onEditalDragStart = function onEditalDragStart(event, editalId) {
+  draggedEditalId = editalId;
+  const el = event.currentTarget;
+  if (el) setTimeout(() => el.classList.add('card-dragging'), 10);
+  document.getElementById('headerTabPipeline')?.classList.add('tab-drop-ready');
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', `edital:${editalId}`);
+  }
+};
+
+window.onEditalDragOver = function onEditalDragOver(event) {
+  if (!draggedEditalId) return;
+  event.preventDefault();
+  event.currentTarget?.classList.add('card-drop-target');
+};
+
+window.onEditalDragLeave = function onEditalDragLeave(event) {
+  event.currentTarget?.classList.remove('card-drop-target');
+};
+
+window.onEditalDrop = function onEditalDrop(event, targetEditalId) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget?.classList.remove('card-drop-target');
+  document.getElementById('headerTabPipeline')?.classList.remove('tab-drop-ready');
+
+  if (!draggedEditalId || draggedEditalId === targetEditalId) return;
+
+  const currentList = getFilteredEditais().map(e => e.id);
+  const fromIdx = currentList.indexOf(draggedEditalId);
+  const toIdx = currentList.indexOf(targetEditalId);
+  if (fromIdx < 0 || toIdx < 0) return;
+
+  currentList.splice(fromIdx, 1);
+  currentList.splice(toIdx, 0, draggedEditalId);
+
+  localStorage.setItem(CUSTOM_EDITAIS_STORAGE_KEY, JSON.stringify(currentList));
+  const sortSelect = document.getElementById('filterSort');
+  if (sortSelect) sortSelect.value = 'custom';
+
+  draggedEditalId = null;
+  renderEditaisTab();
+  showToast('✨ Ordem personalizada dos editais atualizada!');
+};
+
+window.onEditalDragEnd = function onEditalDragEnd(event) {
+  event.currentTarget?.classList.remove('card-dragging');
+  document.getElementById('headerTabPipeline')?.classList.remove('tab-drop-ready');
+  document.querySelectorAll('.card-drop-target').forEach(el => el.classList.remove('card-drop-target'));
+  draggedEditalId = null;
+};
+
+window.moveEditalCard = function moveEditalCard(editalId, direction) {
+  const currentList = getFilteredEditais().map(e => e.id);
+  const idx = currentList.indexOf(editalId);
+  const targetIdx = idx + direction;
+  if (idx < 0 || targetIdx < 0 || targetIdx >= currentList.length) return;
+
+  currentList.splice(idx, 1);
+  currentList.splice(targetIdx, 0, editalId);
+  localStorage.setItem(CUSTOM_EDITAIS_STORAGE_KEY, JSON.stringify(currentList));
+
+  const sortSelect = document.getElementById('filterSort');
+  if (sortSelect) sortSelect.value = 'custom';
+  renderEditaisTab();
+};
+
+window.togglePinEdital = function togglePinEdital(editalId) {
+  const pinned = window.getPinnedEditaisIds();
+  const idx = pinned.indexOf(editalId);
+  if (idx >= 0) {
+    pinned.splice(idx, 1);
+    showToast('Edital desafixado do topo.');
+  } else {
+    pinned.unshift(editalId);
+    showToast('📌 Edital fixado no topo do painel!');
+  }
+  localStorage.setItem(PINNED_EDITAIS_STORAGE_KEY, JSON.stringify(pinned));
+  renderEditaisTab();
+};
+
+window.toggleWideEditalCard = function toggleWideEditalCard(editalId) {
+  const wide = window.getWideEditaisIds();
+  const idx = wide.indexOf(editalId);
+  if (idx >= 0) {
+    wide.splice(idx, 1);
+  } else {
+    wide.push(editalId);
+  }
+  localStorage.setItem(WIDE_EDITAIS_STORAGE_KEY, JSON.stringify(wide));
+  renderEditaisTab();
+};
+
+window.onPipelineTabDragOver = function onPipelineTabDragOver(event) {
+  if (!draggedEditalId) return;
+  event.preventDefault();
+  event.currentTarget?.classList.add('card-drop-target');
+};
+
+window.onPipelineTabDragLeave = function onPipelineTabDragLeave(event) {
+  event.currentTarget?.classList.remove('card-drop-target');
+};
+
+window.onPipelineTabDrop = function onPipelineTabDrop(event) {
+  event.preventDefault();
+  event.currentTarget?.classList.remove('card-drop-target');
+  event.currentTarget?.classList.remove('tab-drop-ready');
+  if (!draggedEditalId) return;
+  const idToAdd = draggedEditalId;
+  draggedEditalId = null;
+  window.addToPipeline(idToAdd, 'analise');
+};
+
+// ===================== DRAG & DROP DO DIRETÓRIO DE 27 FAPS =====================
+window.getCustomFapsOrder = function getCustomFapsOrder() {
+  try {
+    return JSON.parse(localStorage.getItem(CUSTOM_FAPS_STORAGE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+};
+
+window.onFapDragStart = function onFapDragStart(event, sigla) {
+  draggedFapSigla = sigla;
+  const el = event.currentTarget;
+  if (el) setTimeout(() => el.classList.add('card-dragging'), 10);
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', `fap:${sigla}`);
+  }
+};
+
+window.onFapDragOver = function onFapDragOver(event) {
+  if (!draggedFapSigla) return;
+  event.preventDefault();
+  event.currentTarget?.classList.add('card-drop-target');
+};
+
+window.onFapDragLeave = function onFapDragLeave(event) {
+  event.currentTarget?.classList.remove('card-drop-target');
+};
+
+window.onFapDrop = function onFapDrop(event, targetSigla) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget?.classList.remove('card-drop-target');
+  if (!draggedFapSigla || draggedFapSigla === targetSigla) return;
+
+  const currentOrder = window.getCustomFapsOrder().length
+    ? window.getCustomFapsOrder()
+    : (appState.faps || []).map(f => f.sigla);
+
+  const fromIdx = currentOrder.indexOf(draggedFapSigla);
+  const toIdx = currentOrder.indexOf(targetSigla);
+  if (fromIdx < 0 || toIdx < 0) return;
+
+  currentOrder.splice(fromIdx, 1);
+  currentOrder.splice(toIdx, 0, draggedFapSigla);
+  localStorage.setItem(CUSTOM_FAPS_STORAGE_KEY, JSON.stringify(currentOrder));
+
+  draggedFapSigla = null;
+  renderFapsDirectory();
+  showToast('✨ Ordem das FAPs personalizada!');
+};
+
+window.onFapDragEnd = function onFapDragEnd(event) {
+  event.currentTarget?.classList.remove('card-dragging');
+  document.querySelectorAll('.card-drop-target').forEach(el => el.classList.remove('card-drop-target'));
+  draggedFapSigla = null;
+};
+
+window.moveFapCard = function moveFapCard(sigla, direction) {
+  const currentOrder = window.getCustomFapsOrder().length
+    ? window.getCustomFapsOrder()
+    : (appState.faps || []).map(f => f.sigla);
+
+  const idx = currentOrder.indexOf(sigla);
+  const targetIdx = idx + direction;
+  if (idx < 0 || targetIdx < 0 || targetIdx >= currentOrder.length) return;
+
+  currentOrder.splice(idx, 1);
+  currentOrder.splice(targetIdx, 0, sigla);
+  localStorage.setItem(CUSTOM_FAPS_STORAGE_KEY, JSON.stringify(currentOrder));
+  renderFapsDirectory();
+};
+
+// ===================== DRAG & DROP DO KANBAN DE SUBMISSÕES =====================
+window.onKanbanCardDragStart = function onKanbanCardDragStart(event, pipeId) {
+  draggedPipeId = pipeId;
+  const el = event.currentTarget;
+  if (el) setTimeout(() => el.classList.add('card-dragging'), 10);
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', `pipe:${pipeId}`);
+  }
+};
+
+window.onKanbanCardDragOver = function onKanbanCardDragOver(event) {
+  if (!draggedPipeId) return;
+  event.preventDefault();
+  event.currentTarget?.classList.add('card-drop-target');
+};
+
+window.onKanbanCardDragLeave = function onKanbanCardDragLeave(event) {
+  event.currentTarget?.classList.remove('card-drop-target');
+};
+
+window.onKanbanCardDrop = function onKanbanCardDrop(event, targetPipeId, stageId) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget?.classList.remove('card-drop-target');
+  document.querySelectorAll('.kanban-col-drop-target').forEach(el => el.classList.remove('kanban-col-drop-target'));
+
+  if (!draggedPipeId) return;
+  const pipeList = [...(appState.pipeline || [])];
+  const fromIdx = pipeList.findIndex(p => p.id === draggedPipeId);
+  const toIdx = pipeList.findIndex(p => p.id === targetPipeId);
+
+  if (fromIdx >= 0) {
+    const [moved] = pipeList.splice(fromIdx, 1);
+    moved.estagio = stageId;
+    moved.atualizadoEm = new Date().toISOString();
+    if (toIdx >= 0) {
+      pipeList.splice(toIdx, 0, moved);
+    } else {
+      pipeList.push(moved);
+    }
+    appState.pipeline = pipeList;
+    window.movePipelineStage(moved.id, stageId);
+  }
+  draggedPipeId = null;
+};
+
+window.onKanbanCardDragEnd = function onKanbanCardDragEnd(event) {
+  event.currentTarget?.classList.remove('card-dragging');
+  document.querySelectorAll('.card-drop-target, .kanban-col-drop-target').forEach(el => {
+    el.classList.remove('card-drop-target', 'kanban-col-drop-target');
+  });
+  draggedPipeId = null;
+};
+
+window.onKanbanColDragOver = function onKanbanColDragOver(event, stageId) {
+  if (!draggedPipeId && !draggedEditalId) return;
+  event.preventDefault();
+  event.currentTarget?.classList.add('kanban-col-drop-target');
+};
+
+window.onKanbanColDragLeave = function onKanbanColDragLeave(event) {
+  event.currentTarget?.classList.remove('kanban-col-drop-target');
+};
+
+window.onKanbanColDrop = function onKanbanColDrop(event, stageId) {
+  event.preventDefault();
+  event.currentTarget?.classList.remove('kanban-col-drop-target');
+
+  if (draggedPipeId) {
+    const id = draggedPipeId;
+    draggedPipeId = null;
+    window.movePipelineStage(id, stageId);
+  } else if (draggedEditalId) {
+    const edId = draggedEditalId;
+    draggedEditalId = null;
+    window.addToPipeline(edId, stageId);
+  }
+};
+
