@@ -216,6 +216,7 @@ const server = http.createServer(async (req, res) => {
         };
       } else {
         db.pipeline.push({
+          ...body,
           id: `pipe-${Date.now()}`,
           editalId: body.editalId,
           estagio: body.estagio || 'favorito',
@@ -253,6 +254,17 @@ const server = http.createServer(async (req, res) => {
       const db = loadDatabase();
       db.alertConfig = {
         ...(db.alertConfig || {}),
+        ...body
+      };
+      saveDatabase(db);
+      return sendJson(res, 200, { ok: true, state: getFullState() });
+    }
+
+    if (pathname === '/api/profile' && req.method === 'POST') {
+      const body = await parseBody(req);
+      const db = loadDatabase();
+      db.researcherProfile = {
+        ...(db.researcherProfile || {}),
         ...body
       };
       saveDatabase(db);

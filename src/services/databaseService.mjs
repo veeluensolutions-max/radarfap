@@ -257,11 +257,16 @@ export function computeAlerts(db) {
 }
 
 export const DEFAULT_RESEARCHER_PROFILE = {
+  nomePesquisador: 'Prof. Dr. Coordenador Principal',
   nomeGrupo: 'Grupo de Pesquisa & Inovação (PE / Nacional)',
+  instituicao: 'UFPE / UFRPE / UPE / ICT Parceira',
+  naturezaVinculo: 'ICT Pública / Universidade',
   ufPrincipal: 'PE',
   incluirFederais: true,
   incluirOutrosEstados: true,
-  titulacao: 'Doutor / ICT / PPG',
+  titulacao: 'Doutorado',
+  orcamentoAlvoMax: 500000,
+  linhaTematicaProjeto: 'Soluções Científicas, IA e Inovação Aplicadas ao Desenvolvimento Regional',
   areasPrioritarias: [
     'Pesquisa Científica (APQ / Missões)',
     'Bolsas & Pós-Graduação',
@@ -272,55 +277,97 @@ export const DEFAULT_RESEARCHER_PROFILE = {
   palavrasChave: ['pesquisa', 'bolsas', 'pós-graduação', 'inovação', 'startups', 'missões', 'cientista', 'universal', 'tecnologia']
 };
 
-export function computeMatchScore(edital, profile = DEFAULT_RESEARCHER_PROFILE) {
+export function computeMatchBreakdown(edital, profile = DEFAULT_RESEARCHER_PROFILE) {
   let score = 45;
+  const reasons = [];
 
   // 1. Aderência Geográfica / Esfera
-  if (edital.uf === (profile.ufPrincipal || 'PE')) {
+  const userUf = profile.ufPrincipal || 'PE';
+  if (edital.uf === userUf) {
     score += 28;
+    reasons.push(`✓ Sede na mesma UF do seu perfil (${userUf} • ${edital.agencia})`);
   } else if (edital.uf === 'BR' && profile.incluirFederais !== false) {
     score += 22;
-  } else if (edital.regiao === 'Nordeste' && (profile.ufPrincipal || 'PE') === 'PE') {
+    reasons.push(`✓ Chamada Nacional elegível em todo o país (${edital.agencia})`);
+  } else if (edital.regiao === 'Nordeste' && userUf === 'PE') {
     score += 14;
+    reasons.push(`✓ Cooperação Regional Nordeste (${edital.agencia}/${edital.uf})`);
   } else if (profile.incluirOutrosEstados !== false) {
     score += 8;
+    reasons.push(`⚠ Exige ICT sediada ou co-execução em ${edital.uf} (${edital.agencia})`);
+  } else {
+    score -= 12;
+    reasons.push(`⚠ Fora da UF prioritária configurada (${userUf})`);
   }
 
   // 2. Aderência por Linha de Fomento / Área
   if ((profile.areasPrioritarias || []).includes(edital.area)) {
     score += 15;
+    reasons.push(`✓ Linha prioritária: ${edital.area}`);
+  } else {
+    reasons.push(`• Linha complementar: ${edital.area}`);
   }
 
-  // 3. Aderência por Palavras-Chave no Título e Resumo
+  // 3. Natureza do Vínculo (ICT vs Startup/Empresa)
+  const isStartupEdital = edital.area === 'Inovação & Startups' || /centelha|tecnova|subven|empresa|startup/i.test(edital.titulo);
+  if (isStartupEdital) {
+    if ((profile.naturezaVinculo || '').includes('Startup') || (profile.naturezaVinculo || '').includes('Empresa')) {
+      score += 6;
+      reasons.push('✓ Enquadramento direto para CNPJ / Startup Inovadora');
+    } else {
+      reasons.push('• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica');
+    }
+  } else {
+    reasons.push(`✓ Elegível para ${profile.naturezaVinculo || 'ICT / Universidade'} (${profile.titulacao || 'Doutorado'})`);
+  }
+
+  // 4. Aderência por Palavras-Chave no Título e Resumo
   const text = `${edital.titulo} ${edital.resumo} ${edital.publicoAlvo}`.toLowerCase();
   const kws = profile.palavrasChave || [];
-  let kwHits = 0;
+  const matchedKws = [];
   for (const kw of kws) {
-    if (kw && text.includes(kw.toLowerCase().trim())) {
-      kwHits += 1;
+    const cleanKw = (kw || '').toLowerCase().trim();
+    if (cleanKw && text.includes(cleanKw)) {
+      matchedKws.push(kw.trim());
     }
   }
-  score += Math.min(12, kwHits * 4);
+  score += Math.min(12, matchedKws.length * 4);
+  if (matchedKws.length > 0) {
+    reasons.push(`✓ Temas compatíveis: ${matchedKws.slice(0, 3).join(', ')}`);
+  }
 
-  // 4. Bônus para editais abertos / prorrogados
+  // 5. Bônus para editais abertos / prorrogados
   if (edital.status === 'Aberto') {
     score += 4;
   } else if (edital.status === 'Encerrado') {
     score -= 20;
+    reasons.push('⚠ Submissões encerradas (útil como referência para próxima rodada)');
   }
 
-  return Math.max(18, Math.min(99, score));
+  const finalScore = Math.max(18, Math.min(99, score));
+  return {
+    score: finalScore,
+    reasons
+  };
+}
+
+export function computeMatchScore(edital, profile = DEFAULT_RESEARCHER_PROFILE) {
+  return computeMatchBreakdown(edital, profile).score;
 }
 
 export function getFullState() {
   const db = loadDatabase();
-  const profile = db.researcherProfile || DEFAULT_RESEARCHER_PROFILE;
+  const profile = { ...DEFAULT_RESEARCHER_PROFILE, ...(db.researcherProfile || {}) };
   const alerts = computeAlerts(db);
 
-  const editaisWithMatch = db.editais.map(e => ({
-    ...e,
-    matchScore: computeMatchScore(e, profile)
-  }));
+  const editaisWithMatch = db.editais.map(e => {
+    const breakdown = computeMatchBreakdown(e, profile);
+    return {
+      ...e,
+      matchScore: breakdown.score,
+      matchRazoes: breakdown.reasons
+    };
+  });
 
   // Calcula contagem de editais por FAP / UF
   const fapsWithCounts = FAPS_CATALOG.map(fap => {

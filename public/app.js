@@ -105,6 +105,8 @@ function connectRealtimeStream() {
         }
       } catch {}
     };
+  } catch {}
+
   // Fallback/Complemento Serverless (Vercel): sincroniza silenciosamente a cada 3 minutos
   setInterval(async () => {
     try {
@@ -123,6 +125,96 @@ function connectRealtimeStream() {
 
 const LOCAL_STORAGE_KEY = 'radarfap_user_workspace_v1';
 let portalPingStatus = {};
+let onlyHighMatchFilter = false;
+
+const ALL_FOMENTO_AREAS = [
+  'Pesquisa Científica (APQ / Missões)',
+  'Bolsas & Pós-Graduação',
+  'Inovação & Startups',
+  'Governo & Gestão Pública',
+  'Cooperação Internacional',
+  'Eventos & Difusão Científica'
+];
+
+function computeClientMatchBreakdown(edital, profile = {}) {
+  let score = 45;
+  const reasons = [];
+  const userUf = profile.ufPrincipal || 'PE';
+
+  if (edital.uf === userUf) {
+    score += 28;
+    reasons.push(`✓ Sede na mesma UF do seu perfil (${userUf} • ${edital.agencia})`);
+  } else if (edital.uf === 'BR' && profile.incluirFederais !== false) {
+    score += 22;
+    reasons.push(`✓ Chamada Nacional elegível em todo o país (${edital.agencia})`);
+  } else if (edital.regiao === 'Nordeste' && userUf === 'PE') {
+    score += 14;
+    reasons.push(`✓ Cooperação Regional Nordeste (${edital.agencia}/${edital.uf})`);
+  } else if (profile.incluirOutrosEstados !== false) {
+    score += 8;
+    reasons.push(`⚠ Exige ICT sediada ou co-execução em ${edital.uf} (${edital.agencia})`);
+  } else {
+    score -= 12;
+    reasons.push(`⚠ Fora da UF prioritária configurada (${userUf})`);
+  }
+
+  if ((profile.areasPrioritarias || ALL_FOMENTO_AREAS).includes(edital.area)) {
+    score += 15;
+    reasons.push(`✓ Linha prioritária: ${edital.area}`);
+  } else {
+    reasons.push(`• Linha complementar: ${edital.area}`);
+  }
+
+  const isStartupEdital = edital.area === 'Inovação & Startups' || /centelha|tecnova|subven|empresa|startup/i.test(edital.titulo || '');
+  if (isStartupEdital) {
+    if ((profile.naturezaVinculo || '').includes('Startup') || (profile.naturezaVinculo || '').includes('Empresa')) {
+      score += 6;
+      reasons.push('✓ Enquadramento direto para CNPJ / Startup Inovadora');
+    } else {
+      reasons.push('• Recomendado parceria ICT + Empresa/Startup ou spin-off');
+    }
+  } else {
+    reasons.push(`✓ Elegível para ${profile.naturezaVinculo || 'ICT Pública / Universidade'} (${profile.titulacao || 'Doutorado'})`);
+  }
+
+  const text = `${edital.titulo || ''} ${edital.resumo || ''} ${edital.publicoAlvo || ''}`.toLowerCase();
+  const kws = profile.palavrasChave || [];
+  const matchedKws = [];
+  for (const kw of kws) {
+    const cleanKw = (kw || '').toLowerCase().trim();
+    if (cleanKw && text.includes(cleanKw)) {
+      matchedKws.push(kw.trim());
+    }
+  }
+  score += Math.min(12, matchedKws.length * 4);
+  if (matchedKws.length > 0) {
+    reasons.push(`✓ Temas compatíveis: ${matchedKws.slice(0, 3).join(', ')}`);
+  }
+
+  if (edital.status === 'Aberto') {
+    score += 4;
+  } else if (edital.status === 'Encerrado') {
+    score -= 20;
+    reasons.push('⚠ Submissões encerradas (referência histórica)');
+  }
+
+  return {
+    score: Math.max(18, Math.min(99, score)),
+    reasons
+  };
+}
+
+function recalculateClientSideMatches() {
+  const profile = appState.researcherProfile || {};
+  appState.editais = (appState.editais || []).map(ed => {
+    const bd = computeClientMatchBreakdown(ed, profile);
+    return {
+      ...ed,
+      matchScore: bd.score,
+      matchRazoes: bd.reasons
+    };
+  });
+}
 
 function saveWorkspaceBackup() {
   try {
@@ -131,6 +223,7 @@ function saveWorkspaceBackup() {
       favoritos: appState.favoritos || [],
       pipeline: appState.pipeline || [],
       alertConfig: appState.alertConfig || {},
+      researcherProfile: appState.researcherProfile || {},
       manualEditais
     };
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(backup));
@@ -152,6 +245,12 @@ function mergeWorkspaceBackup() {
       }
       appState.pipeline = Array.from(pipeMap.values());
     }
+    if (backup.researcherProfile && typeof backup.researcherProfile === 'object') {
+      appState.researcherProfile = {
+        ...(appState.researcherProfile || {}),
+        ...backup.researcherProfile
+      };
+    }
     if (Array.isArray(backup.manualEditais) && backup.manualEditais.length > 0) {
       const edMap = new Map((appState.editais || []).map(e => [e.id, e]));
       for (const me of backup.manualEditais) {
@@ -166,6 +265,7 @@ async function fetchInitialState() {
   const res = await fetch('/api/state');
   appState = await res.json();
   mergeWorkspaceBackup();
+  recalculateClientSideMatches();
   if (appState.lastAutoSyncIso) {
     updateRealtimeBadge(appState.lastAutoSyncIso);
   }
@@ -179,8 +279,19 @@ function populateFilterSelects() {
   const quickUfSelect = document.getElementById('quickFormUf');
   const agSelect = document.getElementById('filterAgencia');
   const formAgSelect = document.getElementById('formEditalAgencia');
+  const profUfSelect = document.getElementById('profUfPrincipal');
 
   const ufs = [...new Set(appState.faps.map(f => f.uf))];
+
+  if (profUfSelect && profUfSelect.options.length === 0) {
+    ufs.filter(u => u !== 'BR').forEach(uf => {
+      const fap = appState.faps.find(f => f.uf === uf);
+      const opt = document.createElement('option');
+      opt.value = uf;
+      opt.textContent = `${uf} — ${fap?.estado || uf} (${fap?.sigla || ''})`;
+      profUfSelect.appendChild(opt);
+    });
+  }
 
   if (ufSelect && ufSelect.options.length <= 1) {
     ufs.forEach(uf => {
@@ -222,10 +333,17 @@ function populateFilterSelects() {
 }
 
 function renderAll() {
+  recalculateClientSideMatches();
   saveWorkspaceBackup();
   document.getElementById('badgeTotalEditais').textContent = appState.editais.length;
   document.getElementById('badgePipelineCount').textContent = appState.pipeline.length;
   document.getElementById('badgeAlertsCount').textContent = appState.alerts.length;
+
+  const prof = appState.researcherProfile || {};
+  const headerProfLbl = document.getElementById('headerProfileBtnLabel');
+  if (headerProfLbl) {
+    headerProfLbl.textContent = `🎯 Perfil & Match (${prof.ufPrincipal || 'PE'})`;
+  }
 
   renderDashboard();
   renderEditaisTab();
@@ -489,6 +607,9 @@ function getFilteredEditais() {
 
   let list = [...appState.editais];
 
+  if (onlyHighMatchFilter) {
+    list = list.filter(e => (Number(e.matchScore) || 0) >= 80);
+  }
   if (onlyFavoritesFilter) {
     list = list.filter(e => appState.favoritos.includes(e.id));
   }
@@ -536,6 +657,25 @@ function renderEditaisTab() {
     countLabel.textContent = `${filtered.length} oportunidades encontradas de ${appState.editais.length} monitoradas no Brasil`;
   }
 
+  const profileBanner = document.getElementById('activeProfileBanner');
+  if (profileBanner) {
+    const prof = appState.researcherProfile || {};
+    const highMatchCount = appState.editais.filter(e => (Number(e.matchScore) || 0) >= 80 && e.status === 'Aberto').length;
+    profileBanner.innerHTML = `
+      <div class="flex flex-wrap items-center gap-2.5">
+        <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[11px] font-extrabold">Perfil Ativo</span>
+        <span class="text-white font-bold">${escapeHtml(prof.nomePesquisador || 'Prof. Dr. Coordenador')}</span>
+        <span class="text-[#7e8694]">•</span>
+        <span class="text-[#c5cbd6]">${escapeHtml(prof.instituicao || 'UFPE / UFRPE / UPE')} (${escapeHtml(prof.ufPrincipal || 'PE')})</span>
+        <span class="text-[#7e8694]">•</span>
+        <span class="text-[#b6f53b] font-semibold">${highMatchCount} editais abertos com Alto Match (≥80%)</span>
+      </div>
+      <button onclick="window.openProfileModal()" class="btn-pill-outline-dark !py-1.5 !px-3.5 text-xs">
+        ⚙ Configurar Perfil &amp; Elegibilidade
+      </button>
+    `;
+  }
+
   const grid = document.getElementById('editaisGrid');
   if (!grid) return;
 
@@ -564,8 +704,10 @@ function renderEditaisTab() {
       : '';
 
     const matchBadge = ed.matchScore
-      ? `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${ed.matchScore >= 85 ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#f1f3f6] text-[#14181f]'}">${ed.matchScore}% Match</span>`
+      ? `<span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold ${ed.matchScore >= 85 ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#f1f3f6] text-[#14181f]'}" title="${escapeHtml((ed.matchRazoes || []).join(' | '))}">${ed.matchScore}% Match</span>`
       : '';
+
+    const topReason = (ed.matchRazoes && ed.matchRazoes[0]) ? ed.matchRazoes[0] : '';
 
     return `
       <article class="bento-light bento-hover p-6 flex flex-col justify-between gap-5">
@@ -622,6 +764,14 @@ function renderEditaisTab() {
               <span class="text-[#8a92a0] block text-[11px]">Recursos / Bolsas</span>
               <strong class="text-[#14181f]">${escapeHtml(ed.valorEstimado)}</strong>
             </div>
+            ${topReason ? `
+              <div class="col-span-2 pt-1.5 border-t border-[#e8ebf0] text-[11px] font-semibold text-[#14181f] flex items-center justify-between">
+                <span>${escapeHtml(topReason)}</span>
+                <button onclick="window.openWorkplanModal('${ed.id}')" class="text-[#14181f] underline decoration-[#b6f53b] decoration-2 font-extrabold hover:opacity-80">
+                  ✨ Gerar Plano
+                </button>
+              </div>
+            ` : ''}
           </div>
         </div>
 
@@ -631,9 +781,9 @@ function renderEditaisTab() {
             <button onclick="window.openDetailModal('${ed.id}')" class="btn-pill-dark">
               <span>Detalhes ${ed.anexos?.length ? `(${ed.anexos.length})` : ''}</span>
             </button>
-            <a href="${escapeHtml(ed.linkPdf)}" target="_blank" rel="noopener" class="btn-pill-outline-light" title="Baixar PDF Oficial">
-              PDF Oficial ↗
-            </a>
+            <button onclick="window.openWorkplanModal('${ed.id}')" class="btn-pill-outline-light" title="Gerar Plano de Trabalho estruturado para o AgilFAP / FAP">
+              ✨ Plano
+            </button>
           </div>
 
           <div class="flex items-center gap-1.5">
@@ -1027,12 +1177,21 @@ function renderPipelineKanban() {
                       <option value="${s.id}" ${s.id === item.estagio ? 'selected' : ''}>Etapa: ${s.label}</option>
                     `).join('')}
                   </select>
-                  <button
-                    onclick="window.openPipelineModal('${item.id}')"
-                    class="w-full py-1.5 px-3 rounded-full text-[11px] font-bold bg-[#14181f] text-white hover:bg-[#252b36] transition flex items-center justify-center gap-1.5"
-                  >
-                    <span>🧮 Orçamento &amp; Ficha</span>
-                  </button>
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <button
+                      onclick="window.openPipelineModal('${item.id}')"
+                      class="py-1.5 px-2.5 rounded-full text-[11px] font-bold bg-[#14181f] text-white hover:bg-[#252b36] transition flex items-center justify-center gap-1"
+                    >
+                      <span>🧮 Orçamento</span>
+                    </button>
+                    <button
+                      onclick="window.openWorkplanModal('${ed.id}')"
+                      class="py-1.5 px-2.5 rounded-full text-[11px] font-extrabold bg-[#b6f53b] text-[#14181f] hover:brightness-95 transition flex items-center justify-center gap-1"
+                      title="Gerar Plano de Trabalho para o AgilFAP / FAP"
+                    >
+                      <span>✨ Plano</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             `;
@@ -1248,6 +1407,24 @@ window.openDetailModal = function openDetailModal(editalId) {
     <p class="text-sm text-[#4a5260] leading-relaxed bg-[#f6f7f9] p-4 rounded-2xl">
       ${escapeHtml(ed.resumo)}
     </p>
+
+    <!-- Diagnóstico de Elegibilidade e Aderência ao Perfil -->
+    <div class="p-4 rounded-2xl bg-[#14181f] text-white space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">${ed.matchScore || 80}% Match com seu Perfil</span>
+          <span class="text-xs text-[#9aa2b1]">Diagnóstico de Enquadramento &amp; Elegibilidade</span>
+        </div>
+        <button onclick="window.closeDetailModal(); window.openWorkplanModal('${ed.id}');" class="btn-pill-lime !py-1.5 !px-3.5 text-xs">
+          ✨ Gerar Plano de Trabalho (${escapeHtml(ed.plataformaSubmissao || 'AgilFAP')})
+        </button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#d5d9e2]">
+        ${(ed.matchRazoes || []).map(r => `
+          <div class="px-3 py-2 rounded-xl bg-white/5 border border-white/10">${escapeHtml(r)}</div>
+        `).join('')}
+      </div>
+    </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
       <div class="p-3.5 rounded-2xl bg-[#f6f7f9]">
@@ -1475,6 +1652,7 @@ window.removePipelineItem = async function removePipelineItem(pipeId) {
 // ===================== FILTROS RÁPIDOS =====================
 window.filterByFap = function filterByFap(sigla) {
   onlyFavoritesFilter = false;
+  onlyHighMatchFilter = false;
   regionQuickFilter = 'ALL';
   document.getElementById('filterUf').value = 'ALL';
   document.getElementById('filterAgencia').value = sigla;
@@ -1486,6 +1664,7 @@ window.filterByFap = function filterByFap(sigla) {
 
 window.filterByRegion = function filterByRegion(regiao) {
   onlyFavoritesFilter = false;
+  onlyHighMatchFilter = false;
   regionQuickFilter = regiao;
   document.getElementById('filterUf').value = 'ALL';
   document.getElementById('filterAgencia').value = 'ALL';
@@ -1495,6 +1674,7 @@ window.filterByRegion = function filterByRegion(regiao) {
 
 window.filterByArea = function filterByArea(area) {
   onlyFavoritesFilter = false;
+  onlyHighMatchFilter = false;
   regionQuickFilter = 'ALL';
   document.getElementById('filterArea').value = area;
   window.switchTab('editais');
@@ -1503,6 +1683,7 @@ window.filterByArea = function filterByArea(area) {
 
 window.applyQuickFilter = function applyQuickFilter(mode) {
   onlyFavoritesFilter = false;
+  onlyHighMatchFilter = false;
   regionQuickFilter = 'ALL';
   document.getElementById('filterSearch').value = '';
   document.getElementById('filterUf').value = 'ALL';
@@ -1510,7 +1691,11 @@ window.applyQuickFilter = function applyQuickFilter(mode) {
   document.getElementById('filterArea').value = 'ALL';
   document.getElementById('filterStatus').value = 'ALL';
 
-  if (mode === 'all_open') {
+  if (mode === 'high_match') {
+    onlyHighMatchFilter = true;
+    document.getElementById('filterStatus').value = 'Aberto';
+    document.getElementById('filterSort').value = 'match';
+  } else if (mode === 'all_open') {
     document.getElementById('filterStatus').value = 'Aberto';
   } else if (mode === 'facepe_only') {
     document.getElementById('filterAgencia').value = 'FACEPE';
@@ -1709,4 +1894,339 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Orçamento e planejamento da proposta salvos!');
     }
   });
+
+  document.getElementById('researcherProfileForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const checkedAreas = Array.from(document.querySelectorAll('input[name="profArea"]:checked')).map(el => el.value);
+    const rawKws = document.getElementById('profPalavrasChave').value || '';
+    const kws = rawKws.split(',').map(k => k.trim()).filter(Boolean);
+
+    const updatedProfile = {
+      nomePesquisador: document.getElementById('profNomePesquisador').value.trim() || 'Prof. Dr. Coordenador Principal',
+      instituicao: document.getElementById('profInstituicao').value.trim() || 'UFPE / UFRPE / UPE / ICT',
+      ufPrincipal: document.getElementById('profUfPrincipal').value || 'PE',
+      naturezaVinculo: document.getElementById('profNaturezaVinculo').value || 'ICT Pública / Universidade',
+      titulacao: document.getElementById('profTitulacao').value || 'Doutorado',
+      linhaTematicaProjeto: document.getElementById('profLinhaTematica').value.trim() || 'Soluções Científicas e Tecnológicas Aplicadas ao Desenvolvimento Regional',
+      areasPrioritarias: checkedAreas.length > 0 ? checkedAreas : ALL_FOMENTO_AREAS,
+      palavrasChave: kws,
+      incluirFederais: document.getElementById('profIncluirFederais').checked,
+      incluirOutrosEstados: document.getElementById('profIncluirOutrosEstados').checked
+    };
+
+    appState.researcherProfile = updatedProfile;
+    recalculateClientSideMatches();
+    saveWorkspaceBackup();
+
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProfile)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.state) {
+          appState = data.state;
+          mergeWorkspaceBackup();
+          recalculateClientSideMatches();
+        }
+      }
+    } catch {}
+
+    renderAll();
+    window.closeProfileModal();
+    showToast(`Perfil salvo! Scores de % Match recalculados para ${updatedProfile.ufPrincipal}.`);
+  });
 });
+
+// ===================== MODAL PERFIL DO PESQUISADOR / ICT =====================
+window.openProfileModal = function openProfileModal() {
+  const prof = appState.researcherProfile || {};
+  document.getElementById('profNomePesquisador').value = prof.nomePesquisador || 'Prof. Dr. Coordenador Principal';
+  document.getElementById('profInstituicao').value = prof.instituicao || 'UFPE / UFRPE / UPE / ICT Parceira';
+  document.getElementById('profUfPrincipal').value = prof.ufPrincipal || 'PE';
+  document.getElementById('profNaturezaVinculo').value = prof.naturezaVinculo || 'ICT Pública / Universidade';
+  document.getElementById('profTitulacao').value = prof.titulacao || 'Doutorado';
+  document.getElementById('profLinhaTematica').value = prof.linhaTematicaProjeto || 'Soluções Científicas, IA e Inovação Aplicadas ao Desenvolvimento Regional';
+  document.getElementById('profPalavrasChave').value = (prof.palavrasChave || ['pesquisa', 'bolsas', 'pós-graduação', 'inovação', 'startups', 'missões']).join(', ');
+  document.getElementById('profIncluirFederais').checked = prof.incluirFederais !== false;
+  document.getElementById('profIncluirOutrosEstados').checked = prof.incluirOutrosEstados !== false;
+
+  const areasContainer = document.getElementById('profAreasCheckboxes');
+  if (areasContainer) {
+    const activeAreas = prof.areasPrioritarias || ALL_FOMENTO_AREAS;
+    areasContainer.innerHTML = ALL_FOMENTO_AREAS.map(area => {
+      const checked = activeAreas.includes(area);
+      return `
+        <label class="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white/5 cursor-pointer">
+          <input type="checkbox" name="profArea" value="${escapeHtml(area)}" ${checked ? 'checked' : ''} class="accent-[#b6f53b] rounded" />
+          <span class="text-white font-medium">${escapeHtml(area)}</span>
+        </label>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('researcherProfileModal').classList.remove('hidden');
+};
+
+window.closeProfileModal = function closeProfileModal() {
+  document.getElementById('researcherProfileModal').classList.add('hidden');
+};
+
+// ===================== ESTÚDIO GERADOR DE PLANO DE TRABALHO (AGILFAP / CNPQ / FAPS) =====================
+window.openWorkplanFromPipelineModal = function openWorkplanFromPipelineModal() {
+  const pipeId = document.getElementById('pipeFormId').value;
+  const item = appState.pipeline.find(p => p.id === pipeId);
+  if (!item) return;
+  window.closePipelineModal();
+  window.openWorkplanModal(item.editalId);
+};
+
+window.openWorkplanModal = function openWorkplanModal(editalId) {
+  const ed = appState.editais.find(e => e.id === editalId) || appState.editais[0];
+  if (!ed) return;
+
+  const prof = appState.researcherProfile || {};
+  const pipeItem = appState.pipeline.find(p => p.editalId === ed.id);
+
+  document.getElementById('wpEditalId').value = ed.id;
+  document.getElementById('wpTargetAgencyBadge').textContent = `${ed.agencia} • ${ed.uf} (${ed.plataformaSubmissao || 'Portal'})`;
+  document.getElementById('wpModalEditalTitle').textContent = `${ed.numero} — ${ed.titulo}`;
+
+  const cleanEditalFocus = (ed.titulo || '')
+    .replace(/^Edital\s+[A-Z]+\s+nº\s*[\d/]+\s*[–—-]\s*/i, '')
+    .trim();
+
+  const defaultProjectTitle = pipeItem?.tituloProjeto ||
+    `${prof.linhaTematicaProjeto || 'Pesquisa e Desenvolvimento Aplicado'} em Alinhamento ao ${cleanEditalFocus || ed.titulo}`;
+
+  const defaultBudget = pipeItem?.valorPleiteado ||
+    (ed.valorNumerico && ed.valorNumerico <= 600000 ? ed.valorNumerico : 180000);
+
+  document.getElementById('wpProjectTitle').value = defaultProjectTitle;
+  document.getElementById('wpBudgetTotal').value = defaultBudget;
+  document.getElementById('wpDurationMonths').value = '24';
+  document.getElementById('wpCoordinator').value = pipeItem?.pesquisadorResponsavel || prof.nomePesquisador || 'Prof. Dr. Coordenador Principal';
+  document.getElementById('wpInstitution').value = pipeItem?.instituicao || prof.instituicao || 'UFPE / UFRPE / UPE / ICT Executora';
+
+  if (pipeItem?.planoTrabalhoRascunho) {
+    document.getElementById('wpDraftTextarea').value = pipeItem.planoTrabalhoRascunho;
+  } else {
+    window.regenerateWorkplanDraft();
+  }
+
+  document.getElementById('workplanStudioModal').classList.remove('hidden');
+};
+
+window.closeWorkplanModal = function closeWorkplanModal() {
+  document.getElementById('workplanStudioModal').classList.add('hidden');
+};
+
+window.regenerateWorkplanDraft = function regenerateWorkplanDraft() {
+  const editalId = document.getElementById('wpEditalId').value;
+  const ed = appState.editais.find(e => e.id === editalId) || {};
+  const prof = appState.researcherProfile || {};
+
+  const projectTitle = document.getElementById('wpProjectTitle').value || 'Proposta de Pesquisa e Inovação';
+  const totalBudget = Number(document.getElementById('wpBudgetTotal').value) || 180000;
+  const months = Number(document.getElementById('wpDurationMonths').value) || 24;
+  const coordinator = document.getElementById('wpCoordinator').value || 'Coordenação do Projeto';
+  const institution = document.getElementById('wpInstitution').value || 'ICT Executora';
+
+  const custeio = Math.round(totalBudget * 0.45);
+  const capital = Math.round(totalBudget * 0.25);
+  const bolsas = totalBudget - custeio - capital;
+  const trimestres = Math.max(4, Math.round(months / 3));
+  const kws = (prof.palavrasChave || ['pesquisa científica', 'inovação tecnológica', 'sustentabilidade', 'impacto regional']).slice(0, 5).join(', ');
+
+  const draft = [
+    `================================================================================`,
+    `PLANO DE TRABALHO E PROPOSTA TÉCNICA — PADRÃO ${ (ed.plataformaSubmissao || 'AGILFAP / FAP').toUpperCase() }`,
+    `================================================================================`,
+    ``,
+    `1. IDENTIFICAÇÃO E ENQUADRAMENTO DA PROPOSTA`,
+    `• Chamada Pública / Edital: ${ed.titulo || ''} (Nº ${ed.numero || 'S/N'})`,
+    `• Agência de Fomento / UF: ${ed.agencia || 'FACEPE'} (${ed.estado || 'Pernambuco'} - ${ed.uf || 'PE'})`,
+    `• Linha de Fomento: ${ed.area || 'Pesquisa Científica (APQ / Missões)'}`,
+    `• Plataforma de Submissão: ${ed.plataformaSubmissao || 'Sistema AgilFAP'} (${ed.linkSubmissao || 'https://agil.facepe.br/'})`,
+    `• Prazo Limite do Edital: ${formatDateBr(ed.prazoSubmissao)}`,
+    `• Título do Projeto: ${projectTitle}`,
+    `• Coordenador(a) Responsável: ${coordinator} (${prof.titulacao || 'Doutorado'})`,
+    `• Instituição Executora: ${institution} (${prof.naturezaVinculo || 'ICT Pública / Universidade'})`,
+    `• Prazo de Execução: ${months} meses (${trimestres} trimestres)`,
+    `• Valor Global Pleiteado: ${formatCurrencyBRL(totalBudget)}`,
+    ``,
+    `2. RESUMO EXECUTIVO (PADRÃO AGILFAP / PLATAFORMA LATTES)`,
+    `Esta proposta visa desenvolver e validar soluções técnico-científicas voltadas a "${projectTitle}", em estrita consonância com as diretrizes do ${ed.titulo || 'edital'} promovido pela ${ed.agencia || 'FACEPE'}. O projeto articula competências em ${kws}, estruturando entregas aplicadas com alto potencial de transferência tecnológica, formação de recursos humanos qualificados e fortalecimento do ecossistema de ciência, tecnologia e inovação de ${ed.estado || 'Pernambuco'} (${ed.uf || 'PE'}).`,
+    `Palavras-chave: ${kws}.`,
+    ``,
+    `3. JUSTIFICATIVA, RELEVÂNCIA REGIONAL E ADERÊNCIA AO EDITAL`,
+    `• Aderência à Chamada (${ed.matchScore || 88}% Match): O edital prioriza "${ed.resumo || 'o fortalecimento da pesquisa e inovação'}". A instituição executora (${institution}) dispõe de infraestrutura laboratorial e equipe com histórico comprovado na área.`,
+    `• Impacto Socioeconômico e Científico em ${ed.uf || 'PE'}: O projeto endereça gargalos estratégicos regionais, gerando indicadores mensuráveis de produção científica, inovação aberta e apoio a políticas públicas/setor produtivo.`,
+    `• Alinhamento aos Objetivos de Desenvolvimento Sustentável (ODS/ONU): Contribuição direta aos ODS 4 (Educação de Qualidade), ODS 8 (Trabalho Decente e Crescimento Econômico) e ODS 9 (Indústria, Inovação e Infraestrutura).`,
+    ``,
+    `4. OBJETIVO GERAL E OBJETIVOS ESPECÍFICOS`,
+    `[Objetivo Geral]`,
+    `Conceber, desenvolver, validar em ambiente operacional e difundir os resultados do projeto "${projectTitle}" ao longo de ${months} meses, atendendo integralmente às metas técnicas do Edital ${ed.numero || ''} da ${ed.agencia || 'FACEPE'}.`,
+    ``,
+    `[Objetivos Específicos]`,
+    `• OE1 (Diagnóstico e Arquitetura Metodológica): Realizar o levantamento sistemático do estado da arte, requisitos técnicos e protocolos experimentais nos primeiros ${Math.round(months * 0.25)} meses.`,
+    `• OE2 (Desenvolvimento Experimental / Tecnológico): Executar a coleta de dados, modelagem e implementação do protótipo/metodologia central do projeto.`,
+    `• OE3 (Validação Empírica e Indicadores de Desempenho): Testar a solução junto ao público-alvo (${ed.publicoAlvo || 'ICTs e parceiros'}) com métricas reprodutíveis.`,
+    `• OE4 (Difusão Científica, Propriedade Intelectual e Relatório Técnico): Publicar artigos em periódicos de alto impacto, registrar ativos junto ao NIT institucional e consolidar a prestação de contas no ${ed.plataformaSubmissao || 'AgilFAP'}.`,
+    ``,
+    `5. METODOLOGIA E PACOTES DE TRABALHO (WORK PACKAGES)`,
+    `• WP1 — Gestão Científica, Comitê de Ética e Governança (Mês 1 ao Mês ${months}): Coordenação técnica, alinhamento de bolsistas e relatórios parciais/finais.`,
+    `• WP2 — Modelagem Teórica, Coleta de Dados e Requisitos (Mês 1 ao Mês ${Math.round(months * 0.35)}): Revisão sistemática e preparação da base experimental.`,
+    `• WP3 — Desenvolvimento, Experimentação e Integração (Mês ${Math.round(months * 0.25)} ao Mês ${Math.round(months * 0.75)}): Execução laboratorial/computacional e testes iterativos.`,
+    `• WP4 — Validação, Transferência de Tecnologia e Publicações (Mês ${Math.round(months * 0.65)} ao Mês ${months}): Seminário de resultados, submissão de artigos/patentes e entrega do Relatório Técnico Final.`,
+    ``,
+    `6. CRONOGRAMA FÍSICO DE EXECUÇÃO (${months} MESES / ${trimestres} TRIMESTRES)`,
+    `• Etapa 1 (1º ao ${Math.round(trimestres * 0.25)}º Trimestre): Estruturação da equipe, seleção de bolsistas, revisão da literatura e especificação detalhada (Vinculado ao OE1 / WP1 e WP2).`,
+    `• Etapa 2 (${Math.round(trimestres * 0.25) + 1}º ao ${Math.round(trimestres * 0.5)}º Trimestre): Aquisição de itens de custeio/capital, implementação dos experimentos e Relatório Técnico Parcial (Vinculado ao OE2 / WP3).`,
+    `• Etapa 3 (${Math.round(trimestres * 0.5) + 1}º ao ${Math.round(trimestres * 0.75)}º Trimestre): Testes de validação, análise estatística/computacional e ajustes da solução (Vinculado ao OE3 / WP3).`,
+    `• Etapa 4 (${Math.round(trimestres * 0.75) + 1}º ao ${trimestres}º Trimestre): Redação de artigos científicos, workshop de disseminação e Prestação de Contas Final no ${ed.plataformaSubmissao || 'AgilFAP'} (Vinculado ao OE4 / WP4).`,
+    ``,
+    `7. MEMÓRIA DE CÁLCULO ORÇAMENTÁRIA POR RUBRICAS (${formatCurrencyBRL(totalBudget)})`,
+    `• A) CUSTEIO E SERVIÇOS DE TERCEIROS (45% — ${formatCurrencyBRL(custeio)}):`,
+    `  - Material de consumo laboratorial, reagentes, licenças de software/nuvem, serviços técnicos especializados, passagens e diárias para trabalho de campo/eventos científicos.`,
+    `• B) CAPITAL E EQUIPAMENTOS PERMANENTES (25% — ${formatCurrencyBRL(capital)}):`,
+    `  - Estações de processamento de alto desempenho, instrumentação científica e equipamentos multiusuários incorporáveis ao patrimônio da ${institution}.`,
+    `• C) BOLSAS DE PESQUISA E EXTENSÃO TECNOLÓGICA (30% — ${formatCurrencyBRL(bolsas)}):`,
+    `  - Cotas de bolsas (${ed.agencia === 'FACEPE' ? 'Modalidades BCT / BFD / BIC / DCR conforme tabela vigente da FACEPE' : 'Modalidades IC / Mestrado / Doutorado / Apoio Técnico conforme tabela da agência'}) pelo período de ${months} meses.`,
+    `• TOTAL PLEITEADO: ${formatCurrencyBRL(totalBudget)}`,
+    ``,
+    `8. RESULTADOS ESPERADOS E INDICADORES DE IMPACTO`,
+    `• Produção Bibliográfica: Mínimo de 2 a 4 artigos submetidos a periódicos Qualis A / indexados (Scopus/Web of Science).`,
+    `• Formação de Recursos Humanos: Orientação de pesquisadores, estudantes de pós-graduação e iniciação científica.`,
+    `• Inovação / Produto Técnico: 1 protótipo, software registrado, processo tecnológico ou nota técnica executiva entregue à sociedade/setor produtivo.`,
+    ``,
+    `9. CHECKLIST DE DOCUMENTAÇÃO OBRIGATÓRIA (${ed.plataformaSubmissao || 'AGILFAP'})`,
+    `[ ] Formulário eletrônico preenchido integralmente no sistema ${ed.plataformaSubmissao || 'AgilFAP'} (${ed.linkSubmissao || ''})`,
+    `[ ] Currículo Lattes atualizado do(a) Coordenador(a) e da equipe executora`,
+    `[ ] Carta de Anuência institucional assinada pelo representante legal da ${institution}`,
+    `[ ] Certidões de regularidade institucional e ausência de inadimplência junto à ${ed.agencia || 'FACEPE'}`,
+    `[ ] Plano de Trabalho das Bolsas solicitadas com atividades individualizadas por bolsista`
+  ].join('\n');
+
+  document.getElementById('wpDraftTextarea').value = draft;
+};
+
+window.copyWorkplanToClipboard = async function copyWorkplanToClipboard() {
+  const text = document.getElementById('wpDraftTextarea')?.value || '';
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Plano de Trabalho copiado para a área de transferência! Pronto para colar no AgilFAP.');
+  } catch {
+    const ta = document.getElementById('wpDraftTextarea');
+    ta.select();
+    document.execCommand('copy');
+    showToast('Plano de Trabalho copiado!');
+  }
+};
+
+window.downloadWorkplanFile = function downloadWorkplanFile() {
+  const editalId = document.getElementById('wpEditalId').value;
+  const ed = appState.editais.find(e => e.id === editalId) || {};
+  const text = document.getElementById('wpDraftTextarea')?.value || '';
+  const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `plano-de-trabalho-${(ed.agencia || 'fap').toLowerCase()}-${(ed.numero || 'edital').replace(/[^a-zA-Z0-9]/g, '-')}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Documento do Plano de Trabalho (.md) baixado!');
+};
+
+window.printWorkplanDocument = function printWorkplanDocument() {
+  const editalId = document.getElementById('wpEditalId').value;
+  const ed = appState.editais.find(e => e.id === editalId) || {};
+  const projectTitle = document.getElementById('wpProjectTitle').value || 'Plano de Trabalho';
+  const text = document.getElementById('wpDraftTextarea')?.value || '';
+
+  const w = window.open('', '_blank', 'width=900,height=760');
+  if (!w) return;
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Plano de Trabalho — ${escapeHtml(projectTitle)}</title>
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #14181f; padding: 40px; max-width: 820px; margin: 0 auto; line-height: 1.55; }
+        .header { border-bottom: 3px solid #14181f; padding-bottom: 14px; margin-bottom: 20px; }
+        .badge { display: inline-block; background: #14181f; color: #b6f53b; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: bold; }
+        pre { white-space: pre-wrap; word-wrap: break-word; font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; background: #f8f9fb; padding: 20px; border-radius: 12px; border: 1px solid #dcdfe5; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <span class="badge">RadarFAP Brasil • Minuta Oficial de Submissão (${escapeHtml(ed.agencia || 'FACEPE')} - ${escapeHtml(ed.uf || 'PE')})</span>
+        <h1 style="font-size: 18px; margin: 10px 0 4px;">${escapeHtml(projectTitle)}</h1>
+        <div style="font-size: 12px; color: #5a6270;">Referência: ${escapeHtml(ed.titulo || '')} • Prazo: ${formatDateBr(ed.prazoSubmissao)}</div>
+      </div>
+      <pre>${escapeHtml(text)}</pre>
+      <script>window.onload = () => window.print();</script>
+    </body>
+    </html>
+  `);
+  w.document.close();
+};
+
+window.saveWorkplanToPipeline = async function saveWorkplanToPipeline() {
+  const editalId = document.getElementById('wpEditalId').value;
+  const ed = appState.editais.find(e => e.id === editalId);
+  if (!ed) return;
+
+  const projectTitle = document.getElementById('wpProjectTitle').value;
+  const totalBudget = Number(document.getElementById('wpBudgetTotal').value) || 180000;
+  const coordinator = document.getElementById('wpCoordinator').value;
+  const institution = document.getElementById('wpInstitution').value;
+  const draftText = document.getElementById('wpDraftTextarea').value;
+
+  const custeio = Math.round(totalBudget * 0.45);
+  const capital = Math.round(totalBudget * 0.25);
+  const bolsas = totalBudget - custeio - capital;
+
+  const existingPipe = appState.pipeline.find(p => p.editalId === editalId);
+
+  const payload = {
+    id: existingPipe?.id,
+    editalId,
+    estagio: existingPipe?.estagio || 'elaboracao',
+    tituloProjeto: projectTitle,
+    pesquisadorResponsavel: coordinator,
+    instituicao: institution,
+    valorPleiteado: totalBudget,
+    rubricaCusteio: custeio,
+    rubricaCapital: capital,
+    rubricaBolsas: bolsas,
+    planoTrabalhoRascunho: draftText,
+    notas: `Plano de Trabalho estruturado (${projectTitle}) salvo para submissão via ${ed.plataformaSubmissao || 'AgilFAP'}.`
+  };
+
+  const res = await fetch('/api/pipeline', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (data.state) {
+    appState = data.state;
+    // Garante que os campos extras também fiquem no estado local e localStorage
+    const targetPipe = appState.pipeline.find(p => p.editalId === editalId);
+    if (targetPipe) {
+      targetPipe.tituloProjeto = projectTitle;
+      targetPipe.planoTrabalhoRascunho = draftText;
+      targetPipe.rubricaCusteio = custeio;
+      targetPipe.rubricaCapital = capital;
+      targetPipe.rubricaBolsas = bolsas;
+    }
+    renderAll();
+    window.closeWorkplanModal();
+    showToast(`Plano de Trabalho e orçamento salvos na etapa "Escrevendo Projeto" do Kanban!`);
+  }
+};

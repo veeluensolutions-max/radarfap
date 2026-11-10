@@ -63,7 +63,16 @@
       </div>
 
       <!-- Botões de Ação em Pílula + Círculo (Estilo da referência) -->
-      <div class="flex items-center gap-2.5 self-end lg:self-auto">
+      <div class="flex flex-wrap items-center gap-2.5 self-end lg:self-auto">
+        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm">
+          <button onclick="window.openProfileModal()" class="btn-pill-outline-light !py-2 !px-3.5 border-none hover:bg-[#f1f3f6]">
+            <span id="headerProfileBtnLabel">🎯 Perfil &amp; Match (PE)</span>
+          </button>
+          <button onclick="window.openProfileModal()" class="circle-icon-lime" title="Configurar Perfil do Pesquisador / ICT e recalcular Match (%)">
+            <span class="text-xs leading-none font-extrabold">%</span>
+          </button>
+        </div>
+
         <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm">
           <button id="btnNewEdital" class="btn-pill-outline-light !py-2 !px-4 border-none hover:bg-[#f1f3f6]">
             Novo Edital
@@ -419,7 +428,10 @@
             <p id="editaisCountLabel" class="text-xs text-[#7e8694] mt-0.5">Carregando oportunidades...</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button onclick="window.applyQuickFilter('all_open')" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#b6f53b] text-[#14181f]">
+            <button onclick="window.applyQuickFilter('high_match')" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#b6f53b] text-[#14181f]">
+              🎯 Alto Match (≥80%)
+            </button>
+            <button onclick="window.applyQuickFilter('all_open')" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-[#14181f] hover:bg-[#b6f53b] transition">
               Somente Abertos
             </button>
             <button onclick="window.applyQuickFilter('facepe_only')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white hover:bg-white/20">
@@ -436,6 +448,9 @@
             </button>
           </div>
         </div>
+
+        <!-- Barra de Inteligência do Perfil do Pesquisador / ICT -->
+        <div id="activeProfileBanner" class="p-3.5 rounded-2xl bg-[#0d1015] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs"></div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
           <div class="lg:col-span-2">
@@ -825,9 +840,14 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10">
-          <button type="button" onclick="window.printPipelineProposal()" class="btn-pill-outline-dark">
-            🖨️ Imprimir Ficha da Proposta
-          </button>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="window.printPipelineProposal()" class="btn-pill-outline-dark">
+              🖨️ Imprimir Ficha
+            </button>
+            <button type="button" onclick="window.openWorkplanFromPipelineModal()" class="btn-pill-lime">
+              ✨ Gerar Plano de Trabalho (AgilFAP)
+            </button>
+          </div>
 
           <div class="flex items-center gap-2">
             <button type="button" onclick="window.closePipelineModal()" class="btn-pill-outline-dark">
@@ -839,6 +859,193 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL PERFIL DO PESQUISADOR / ICT & CRITÉRIOS DE ELEGIBILIDADE / MATCH -->
+  <div id="researcherProfileModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/65 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-dark max-w-2xl w-full max-h-[92vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[11px] font-extrabold">Inteligência de Enquadramento</span>
+            <h3 class="text-lg font-bold text-white">Perfil do Pesquisador / ICT &amp; Match (%)</h3>
+          </div>
+          <p class="text-xs text-[#7e8694] mt-1">
+            Personalize seus dados para recalcular o score de aderência (% Match) em todas as chamadas da FACEPE, 27 FAPs e agências federais.
+          </p>
+        </div>
+        <button onclick="window.closeProfileModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 inline-flex items-center justify-center">✕</button>
+      </div>
+
+      <form id="researcherProfileForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Nome do Coordenador / Pesquisador</label>
+            <input id="profNomePesquisador" type="text" required class="input-well-dark w-full" placeholder="Ex: Prof. Dr. Nome do Coordenador" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Instituição Executora (ICT / Universidade / Empresa)</label>
+            <input id="profInstituicao" type="text" required class="input-well-dark w-full" placeholder="Ex: UFPE / UFRPE / UPE / CESAR / Startup" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Estado Sede (UF Principal)</label>
+            <select id="profUfPrincipal" class="input-well-dark w-full"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Natureza do Vínculo</label>
+            <select id="profNaturezaVinculo" class="input-well-dark w-full">
+              <option value="ICT Pública / Universidade">ICT Pública / Universidade</option>
+              <option value="ICT Privada Sem Fins Lucrativos">ICT Privada Sem Fins Lucrativos</option>
+              <option value="Startup / Empresa Inovadora (CNPJ)">Startup / Empresa Inovadora (CNPJ)</option>
+              <option value="Pesquisador Individual / Pós-Graduação">Pesquisador Individual / Pós-Graduação</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Titulação da Coordenação</label>
+            <select id="profTitulacao" class="input-well-dark w-full">
+              <option value="Doutorado">Doutorado</option>
+              <option value="Mestrado">Mestrado</option>
+              <option value="Graduação / Especialização">Graduação / Especialização</option>
+              <option value="Empreendedor / Equipe Técnica">Empreendedor / Equipe Técnica</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Tema Central / Linha de Pesquisa do seu Grupo ou Projeto</label>
+          <input id="profLinhaTematica" type="text" class="input-well-dark w-full" placeholder="Ex: Inteligência Artificial e Bioeconomia Aplicadas à Saúde e Sustentabilidade em PE" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Linhas de Fomento Prioritárias</label>
+          <div id="profAreasCheckboxes" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3.5 rounded-2xl bg-[#0d1015] border border-white/5 text-xs"></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Palavras-Chave de Atuação (separadas por vírgula)</label>
+          <input id="profPalavrasChave" type="text" class="input-well-dark w-full" placeholder="Ex: inteligência artificial, bolsas, pós-graduação, startups, saúde, energia, agro..." />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <label class="flex items-center gap-2 text-xs text-[#b0b7c3] cursor-pointer">
+            <input id="profIncluirFederais" type="checkbox" checked class="accent-[#b6f53b] w-4 h-4 rounded" />
+            <span>Priorizar também Chamadas Federais (CNPq / FINEP / CAPES)</span>
+          </label>
+          <label class="flex items-center gap-2 text-xs text-[#b0b7c3] cursor-pointer">
+            <input id="profIncluirOutrosEstados" type="checkbox" checked class="accent-[#b6f53b] w-4 h-4 rounded" />
+            <span>Monitorar editais de cooperação com outros Estados</span>
+          </label>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10">
+          <span class="text-[11px] text-[#7e8694]">Recalcula instantaneamente os 82+ editais monitorados</span>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="window.closeProfileModal()" class="btn-pill-outline-dark">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-pill-lime">
+              Salvar Perfil &amp; Recalcular Match
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL ESTÚDIO GERADOR DE PLANO DE TRABALHO (PADRÃO AGILFAP / CNPQ / FAPS) -->
+  <div id="workplanStudioModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-light max-w-4xl w-full max-h-[94vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-[#f1f3f6] pb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-3 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold">Estúdio AgilFAP &amp; FAPs</span>
+            <span id="wpTargetAgencyBadge" class="px-3 py-0.5 rounded-full bg-[#f1f3f6] text-[#14181f] text-xs font-bold">FACEPE • PE</span>
+          </div>
+          <h3 id="wpModalEditalTitle" class="text-lg font-extrabold text-[#14181f] mt-1.5 leading-snug">Gerador de Plano de Trabalho e Rascunho Técnico</h3>
+        </div>
+        <button onclick="window.closeWorkplanModal()" class="circle-icon-dark shrink-0">✕</button>
+      </div>
+
+      <!-- Parâmetros Personalizáveis do Plano de Trabalho -->
+      <div class="bento-dark p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-bold text-white">Parâmetros do Projeto para Submissão</span>
+          <button type="button" onclick="window.regenerateWorkplanDraft()" class="btn-pill-lime !py-1.5 !px-3.5 text-xs">
+            🔄 Atualizar Rascunho Estruturado
+          </button>
+        </div>
+
+        <input type="hidden" id="wpEditalId" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div class="sm:col-span-6">
+            <label class="block text-[11px] text-[#8a92a0] mb-1">Título Proposto para o Seu Projeto</label>
+            <input id="wpProjectTitle" type="text" class="input-well-dark w-full" />
+          </div>
+          <div class="sm:col-span-3">
+            <label class="block text-[11px] text-[#8a92a0] mb-1">Orçamento Total Pleiteado (R$)</label>
+            <input id="wpBudgetTotal" type="number" step="5000" class="input-well-dark w-full" />
+          </div>
+          <div class="sm:col-span-3">
+            <label class="block text-[11px] text-[#8a92a0] mb-1">Prazo de Execução</label>
+            <select id="wpDurationMonths" class="input-well-dark w-full">
+              <option value="12">12 meses (4 trimestres)</option>
+              <option value="18">18 meses (6 trimestres)</option>
+              <option value="24" selected>24 meses (8 trimestres)</option>
+              <option value="36">36 meses (12 trimestres)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] text-[#8a92a0] mb-1">Coordenador Responsável</label>
+            <input id="wpCoordinator" type="text" class="input-well-dark w-full" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-[#8a92a0] mb-1">Instituição Executora / ICT / Empresa</label>
+            <input id="wpInstitution" type="text" class="input-well-dark w-full" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor do Plano de Trabalho Completo -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-[#14181f]">Minuta Estruturada da Proposta Técnica (Editável):</span>
+          <span class="text-[#8a92a0]">Compatível com formulários AgilFAP (FACEPE), PICC (CNPq) e SAGe</span>
+        </div>
+        <textarea
+          id="wpDraftTextarea"
+          rows="16"
+          class="w-full rounded-2xl bg-[#f6f7f9] border border-[#dcdfe5] p-4 text-xs font-mono text-[#14181f] leading-relaxed focus:outline-none focus:border-[#14181f]"
+        ></textarea>
+      </div>
+
+      <!-- Barra de Ações do Plano de Trabalho -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#f1f3f6]">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="window.copyWorkplanToClipboard()" class="btn-pill-dark">
+            📋 Copiar para o AgilFAP
+          </button>
+          <button type="button" onclick="window.downloadWorkplanFile()" class="btn-pill-outline-light">
+            📥 Baixar Documento (.md)
+          </button>
+          <button type="button" onclick="window.printWorkplanDocument()" class="btn-pill-outline-light">
+            🖨️ Imprimir / Salvar PDF
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="window.saveWorkplanToPipeline()" class="btn-pill-lime">
+            💾 Salvar no Pipeline Kanban
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
