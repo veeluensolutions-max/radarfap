@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 100" fill="none">
+  <defs>
+    <linearGradient id="fullBg" x1="0" y1="0" x2="84" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E2430" />
+      <stop offset="100%" stop-color="#11151C" />
+    </linearGradient>
+    <linearGradient id="fullSweep" x1="48" y1="50" x2="78" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#B6F53B" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#B6F53B" stop-opacity="0.0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Emblem Container -->
+  <rect x="8" y="10" width="80" height="80" rx="22" fill="url(#fullBg)" stroke="#2D3545" stroke-width="2.5" />
+  <path d="M48 50 L48 20 A30 30 0 0 1 75 36 Z" fill="url(#fullSweep)" />
+  <circle cx="48" cy="50" r="28" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="2.2" />
+  <circle cx="48" cy="50" r="18" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="2.2" stroke-dasharray="6 4" />
+  <path d="M29 28 A28 28 0 0 1 75 38" stroke="#B6F53B" stroke-width="4" stroke-linecap="round" />
+  <line x1="48" y1="50" x2="69" y2="29" stroke="#B6F53B" stroke-width="3.6" stroke-linecap="round" />
+  <line x1="48" y1="50" x2="33" y2="65" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2.5" stroke-linecap="round" />
+  <circle cx="48" cy="50" r="6.8" fill="#FFFFFF" />
+  <circle cx="48" cy="50" r="3" fill="#14181F" />
+  <circle cx="69" cy="29" r="8.5" fill="#B6F53B" fill-opacity="0.28" />
+  <circle cx="69" cy="29" r="4.8" fill="#B6F53B" stroke="#14181F" stroke-width="1.8" />
+
+  <!-- Typography & Pill Badge -->
+  <text x="106" y="49" fill="#14181F" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="800" letter-spacing="-0.6">RadarFAP</text>
+  <rect x="252" y="27" width="68" height="26" rx="13" fill="#14181F" />
+  <text x="286" y="44" text-anchor="middle" fill="#B6F53B" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="13" font-weight="800">BRASIL</text>
+
+  <text x="106" y="73" fill="#68707E" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="13" font-weight="600">Inteligência em Fomento à Pesquisa • FACEPE &amp; 27 FAPs</text>
+</svg>

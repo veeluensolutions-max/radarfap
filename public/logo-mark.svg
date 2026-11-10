@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="markBg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E2430" />
+      <stop offset="100%" stop-color="#11151C" />
+    </linearGradient>
+    <linearGradient id="sweepCone" x1="60" y1="60" x2="100" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#B6F53B" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#B6F53B" stop-opacity="0.0" />
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="112" height="112" rx="30" fill="url(#markBg)" stroke="#2D3545" stroke-width="3" />
+
+  <!-- Radar Sweep Sector -->
+  <path d="M60 60 L60 18 A42 42 0 0 1 97 40 Z" fill="url(#sweepCone)" />
+
+  <!-- Concentric Rings -->
+  <circle cx="60" cy="60" r="40" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="3" />
+  <circle cx="60" cy="60" r="26" stroke="#FFFFFF" stroke-opacity="0.26" stroke-width="3" stroke-dasharray="8 6" />
+
+  <!-- High-Contrast Lime Orbital Arc -->
+  <path d="M34 29 A40 40 0 0 1 97 43" stroke="#B6F53B" stroke-width="5.5" stroke-linecap="round" />
+
+  <!-- Crosshair Subtle Ticks -->
+  <line x1="60" y1="14" x2="60" y2="22" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="60" y1="98" x2="60" y2="106" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="14" y1="60" x2="22" y2="60" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="98" y1="60" x2="106" y2="60" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2.5" stroke-linecap="round" />
+
+  <!-- Active Vector Needle -->
+  <line x1="60" y1="60" x2="89" y2="31" stroke="#B6F53B" stroke-width="5" stroke-linecap="round" />
+  <line x1="60" y1="60" x2="39" y2="81" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Core Node -->
+  <circle cx="60" cy="60" r="9.5" fill="#FFFFFF" />
+  <circle cx="60" cy="60" r="4.2" fill="#14181F" />
+
+  <!-- Pulse Target Node -->
+  <circle cx="89" cy="31" r="12" fill="#B6F53B" fill-opacity="0.26" />
+  <circle cx="89" cy="31" r="6.8" fill="#B6F53B" stroke="#14181F" stroke-width="2.5" />
+</svg>

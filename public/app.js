@@ -1272,6 +1272,7 @@ window.printPipelineProposal = function printPipelineProposal() {
     <html lang="pt-BR">
     <head>
       <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <title>Ficha Técnica de Submissão — ${escapeHtml(ed.agencia || 'FAP')} ${escapeHtml(ed.numero || '')}</title>
       <style>
         body { font-family: Arial, sans-serif; color: #14181f; padding: 36px; line-height: 1.5; }
@@ -1283,6 +1284,7 @@ window.printPipelineProposal = function printPipelineProposal() {
       </style>
     </head>
     <body>
+      <div style="margin-bottom: 12px;"><img src="/logo-full.svg" alt="RadarFAP Brasil" style="height: 44px;" /></div>
       <span class="badge">RadarFAP Brasil • Ficha de Submissão</span>
       <h1>${escapeHtml(ed.titulo || 'Proposta de Pesquisa')}</h1>
       <p><strong>Agência / UF:</strong> ${escapeHtml(ed.agencia || '')} (${escapeHtml(ed.uf || '')}) • <strong>Prazo Final:</strong> ${formatDateBr(ed.prazoSubmissao)} • <strong>Plataforma:</strong> ${escapeHtml(ed.plataformaSubmissao || '')}</p>
@@ -2225,6 +2227,7 @@ window.printWorkplanDocument = function printWorkplanDocument() {
     <html lang="pt-BR">
     <head>
       <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <title>Plano de Trabalho — ${escapeHtml(projectTitle)}</title>
       <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; color: #14181f; padding: 40px; max-width: 820px; margin: 0 auto; line-height: 1.55; }
@@ -2235,6 +2238,7 @@ window.printWorkplanDocument = function printWorkplanDocument() {
     </head>
     <body>
       <div class="header">
+        <div style="margin-bottom: 10px;"><img src="/logo-full.svg" alt="RadarFAP Brasil" style="height: 44px;" /></div>
         <span class="badge">RadarFAP Brasil • Minuta Oficial de Submissão (${escapeHtml(ed.agencia || 'FACEPE')} - ${escapeHtml(ed.uf || 'PE')})</span>
         <h1 style="font-size: 18px; margin: 10px 0 4px;">${escapeHtml(projectTitle)}</h1>
         <div style="font-size: 12px; color: #5a6270;">Referência: ${escapeHtml(ed.titulo || '')} • Prazo: ${formatDateBr(ed.prazoSubmissao)}</div>
@@ -2481,6 +2485,7 @@ window.printPortfolioReport = function printPortfolioReport() {
     <html lang="pt-BR">
     <head>
       <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <title>Relatório Executivo de Captação — RadarFAP Brasil</title>
       <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; color: #14181f; padding: 36px; line-height: 1.5; }
@@ -2497,6 +2502,7 @@ window.printPortfolioReport = function printPortfolioReport() {
     <body>
       <div class="top-bar">
         <div>
+          <div style="margin-bottom: 10px;"><img src="/logo-full.svg" alt="RadarFAP Brasil" style="height: 46px;" /></div>
           <span class="badge">RadarFAP Brasil • Relatório Executivo de Portfólio de Captação</span>
           <h1 style="font-size: 22px; margin: 8px 0 4px;">Carteira de Projetos e Submissões em Fomento</h1>
           <div style="font-size: 13px; color: #5a6270;">

@@ -1,0 +1,23 @@
+{
+  "name": "RadarFAP Brasil — Captação de Recursos para Pesquisas",
+  "short_name": "RadarFAP",
+  "description": "Radar Inteligente de Editais de Pesquisa integrado ao vivo à FACEPE, 27 FAPs Estaduais e Agências Federais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E6E8EC",
+  "theme_color": "#14181F",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-mark.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

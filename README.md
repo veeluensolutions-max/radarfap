@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo-full.svg" alt="RadarFAP Brasil — Captação de Recursos para Pesquisas" width="440" />
+</p>
+
 # RadarFAP Brasil — Sistema Inteligente de Captação de Recursos para Pesquisas
 
 Plataforma web full-stack de inteligência e gestão de fomento científico e tecnológico integrada ao vivo ao portal da **FACEPE (`https://www2.facepe.br/editais/`)**, às **27 Fundações Estaduais de Amparo à Pesquisa (FAPs)** de todos os estados brasileiros e às **4 agências nacionais (`CNPq`, `FINEP`, `CAPES`, `CONFAP`)**.
