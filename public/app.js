@@ -726,15 +726,28 @@ function renderEditaisTab() {
               ${matchBadge}
             </div>
 
-            <button
-              onclick="window.toggleFavorite('${ed.id}')"
-              class="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm transition ${
-                isFav ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#f1f3f6] text-[#8a92a0] hover:text-[#14181f]'
-              }"
-              title="Favoritar edital"
-            >
-              ★
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button
+                onclick="window.toggleCompareEdital('${ed.id}')"
+                class="w-8 h-8 rounded-full inline-flex items-center justify-center text-xs font-bold transition ${
+                  (window.compareSelectedIds || []).includes(ed.id)
+                    ? 'bg-[#b6f53b] text-[#14181f] shadow'
+                    : 'bg-[#f1f3f6] text-[#8a92a0] hover:text-[#14181f]'
+                }"
+                title="Selecionar para comparar lado a lado (até 3 editais)"
+              >
+                ⚖️
+              </button>
+              <button
+                onclick="window.toggleFavorite('${ed.id}')"
+                class="w-8 h-8 rounded-full inline-flex items-center justify-center text-sm transition ${
+                  isFav ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#f1f3f6] text-[#8a92a0] hover:text-[#14181f]'
+                }"
+                title="Favoritar edital"
+              >
+                ★
+              </button>
+            </div>
           </div>
 
           <!-- Título -->
@@ -805,6 +818,10 @@ function renderEditaisTab() {
       </article>
     `;
   }).join('');
+
+  if (typeof window.renderCompareFloatingBar === 'function') {
+    window.renderCompareFloatingBar();
+  }
 }
 
 // ===================== 3. RENDER DIRETÓRIO DAS 27 FAPS + FEDERAIS & MAPA GEOGRÁFICO =====================
@@ -1296,6 +1313,224 @@ window.printPipelineProposal = function printPipelineProposal() {
   `);
   w.document.close();
 };
+
+// ===================== COMPARADOR LADO A LADO DE EDITAIS, SIMULADOR DE BOLSAS & LINK COMPARTILHÁVEL =====================
+window.compareSelectedIds = [];
+
+window.toggleCompareEdital = function toggleCompareEdital(editalId) {
+  const idx = window.compareSelectedIds.indexOf(editalId);
+  if (idx >= 0) {
+    window.compareSelectedIds.splice(idx, 1);
+  } else {
+    if (window.compareSelectedIds.length >= 3) {
+      showToast('Selecione no máximo 3 editais por vez para comparação lado a lado.');
+      return;
+    }
+    window.compareSelectedIds.push(editalId);
+  }
+  renderEditaisTab();
+};
+
+window.clearCompareSelection = function clearCompareSelection() {
+  window.compareSelectedIds = [];
+  renderEditaisTab();
+};
+
+window.renderCompareFloatingBar = function renderCompareFloatingBar() {
+  const bar = document.getElementById('compareFloatingBar');
+  if (!bar) return;
+  const ids = window.compareSelectedIds || [];
+  if (ids.length === 0) {
+    bar.classList.add('hidden');
+    return;
+  }
+  bar.classList.remove('hidden');
+  const selectedEditais = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
+
+  bar.innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
+        ⚖️ Comparador (${selectedEditais.length}/3)
+      </span>
+      ${selectedEditais.map(e => `
+        <span class="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold flex items-center gap-1.5">
+          <span>${escapeHtml(e.agencia)} Nº ${escapeHtml(e.numero)} (${e.matchScore || 80}%)</span>
+          <button onclick="window.toggleCompareEdital('${e.id}')" class="text-[#9aa2b1] hover:text-white font-bold">✕</button>
+        </span>
+      `).join('')}
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="window.clearCompareSelection()" class="btn-pill-outline-dark !py-1.5 !px-3 text-xs">
+        Limpar
+      </button>
+      <button onclick="window.openCompareModal()" class="btn-pill-lime !py-1.5 !px-4 text-xs">
+        ⚖️ Comparar Lado a Lado (${selectedEditais.length})
+      </button>
+    </div>
+  `;
+};
+
+window.openCompareModal = function openCompareModal() {
+  const ids = window.compareSelectedIds || [];
+  const list = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
+  if (list.length === 0) {
+    showToast('Selecione pelo menos 1 ou 2 editais clicando no botão ⚖️ do card.');
+    return;
+  }
+
+  const body = document.getElementById('compareModalBody');
+  const modal = document.getElementById('compareEditaisModal');
+  if (!body || !modal) return;
+
+  body.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-${Math.max(2, list.length)} gap-4 min-w-[600px]">
+      ${list.map(ed => {
+        const daysLeft = getDaysRemaining(ed.prazoSubmissao);
+        return `
+          <div class="p-5 rounded-3xl bg-[#f6f7f9] border border-[#dcdfe5] flex flex-col justify-between gap-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-3 py-1 rounded-full bg-[#14181f] text-white text-xs font-extrabold">
+                  ${escapeHtml(ed.agencia)} • ${escapeHtml(ed.uf)}
+                </span>
+                <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
+                  ${ed.matchScore || 80}% Match
+                </span>
+              </div>
+
+              <h4 class="text-sm font-extrabold text-[#14181f] leading-snug">
+                Nº ${escapeHtml(ed.numero)} — ${escapeHtml(ed.titulo)}
+              </h4>
+
+              <div class="space-y-2 text-xs bg-white p-3.5 rounded-2xl border border-[#ebedf2]">
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Status:</span>
+                  <strong class="text-[#14181f]">${escapeHtml(ed.status)} ${ed.prorrogado ? '(Prorrogado)' : ''}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Prazo Final:</span>
+                  <strong class="text-[#14181f]">${formatDateBr(ed.prazoSubmissao)} ${daysLeft !== null ? `(${daysLeft}d)` : ''}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Linha:</span>
+                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.area)}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Recursos:</span>
+                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.valorEstimado)}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Plataforma:</span>
+                  <strong class="text-[#14181f]">${escapeHtml(ed.plataformaSubmissao || 'Portal')}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Anexos / Erratas:</span>
+                  <strong class="text-[#14181f]">${(ed.anexos || []).length} doc(s)</strong>
+                </div>
+              </div>
+
+              <div class="space-y-1 text-[11px] text-[#4a5260]">
+                <strong class="text-[#14181f] block">Diagnóstico de Elegibilidade:</strong>
+                ${(ed.matchRazoes || []).map(r => `<div>${escapeHtml(r)}</div>`).join('')}
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#dcdfe5] flex flex-wrap items-center justify-between gap-2">
+              <button onclick="window.closeCompareModal(); window.openWorkplanModal('${ed.id}');" class="btn-pill-dark flex-1 text-xs">
+                ✨ Gerar Plano (${escapeHtml(ed.plataformaSubmissao || 'FAP')})
+              </button>
+              <button onclick="window.addToPipeline('${ed.id}')" class="btn-pill-lime text-xs">
+                + Kanban
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+};
+
+window.closeCompareModal = function closeCompareModal() {
+  document.getElementById('compareEditaisModal')?.classList.add('hidden');
+};
+
+window.addSimulatedBolsaToRubrica = function addSimulatedBolsaToRubrica() {
+  const select = document.getElementById('simBolsaModalidade');
+  const valMensal = Number(select?.value) || 3500;
+  const labelModalidade = select?.options[select.selectedIndex]?.text?.split('(')[0]?.trim() || 'Bolsa';
+  const qtd = Math.max(1, Number(document.getElementById('simBolsaQtd')?.value) || 1);
+  const meses = Math.max(1, Number(document.getElementById('simBolsaMeses')?.value) || 12);
+
+  const subtotalBolsa = valMensal * qtd * meses;
+  const inputBolsas = document.getElementById('pipeRubricaBolsas');
+  if (inputBolsas) {
+    inputBolsas.value = (Number(inputBolsas.value) || 0) + subtotalBolsa;
+  }
+
+  const notasEl = document.getElementById('pipeFormNotas');
+  if (notasEl) {
+    const notaBolsa = `[Bolsa Calculada: ${qtd}x ${labelModalidade} por ${meses}m = ${formatCurrencyBRL(subtotalBolsa)}]`;
+    notasEl.value = notasEl.value ? `${notasEl.value}\n${notaBolsa}` : notaBolsa;
+  }
+
+  const previewLbl = document.getElementById('bolsaPreviewCalc');
+  if (previewLbl) {
+    previewLbl.textContent = `+ ${formatCurrencyBRL(subtotalBolsa)} adicionado`;
+  }
+
+  updatePipeTotalPreview();
+  showToast(`Adicionado ${qtd}x ${labelModalidade} (${meses} meses = ${formatCurrencyBRL(subtotalBolsa)}) na rubrica Bolsas!`);
+};
+
+window.copyShareablePortfolioLink = async function copyShareablePortfolioLink() {
+  try {
+    const compactPayload = {
+      p: appState.researcherProfile || {},
+      f: appState.favoritos || [],
+      k: (appState.pipeline || []).map(item => ({
+        id: item.id,
+        editalId: item.editalId,
+        estagio: item.estagio,
+        tituloProjeto: item.tituloProjeto,
+        pesquisadorResponsavel: item.pesquisadorResponsavel,
+        instituicao: item.instituicao,
+        valorPleiteado: item.valorPleiteado,
+        rubricaCusteio: item.rubricaCusteio,
+        rubricaCapital: item.rubricaCapital,
+        rubricaBolsas: item.rubricaBolsas,
+        notas: item.notas
+      }))
+    };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(compactPayload)));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?carteira=${encoded}`;
+    await navigator.clipboard.writeText(shareUrl);
+    showToast('🔗 Link da Carteira copiado! Envie para qualquer pesquisador da sua equipe abrir na Vercel.');
+  } catch (err) {
+    showToast(`Erro ao gerar link compartilhável: ${err.message}`);
+  }
+};
+
+// Restaura automaticamente uma carteira compartilhada via URL (?carteira=...)
+try {
+  const params = new URLSearchParams(window.location.search);
+  const sharedParam = params.get('carteira');
+  if (sharedParam) {
+    const decoded = JSON.parse(decodeURIComponent(atob(sharedParam)));
+    const existingRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const currentBackup = existingRaw ? JSON.parse(existingRaw) : {};
+    const mergedBackup = {
+      ...currentBackup,
+      researcherProfile: decoded.p || currentBackup.researcherProfile,
+      favoritos: decoded.f || currentBackup.favoritos || [],
+      pipeline: decoded.k || currentBackup.pipeline || []
+    };
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedBackup));
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => showToast('🔗 Carteira compartilhada pela equipe carregada com sucesso!'), 900);
+  }
+} catch {}
 
 // ===================== 5. RENDER ALERTAS & LOG =====================
 function renderAlertasTab() {
@@ -2191,6 +2426,224 @@ window.printWorkplanDocument = function printWorkplanDocument() {
   w.document.close();
 };
 
+// ===================== COMPARADOR LADO A LADO DE EDITAIS, SIMULADOR DE BOLSAS & LINK COMPARTILHÁVEL =====================
+window.compareSelectedIds = [];
+
+window.toggleCompareEdital = function toggleCompareEdital(editalId) {
+  const idx = window.compareSelectedIds.indexOf(editalId);
+  if (idx >= 0) {
+    window.compareSelectedIds.splice(idx, 1);
+  } else {
+    if (window.compareSelectedIds.length >= 3) {
+      showToast('Selecione no máximo 3 editais por vez para comparação lado a lado.');
+      return;
+    }
+    window.compareSelectedIds.push(editalId);
+  }
+  renderEditaisTab();
+};
+
+window.clearCompareSelection = function clearCompareSelection() {
+  window.compareSelectedIds = [];
+  renderEditaisTab();
+};
+
+window.renderCompareFloatingBar = function renderCompareFloatingBar() {
+  const bar = document.getElementById('compareFloatingBar');
+  if (!bar) return;
+  const ids = window.compareSelectedIds || [];
+  if (ids.length === 0) {
+    bar.classList.add('hidden');
+    return;
+  }
+  bar.classList.remove('hidden');
+  const selectedEditais = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
+
+  bar.innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
+        ⚖️ Comparador (${selectedEditais.length}/3)
+      </span>
+      ${selectedEditais.map(e => `
+        <span class="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold flex items-center gap-1.5">
+          <span>${escapeHtml(e.agencia)} Nº ${escapeHtml(e.numero)} (${e.matchScore || 80}%)</span>
+          <button onclick="window.toggleCompareEdital('${e.id}')" class="text-[#9aa2b1] hover:text-white font-bold">✕</button>
+        </span>
+      `).join('')}
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="window.clearCompareSelection()" class="btn-pill-outline-dark !py-1.5 !px-3 text-xs">
+        Limpar
+      </button>
+      <button onclick="window.openCompareModal()" class="btn-pill-lime !py-1.5 !px-4 text-xs">
+        ⚖️ Comparar Lado a Lado (${selectedEditais.length})
+      </button>
+    </div>
+  `;
+};
+
+window.openCompareModal = function openCompareModal() {
+  const ids = window.compareSelectedIds || [];
+  const list = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
+  if (list.length === 0) {
+    showToast('Selecione pelo menos 1 ou 2 editais clicando no botão ⚖️ do card.');
+    return;
+  }
+
+  const body = document.getElementById('compareModalBody');
+  const modal = document.getElementById('compareEditaisModal');
+  if (!body || !modal) return;
+
+  body.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-${Math.max(2, list.length)} gap-4 min-w-[600px]">
+      ${list.map(ed => {
+        const daysLeft = getDaysRemaining(ed.prazoSubmissao);
+        return `
+          <div class="p-5 rounded-3xl bg-[#f6f7f9] border border-[#dcdfe5] flex flex-col justify-between gap-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-3 py-1 rounded-full bg-[#14181f] text-white text-xs font-extrabold">
+                  ${escapeHtml(ed.agencia)} • ${escapeHtml(ed.uf)}
+                </span>
+                <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
+                  ${ed.matchScore || 80}% Match
+                </span>
+              </div>
+
+              <h4 class="text-sm font-extrabold text-[#14181f] leading-snug">
+                Nº ${escapeHtml(ed.numero)} — ${escapeHtml(ed.titulo)}
+              </h4>
+
+              <div class="space-y-2 text-xs bg-white p-3.5 rounded-2xl border border-[#ebedf2]">
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Status:</span>
+                  <strong class="text-[#14181f]">${escapeHtml(ed.status)} ${ed.prorrogado ? '(Prorrogado)' : ''}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Prazo Final:</span>
+                  <strong class="text-[#14181f]">${formatDateBr(ed.prazoSubmissao)} ${daysLeft !== null ? `(${daysLeft}d)` : ''}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Linha:</span>
+                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.area)}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Recursos:</span>
+                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.valorEstimado)}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Plataforma:</span>
+                  <strong class="text-[#14181f]">${escapeHtml(ed.plataformaSubmissao || 'Portal')}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Anexos / Erratas:</span>
+                  <strong class="text-[#14181f]">${(ed.anexos || []).length} doc(s)</strong>
+                </div>
+              </div>
+
+              <div class="space-y-1 text-[11px] text-[#4a5260]">
+                <strong class="text-[#14181f] block">Diagnóstico de Elegibilidade:</strong>
+                ${(ed.matchRazoes || []).map(r => `<div>${escapeHtml(r)}</div>`).join('')}
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#dcdfe5] flex flex-wrap items-center justify-between gap-2">
+              <button onclick="window.closeCompareModal(); window.openWorkplanModal('${ed.id}');" class="btn-pill-dark flex-1 text-xs">
+                ✨ Gerar Plano (${escapeHtml(ed.plataformaSubmissao || 'FAP')})
+              </button>
+              <button onclick="window.addToPipeline('${ed.id}')" class="btn-pill-lime text-xs">
+                + Kanban
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+};
+
+window.closeCompareModal = function closeCompareModal() {
+  document.getElementById('compareEditaisModal')?.classList.add('hidden');
+};
+
+window.addSimulatedBolsaToRubrica = function addSimulatedBolsaToRubrica() {
+  const select = document.getElementById('simBolsaModalidade');
+  const valMensal = Number(select?.value) || 3500;
+  const labelModalidade = select?.options[select.selectedIndex]?.text?.split('(')[0]?.trim() || 'Bolsa';
+  const qtd = Math.max(1, Number(document.getElementById('simBolsaQtd')?.value) || 1);
+  const meses = Math.max(1, Number(document.getElementById('simBolsaMeses')?.value) || 12);
+
+  const subtotalBolsa = valMensal * qtd * meses;
+  const inputBolsas = document.getElementById('pipeRubricaBolsas');
+  if (inputBolsas) {
+    inputBolsas.value = (Number(inputBolsas.value) || 0) + subtotalBolsa;
+  }
+
+  const notasEl = document.getElementById('pipeFormNotas');
+  if (notasEl) {
+    const notaBolsa = `[Bolsa Calculada: ${qtd}x ${labelModalidade} por ${meses}m = ${formatCurrencyBRL(subtotalBolsa)}]`;
+    notasEl.value = notasEl.value ? `${notasEl.value}\n${notaBolsa}` : notaBolsa;
+  }
+
+  const previewLbl = document.getElementById('bolsaPreviewCalc');
+  if (previewLbl) {
+    previewLbl.textContent = `+ ${formatCurrencyBRL(subtotalBolsa)} adicionado`;
+  }
+
+  updatePipeTotalPreview();
+  showToast(`Adicionado ${qtd}x ${labelModalidade} (${meses} meses = ${formatCurrencyBRL(subtotalBolsa)}) na rubrica Bolsas!`);
+};
+
+window.copyShareablePortfolioLink = async function copyShareablePortfolioLink() {
+  try {
+    const compactPayload = {
+      p: appState.researcherProfile || {},
+      f: appState.favoritos || [],
+      k: (appState.pipeline || []).map(item => ({
+        id: item.id,
+        editalId: item.editalId,
+        estagio: item.estagio,
+        tituloProjeto: item.tituloProjeto,
+        pesquisadorResponsavel: item.pesquisadorResponsavel,
+        instituicao: item.instituicao,
+        valorPleiteado: item.valorPleiteado,
+        rubricaCusteio: item.rubricaCusteio,
+        rubricaCapital: item.rubricaCapital,
+        rubricaBolsas: item.rubricaBolsas,
+        notas: item.notas
+      }))
+    };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(compactPayload)));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?carteira=${encoded}`;
+    await navigator.clipboard.writeText(shareUrl);
+    showToast('🔗 Link da Carteira copiado! Envie para qualquer pesquisador da sua equipe abrir na Vercel.');
+  } catch (err) {
+    showToast(`Erro ao gerar link compartilhável: ${err.message}`);
+  }
+};
+
+// Restaura automaticamente uma carteira compartilhada via URL (?carteira=...)
+try {
+  const params = new URLSearchParams(window.location.search);
+  const sharedParam = params.get('carteira');
+  if (sharedParam) {
+    const decoded = JSON.parse(decodeURIComponent(atob(sharedParam)));
+    const existingRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const currentBackup = existingRaw ? JSON.parse(existingRaw) : {};
+    const mergedBackup = {
+      ...currentBackup,
+      researcherProfile: decoded.p || currentBackup.researcherProfile,
+      favoritos: decoded.f || currentBackup.favoritos || [],
+      pipeline: decoded.k || currentBackup.pipeline || []
+    };
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedBackup));
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => showToast('🔗 Carteira compartilhada pela equipe carregada com sucesso!'), 900);
+  }
+} catch {}
+
 window.saveWorkplanToPipeline = async function saveWorkplanToPipeline() {
   const editalId = document.getElementById('wpEditalId').value;
   const ed = appState.editais.find(e => e.id === editalId);
@@ -2511,3 +2964,221 @@ window.printPortfolioReport = function printPortfolioReport() {
   `);
   w.document.close();
 };
+
+// ===================== COMPARADOR LADO A LADO DE EDITAIS, SIMULADOR DE BOLSAS & LINK COMPARTILHÁVEL =====================
+window.compareSelectedIds = [];
+
+window.toggleCompareEdital = function toggleCompareEdital(editalId) {
+  const idx = window.compareSelectedIds.indexOf(editalId);
+  if (idx >= 0) {
+    window.compareSelectedIds.splice(idx, 1);
+  } else {
+    if (window.compareSelectedIds.length >= 3) {
+      showToast('Selecione no máximo 3 editais por vez para comparação lado a lado.');
+      return;
+    }
+    window.compareSelectedIds.push(editalId);
+  }
+  renderEditaisTab();
+};
+
+window.clearCompareSelection = function clearCompareSelection() {
+  window.compareSelectedIds = [];
+  renderEditaisTab();
+};
+
+window.renderCompareFloatingBar = function renderCompareFloatingBar() {
+  const bar = document.getElementById('compareFloatingBar');
+  if (!bar) return;
+  const ids = window.compareSelectedIds || [];
+  if (ids.length === 0) {
+    bar.classList.add('hidden');
+    return;
+  }
+  bar.classList.remove('hidden');
+  const selectedEditais = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
+
+  bar.innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
+        ⚖️ Comparador (${selectedEditais.length}/3)
+      </span>
+      ${selectedEditais.map(e => `
+        <span class="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold flex items-center gap-1.5">
+          <span>${escapeHtml(e.agencia)} Nº ${escapeHtml(e.numero)} (${e.matchScore || 80}%)</span>
+          <button onclick="window.toggleCompareEdital('${e.id}')" class="text-[#9aa2b1] hover:text-white font-bold">✕</button>
+        </span>
+      `).join('')}
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="window.clearCompareSelection()" class="btn-pill-outline-dark !py-1.5 !px-3 text-xs">
+        Limpar
+      </button>
+      <button onclick="window.openCompareModal()" class="btn-pill-lime !py-1.5 !px-4 text-xs">
+        ⚖️ Comparar Lado a Lado (${selectedEditais.length})
+      </button>
+    </div>
+  `;
+};
+
+window.openCompareModal = function openCompareModal() {
+  const ids = window.compareSelectedIds || [];
+  const list = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
+  if (list.length === 0) {
+    showToast('Selecione pelo menos 1 ou 2 editais clicando no botão ⚖️ do card.');
+    return;
+  }
+
+  const body = document.getElementById('compareModalBody');
+  const modal = document.getElementById('compareEditaisModal');
+  if (!body || !modal) return;
+
+  body.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-${Math.max(2, list.length)} gap-4 min-w-[600px]">
+      ${list.map(ed => {
+        const daysLeft = getDaysRemaining(ed.prazoSubmissao);
+        return `
+          <div class="p-5 rounded-3xl bg-[#f6f7f9] border border-[#dcdfe5] flex flex-col justify-between gap-4">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-3 py-1 rounded-full bg-[#14181f] text-white text-xs font-extrabold">
+                  ${escapeHtml(ed.agencia)} • ${escapeHtml(ed.uf)}
+                </span>
+                <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
+                  ${ed.matchScore || 80}% Match
+                </span>
+              </div>
+
+              <h4 class="text-sm font-extrabold text-[#14181f] leading-snug">
+                Nº ${escapeHtml(ed.numero)} — ${escapeHtml(ed.titulo)}
+              </h4>
+
+              <div class="space-y-2 text-xs bg-white p-3.5 rounded-2xl border border-[#ebedf2]">
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Status:</span>
+                  <strong class="text-[#14181f]">${escapeHtml(ed.status)} ${ed.prorrogado ? '(Prorrogado)' : ''}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Prazo Final:</span>
+                  <strong class="text-[#14181f]">${formatDateBr(ed.prazoSubmissao)} ${daysLeft !== null ? `(${daysLeft}d)` : ''}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Linha:</span>
+                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.area)}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Recursos:</span>
+                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.valorEstimado)}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Plataforma:</span>
+                  <strong class="text-[#14181f]">${escapeHtml(ed.plataformaSubmissao || 'Portal')}</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-[#8a92a0]">Anexos / Erratas:</span>
+                  <strong class="text-[#14181f]">${(ed.anexos || []).length} doc(s)</strong>
+                </div>
+              </div>
+
+              <div class="space-y-1 text-[11px] text-[#4a5260]">
+                <strong class="text-[#14181f] block">Diagnóstico de Elegibilidade:</strong>
+                ${(ed.matchRazoes || []).map(r => `<div>${escapeHtml(r)}</div>`).join('')}
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#dcdfe5] flex flex-wrap items-center justify-between gap-2">
+              <button onclick="window.closeCompareModal(); window.openWorkplanModal('${ed.id}');" class="btn-pill-dark flex-1 text-xs">
+                ✨ Gerar Plano (${escapeHtml(ed.plataformaSubmissao || 'FAP')})
+              </button>
+              <button onclick="window.addToPipeline('${ed.id}')" class="btn-pill-lime text-xs">
+                + Kanban
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  modal.classList.remove('hidden');
+};
+
+window.closeCompareModal = function closeCompareModal() {
+  document.getElementById('compareEditaisModal')?.classList.add('hidden');
+};
+
+window.addSimulatedBolsaToRubrica = function addSimulatedBolsaToRubrica() {
+  const select = document.getElementById('simBolsaModalidade');
+  const valMensal = Number(select?.value) || 3500;
+  const labelModalidade = select?.options[select.selectedIndex]?.text?.split('(')[0]?.trim() || 'Bolsa';
+  const qtd = Math.max(1, Number(document.getElementById('simBolsaQtd')?.value) || 1);
+  const meses = Math.max(1, Number(document.getElementById('simBolsaMeses')?.value) || 12);
+
+  const subtotalBolsa = valMensal * qtd * meses;
+  const inputBolsas = document.getElementById('pipeRubricaBolsas');
+  if (inputBolsas) {
+    inputBolsas.value = (Number(inputBolsas.value) || 0) + subtotalBolsa;
+  }
+
+  const notasEl = document.getElementById('pipeFormNotas');
+  if (notasEl) {
+    const notaBolsa = `[Bolsa Calculada: ${qtd}x ${labelModalidade} por ${meses}m = ${formatCurrencyBRL(subtotalBolsa)}]`;
+    notasEl.value = notasEl.value ? `${notasEl.value}\n${notaBolsa}` : notaBolsa;
+  }
+
+  const previewLbl = document.getElementById('bolsaPreviewCalc');
+  if (previewLbl) {
+    previewLbl.textContent = `+ ${formatCurrencyBRL(subtotalBolsa)} adicionado`;
+  }
+
+  updatePipeTotalPreview();
+  showToast(`Adicionado ${qtd}x ${labelModalidade} (${meses} meses = ${formatCurrencyBRL(subtotalBolsa)}) na rubrica Bolsas!`);
+};
+
+window.copyShareablePortfolioLink = async function copyShareablePortfolioLink() {
+  try {
+    const compactPayload = {
+      p: appState.researcherProfile || {},
+      f: appState.favoritos || [],
+      k: (appState.pipeline || []).map(item => ({
+        id: item.id,
+        editalId: item.editalId,
+        estagio: item.estagio,
+        tituloProjeto: item.tituloProjeto,
+        pesquisadorResponsavel: item.pesquisadorResponsavel,
+        instituicao: item.instituicao,
+        valorPleiteado: item.valorPleiteado,
+        rubricaCusteio: item.rubricaCusteio,
+        rubricaCapital: item.rubricaCapital,
+        rubricaBolsas: item.rubricaBolsas,
+        notas: item.notas
+      }))
+    };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(compactPayload)));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?carteira=${encoded}`;
+    await navigator.clipboard.writeText(shareUrl);
+    showToast('🔗 Link da Carteira copiado! Envie para qualquer pesquisador da sua equipe abrir na Vercel.');
+  } catch (err) {
+    showToast(`Erro ao gerar link compartilhável: ${err.message}`);
+  }
+};
+
+// Restaura automaticamente uma carteira compartilhada via URL (?carteira=...)
+try {
+  const params = new URLSearchParams(window.location.search);
+  const sharedParam = params.get('carteira');
+  if (sharedParam) {
+    const decoded = JSON.parse(decodeURIComponent(atob(sharedParam)));
+    const existingRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const currentBackup = existingRaw ? JSON.parse(existingRaw) : {};
+    const mergedBackup = {
+      ...currentBackup,
+      researcherProfile: decoded.p || currentBackup.researcherProfile,
+      favoritos: decoded.f || currentBackup.favoritos || [],
+      pipeline: decoded.k || currentBackup.pipeline || []
+    };
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedBackup));
+    window.history.replaceState({}, document.title, window.location.pathname);
+    setTimeout(() => showToast('🔗 Carteira compartilhada pela equipe carregada com sucesso!'), 900);
+  }
+} catch {}

@@ -502,6 +502,9 @@
         </div>
       </div>
 
+      <!-- Barra de Comparação Lado a Lado (Aparece ao selecionar editais para comparar) -->
+      <div id="compareFloatingBar" class="hidden bento-dark p-4 flex flex-wrap items-center justify-between gap-3 border border-[#b6f53b]/40"></div>
+
       <!-- Grid de Cards Claros e Escuros -->
       <div id="editaisGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </section>
@@ -596,6 +599,9 @@
           <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-2.5"></div>
           <button onclick="window.printPortfolioReport()" class="btn-pill-lime !py-2 !px-4 text-xs" title="Gerar Relatório Executivo da Carteira de Projetos em PDF">
             📊 Relatório Executivo (PDF)
+          </button>
+          <button onclick="window.copyShareablePortfolioLink()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Gerar link compartilhável da sua carteira para enviar à equipe">
+            🔗 Compartilhar Link
           </button>
           <button onclick="window.exportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Exportar backup completo da carteira de projetos (.json)">
             💾 Exportar Carteira
@@ -888,6 +894,37 @@
               <input id="pipeRubricaBolsas" type="number" min="0" step="1000" class="input-well-dark w-full" />
             </div>
           </div>
+
+          <!-- Simulador Oficial de Cotas de Bolsas (FACEPE / CNPq / CAPES) -->
+          <div class="pt-3 border-t border-white/10 space-y-2">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="font-bold text-[#b6f53b]">🎓 Simulador de Cotas de Bolsas (FACEPE / CNPq / CAPES)</span>
+              <span id="bolsaPreviewCalc" class="text-[#9aa2b1]">Selecione a modalidade para somar</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+              <div class="sm:col-span-6">
+                <select id="simBolsaModalidade" class="input-well-dark w-full !py-2 text-xs">
+                  <option value="700">BIC / IC — Iniciação Científica (R$ 700/mês)</option>
+                  <option value="2100">Mestrado — GM / FACEPE / CAPES (R$ 2.100/mês)</option>
+                  <option value="3100">Doutorado — GD / FACEPE / CAPES (R$ 3.100/mês)</option>
+                  <option value="3500" selected>BCT-II — Cooperação Técnica Mestre (R$ 3.500/mês)</option>
+                  <option value="4800">BCT-I — Cooperação Técnica Doutor (R$ 4.800/mês)</option>
+                  <option value="5200">BFD / DCR — Fixação de Doutor / Pós-Doc (R$ 5.200/mês)</option>
+                </select>
+              </div>
+              <div class="sm:col-span-2">
+                <input id="simBolsaQtd" type="number" min="1" max="20" value="1" title="Quantidade de bolsistas" placeholder="Qtd" class="input-well-dark w-full !py-2 text-xs text-center" />
+              </div>
+              <div class="sm:col-span-2">
+                <input id="simBolsaMeses" type="number" min="1" max="48" value="12" title="Meses de bolsa" placeholder="Meses" class="input-well-dark w-full !py-2 text-xs text-center" />
+              </div>
+              <div class="sm:col-span-2">
+                <button type="button" onclick="window.addSimulatedBolsaToRubrica()" class="btn-pill-lime w-full !py-2 !px-2 text-[11px]" title="Somar este valor na rubrica de Bolsas">
+                  + Somar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -1107,6 +1144,23 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL COMPARADOR LADO A LADO DE EDITAIS -->
+  <div id="compareEditaisModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-light max-w-5xl w-full max-h-[92vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#f1f3f6] pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold">Análise Estratégica</span>
+            <h3 class="text-lg font-extrabold text-[#14181f]">Comparador Lado a Lado de Editais</h3>
+          </div>
+          <p class="text-xs text-[#767f8e] mt-1">Compare aderência (% Match), valores, prazos, plataformas e exigências para priorizar sua submissão.</p>
+        </div>
+        <button onclick="window.closeCompareModal()" class="circle-icon-dark">✕</button>
+      </div>
+      <div id="compareModalBody" class="overflow-x-auto"></div>
     </div>
   </div>
 
