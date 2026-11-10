@@ -121,9 +121,51 @@ function connectRealtimeStream() {
   }, 3 * 60 * 1000);
 }
 
+const LOCAL_STORAGE_KEY = 'radarfap_user_workspace_v1';
+let portalPingStatus = {};
+
+function saveWorkspaceBackup() {
+  try {
+    const manualEditais = (appState.editais || []).filter(e => e.curadoriaManual);
+    const backup = {
+      favoritos: appState.favoritos || [],
+      pipeline: appState.pipeline || [],
+      alertConfig: appState.alertConfig || {},
+      manualEditais
+    };
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(backup));
+  } catch {}
+}
+
+function mergeWorkspaceBackup() {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!raw) return;
+    const backup = JSON.parse(raw);
+    if (Array.isArray(backup.favoritos) && backup.favoritos.length > 0) {
+      appState.favoritos = [...new Set([...(appState.favoritos || []), ...backup.favoritos])];
+    }
+    if (Array.isArray(backup.pipeline) && backup.pipeline.length > 0) {
+      const pipeMap = new Map((appState.pipeline || []).map(p => [p.id, p]));
+      for (const bp of backup.pipeline) {
+        pipeMap.set(bp.id, bp);
+      }
+      appState.pipeline = Array.from(pipeMap.values());
+    }
+    if (Array.isArray(backup.manualEditais) && backup.manualEditais.length > 0) {
+      const edMap = new Map((appState.editais || []).map(e => [e.id, e]));
+      for (const me of backup.manualEditais) {
+        if (!edMap.has(me.id)) edMap.set(me.id, me);
+      }
+      appState.editais = Array.from(edMap.values());
+    }
+  } catch {}
+}
+
 async function fetchInitialState() {
   const res = await fetch('/api/state');
   appState = await res.json();
+  mergeWorkspaceBackup();
   if (appState.lastAutoSyncIso) {
     updateRealtimeBadge(appState.lastAutoSyncIso);
   }
@@ -180,6 +222,7 @@ function populateFilterSelects() {
 }
 
 function renderAll() {
+  saveWorkspaceBackup();
   document.getElementById('badgeTotalEditais').textContent = appState.editais.length;
   document.getElementById('badgePipelineCount').textContent = appState.pipeline.length;
   document.getElementById('badgeAlertsCount').textContent = appState.alerts.length;
@@ -714,12 +757,17 @@ function renderBrazilGeoMap() {
     </div>
 
     <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#f1f3f6]">
-      <button onclick="window.filterByFap('${escapeHtml(fap.sigla)}')" class="btn-pill-dark">
-        Filtrar Todos de ${escapeHtml(fap.uf)} (${stateEditais.length})
-      </button>
+      <div class="flex items-center gap-1.5">
+        <button onclick="window.filterByFap('${escapeHtml(fap.sigla)}')" class="btn-pill-dark">
+          Filtrar ${escapeHtml(fap.uf)} (${stateEditais.length})
+        </button>
+        <button onclick="window.pingFapPortal('${escapeHtml(fap.sigla)}')" class="btn-pill-outline-light" title="Testar disponibilidade do portal ao vivo">
+          ${portalPingStatus[fap.sigla] ? `🟢 ${portalPingStatus[fap.sigla]}ms` : '⚡ Testar Portal'}
+        </button>
+      </div>
       <div class="flex items-center gap-1.5">
         <a href="${escapeHtml(fap.urlEditais)}" target="_blank" rel="noopener" class="btn-pill-outline-light">
-          Portal Editais ↗
+          Portal ↗
         </a>
         <a href="${escapeHtml(fap.urlPlataforma || fap.siteOficial)}" target="_blank" rel="noopener" class="circle-icon-lime" title="Sistema de Submissão">
           →
@@ -728,6 +776,29 @@ function renderBrazilGeoMap() {
     </div>
   `;
 }
+
+window.pingFapPortal = async function pingFapPortal(sigla) {
+  showToast(`Testando conexão ao vivo com o portal da ${sigla}...`);
+  try {
+    const res = await fetch('/api/faps/ping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sigla })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      portalPingStatus[sigla] = data.latencyMs;
+      renderBrazilGeoMap();
+      showToast(
+        data.portalOk
+          ? `Portal ${sigla} (${data.uf}) Online! Tempo de resposta: ${data.latencyMs}ms.`
+          : `Portal ${sigla} respondeu com instabilidade (${data.latencyMs}ms).`
+      );
+    }
+  } catch (err) {
+    showToast(`Erro ao testar portal: ${err.message}`);
+  }
+};
 
 function renderFapsDirectory() {
   renderBrazilGeoMap();
@@ -1217,6 +1288,9 @@ window.openDetailModal = function openDetailModal(editalId) {
       </div>
 
       <div class="flex items-center gap-2">
+        <button onclick="window.downloadEditalIcs('${ed.id}')" class="btn-pill-outline-light" title="Salvar prazo no Google Calendar / Outlook">
+          📅 Agendar (.ics)
+        </button>
         <button onclick="window.addToPipeline('${ed.id}'); window.closeDetailModal();" class="btn-pill-outline-light">
           + Pipeline
         </button>
@@ -1228,6 +1302,36 @@ window.openDetailModal = function openDetailModal(editalId) {
   `;
 
   modal.classList.remove('hidden');
+};
+
+window.downloadEditalIcs = function downloadEditalIcs(editalId) {
+  const ed = appState.editais.find(e => e.id === editalId);
+  if (!ed) return;
+  const dateClean = (ed.prazoSubmissao || '2026-12-01').replace(/-/g, '').slice(0, 8);
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//RadarFAP Brasil//PT-BR',
+    'BEGIN:VEVENT',
+    `UID:radarfap-${ed.id}@radarfap.br`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+    `DTSTART;VALUE=DATE:${dateClean}`,
+    `DTEND;VALUE=DATE:${dateClean}`,
+    `SUMMARY:[Prazo FAP] ${ed.agencia} (${ed.uf}) - Edital ${ed.numero}`,
+    `DESCRIPTION:${(ed.titulo || '').replace(/\n/g, ' ')} | Submissao: ${ed.linkSubmissao || ''} | PDF: ${ed.linkPdf || ''}`,
+    `URL:${ed.linkSubmissao || ed.linkEdital || ''}`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `prazo-${ed.agencia.toLowerCase()}-${ed.numero.replace(/[^a-zA-Z0-9]/g, '-')}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Arquivo de calendário (.ics) baixado!');
 };
 
 window.closeDetailModal = function closeDetailModal() {

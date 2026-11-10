@@ -266,3 +266,4 @@ export default async function handler(req, res) {
     return sendJson(res, 500, { error: err.message || 'Erro interno no servidor' });
   }
 }
+
