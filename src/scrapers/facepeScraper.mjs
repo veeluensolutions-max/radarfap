@@ -346,6 +346,28 @@ const MULTI_FAP_WP_ENDPOINTS = [
     plataformaSubmissao: 'SIGFUNDECT',
     linkSubmissao: 'https://sigfundect.ledes.net/',
     apiUrl: 'https://www.fundect.ms.gov.br/wp-json/wp/v2/posts?per_page=6'
+  },
+  {
+    fapId: 'fapema-ma',
+    agencia: 'FAPEMA',
+    uf: 'MA',
+    estado: 'Maranhão',
+    regiao: 'Nordeste',
+    esfera: 'Estadual',
+    plataformaSubmissao: 'Patronage FAPEMA',
+    linkSubmissao: 'https://www.fapema.br/',
+    apiUrl: 'https://www.fapema.br/wp-json/wp/v2/posts?per_page=6'
+  },
+  {
+    fapId: 'fapeg-go',
+    agencia: 'FAPEG',
+    uf: 'GO',
+    estado: 'Goiás',
+    regiao: 'Centro-Oeste',
+    esfera: 'Estadual',
+    plataformaSubmissao: 'OPP FAPEG',
+    linkSubmissao: 'https://goias.gov.br/fapeg/',
+    apiUrl: 'https://goias.gov.br/fapeg/wp-json/wp/v2/posts?per_page=5'
   }
 ];
 

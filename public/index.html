@@ -592,44 +592,105 @@
             Organize os projetos que sua equipe pretende submeter no AgilFAP (FACEPE), PICC (CNPq), SAGe (FAPESP) e demais sistemas.
           </p>
         </div>
-        <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-3"></div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-2.5"></div>
+          <button onclick="window.printPortfolioReport()" class="btn-pill-lime !py-2 !px-4 text-xs" title="Gerar Relatório Executivo da Carteira de Projetos em PDF">
+            📊 Relatório Executivo (PDF)
+          </button>
+          <button onclick="window.exportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Exportar backup completo da carteira de projetos (.json)">
+            💾 Exportar Carteira
+          </button>
+          <button onclick="window.triggerImportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Importar ou restaurar carteira de projetos (.json)">
+            📂 Importar
+          </button>
+        </div>
       </div>
 
       <div id="kanbanBoard" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-start"></div>
     </section>
 
-    <!-- ===================== ABA 5: ALERTAS & LOG DO COLETOR ===================== -->
+    <!-- ===================== ABA 5: ALERTAS ATIVOS, WEBHOOK & BACKUP DA CARTEIRA ===================== -->
     <section id="tab-alertas" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Configurar Alertas (Card Escuro estilo Form option) -->
-        <div class="lg:col-span-4 bento-dark p-7 space-y-5">
-          <div>
-            <h2 class="text-base font-bold text-white">Configurar Radar de Alertas</h2>
-            <p class="text-xs text-[#7e8694] mt-1">
-              Personalize avisos de prorrogação da FACEPE e vencimentos próximos por estado.
-            </p>
+        <!-- Configurar Alertas + Notificações Ativas + Webhook -->
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bento-dark p-7 space-y-5">
+            <div>
+              <h2 class="text-base font-bold text-white">Configurar Radar de Alertas Ativos</h2>
+              <p class="text-xs text-[#7e8694] mt-1">
+                Personalize avisos de prorrogação da FACEPE, vencimentos próximos, notificações nativas e Webhook.
+              </p>
+            </div>
+
+            <!-- Notificações Nativas do Navegador -->
+            <div class="p-3.5 rounded-2xl bg-[#0d1015] border border-white/10 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">Notificações no Navegador</span>
+                <span id="browserNotifStatusBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-[#9aa2b1]">Pendente</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="window.enableBrowserNotifications()" class="btn-pill-lime flex-1 !py-2 text-xs">
+                  🔔 Ativar Alertas Desktop
+                </button>
+                <button type="button" onclick="window.sendTestBrowserNotification()" class="btn-pill-outline-dark !py-2 !px-3 text-xs" title="Testar notificação agora">
+                  ⚡ Testar
+                </button>
+              </div>
+            </div>
+
+            <form id="alertConfigForm" class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Aviso prévio de vencimento (dias)</label>
+                <input id="alertDaysInput" type="number" min="3" max="90" class="input-well-dark w-full" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Estados (UFs) Monitorados</label>
+                <div id="alertUfsCheckboxes" class="grid grid-cols-4 gap-2 max-h-44 overflow-y-auto p-3 rounded-2xl bg-[#0d1015] text-xs"></div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Webhook da Equipe (Slack / Discord / n8n / WhatsApp API)</label>
+                <div class="flex gap-2">
+                  <input id="alertWebhookUrl" type="url" placeholder="https://hooks.slack.com/... ou Discord/n8n" class="input-well-dark flex-1" />
+                  <button type="button" onclick="window.testAlertWebhook()" class="btn-pill-outline-dark !px-3 shrink-0" title="Disparar boletim de teste">
+                    🚀
+                  </button>
+                </div>
+              </div>
+
+              <label class="flex items-center gap-2.5 text-xs text-[#b0b7c3] cursor-pointer">
+                <input id="alertProrrogFacepe" type="checkbox" class="accent-[#b6f53b] w-4 h-4 rounded" />
+                <span>Destacar prorrogações e erratas da FACEPE</span>
+              </label>
+
+              <button type="submit" class="btn-pill-lime w-full !py-3">
+                Salvar Configuração
+              </button>
+            </form>
           </div>
 
-          <form id="alertConfigForm" class="space-y-4">
+          <!-- Card Branco: Portabilidade, Backup JSON & Relatório Executivo -->
+          <div class="bento-light p-6 space-y-4">
             <div>
-              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Aviso prévio de vencimento (dias)</label>
-              <input id="alertDaysInput" type="number" min="3" max="90" class="input-well-dark w-full" />
+              <h3 class="text-sm font-bold text-[#14181f]">Backup &amp; Portabilidade da Carteira</h3>
+              <p class="text-xs text-[#767f8e] mt-0.5">
+                Exporte ou restaure seu Perfil, Favoritos, Kanban, Orçamentos e Planos de Trabalho em qualquer dispositivo.
+              </p>
             </div>
-
-            <div>
-              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Estados (UFs) Monitorados</label>
-              <div id="alertUfsCheckboxes" class="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto p-3 rounded-2xl bg-[#0d1015] text-xs"></div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" onclick="window.exportWorkspaceJson()" class="btn-pill-dark w-full">
+                💾 Exportar (.json)
+              </button>
+              <button type="button" onclick="window.triggerImportWorkspaceJson()" class="btn-pill-outline-light w-full">
+                📂 Importar (.json)
+              </button>
             </div>
-
-            <label class="flex items-center gap-2.5 text-xs text-[#b0b7c3] cursor-pointer">
-              <input id="alertProrrogFacepe" type="checkbox" class="accent-[#b6f53b] w-4 h-4 rounded" />
-              <span>Destacar prorrogações e erratas da FACEPE</span>
-            </label>
-
-            <button type="submit" class="btn-pill-lime w-full !py-3">
-              Salvar Configuração
+            <button type="button" onclick="window.printPortfolioReport()" class="btn-pill-lime w-full">
+              📊 Gerar Relatório Executivo (PDF)
             </button>
-          </form>
+            <input type="file" id="importWorkspaceInput" accept=".json" class="hidden" onchange="window.handleImportWorkspaceFile(event)" />
+          </div>
         </div>
 
         <!-- Lista de Alertas + Log de Sincronização (Cards Brancos Limpos) -->

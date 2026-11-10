@@ -271,6 +271,56 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true, state: getFullState() });
     }
 
+    if (pathname === '/api/alerts/test-webhook' && req.method === 'POST') {
+      const { webhookUrl } = await parseBody(req);
+      const state = getFullState();
+      const topEditais = (state.editais || [])
+        .filter(e => e.status === 'Aberto')
+        .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
+        .slice(0, 3);
+
+      const messageText = [
+        `🔔 *RadarFAP Brasil — Boletim Ativo de Oportunidades & Alertas*`,
+        `• Perfil: ${state.researcherProfile?.nomePesquisador || 'Coordenação'} (${state.researcherProfile?.ufPrincipal || 'PE'})`,
+        `• Alertas Críticos Ativos: ${state.alerts?.length || 0}`,
+        `• Top Oportunidades Abertas por % Match:`,
+        ...topEditais.map(e => `  - [${e.matchScore}% Match] ${e.agencia} (${e.uf}) Nº ${e.numero}: ${e.titulo} (Prazo: ${e.prazoSubmissao})`)
+      ].join('\n');
+
+      let webhookDispatched = false;
+      let webhookStatus = 200;
+
+      if (webhookUrl && /^https?:\/\//i.test(webhookUrl.trim())) {
+        try {
+          const whRes = await fetch(webhookUrl.trim(), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text: messageText,
+              content: messageText,
+              source: 'RadarFAP Brasil',
+              timestamp: new Date().toISOString(),
+              alertsCount: state.alerts?.length || 0,
+              topEditais
+            }),
+            signal: AbortSignal.timeout(7000)
+          });
+          webhookStatus = whRes.status;
+          webhookDispatched = whRes.ok || whRes.status < 400;
+        } catch {
+          webhookDispatched = false;
+        }
+      }
+
+      return sendJson(res, 200, {
+        ok: true,
+        webhookDispatched,
+        webhookStatus,
+        messageText,
+        dispatchedAt: new Date().toLocaleTimeString('pt-BR')
+      });
+    }
+
     if (pathname === '/api/faps/ping' && req.method === 'POST') {
       const { sigla, uf } = await parseBody(req);
       const fap = FAPS_CATALOG.find(f => f.sigla === sigla || f.uf === uf) || FAPS_CATALOG[0];

@@ -1303,9 +1303,22 @@ function renderAlertasTab() {
   const daysInput = document.getElementById('alertDaysInput');
   const prorrogCheck = document.getElementById('alertProrrogFacepe');
   const ufsContainer = document.getElementById('alertUfsCheckboxes');
+  const webhookInput = document.getElementById('alertWebhookUrl');
+  const notifBadge = document.getElementById('browserNotifStatusBadge');
 
   if (daysInput) daysInput.value = cfg.diasAntecedenciaVencimento || 20;
   if (prorrogCheck) prorrogCheck.checked = cfg.notificarProrrogacoesFacepe !== false;
+  if (webhookInput && cfg.webhookUrl !== undefined) webhookInput.value = cfg.webhookUrl || '';
+
+  if (notifBadge && 'Notification' in window) {
+    if (Notification.permission === 'granted') {
+      notifBadge.textContent = 'Ativo • Desktop';
+      notifBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#b6f53b] text-[#14181f]';
+    } else if (Notification.permission === 'denied') {
+      notifBadge.textContent = 'Bloqueado no Navegador';
+      notifBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-[#9aa2b1]';
+    }
+  }
 
   const allUfs = [...new Set(appState.faps.map(f => f.uf))];
   if (ufsContainer) {
@@ -1832,6 +1845,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkedUfs = Array.from(document.querySelectorAll('input[name="alertUf"]:checked')).map(el => el.value);
     const dias = Number(document.getElementById('alertDaysInput').value) || 20;
     const prorrog = document.getElementById('alertProrrogFacepe').checked;
+    const webhookUrl = (document.getElementById('alertWebhookUrl')?.value || '').trim();
 
     const res = await fetch('/api/alerts/config', {
       method: 'POST',
@@ -1839,14 +1853,15 @@ document.addEventListener('DOMContentLoaded', () => {
       body: JSON.stringify({
         ufsMonitoradas: checkedUfs,
         diasAntecedenciaVencimento: dias,
-        notificarProrrogacoesFacepe: prorrog
+        notificarProrrogacoesFacepe: prorrog,
+        webhookUrl
       })
     });
     const data = await res.json();
     if (data.state) {
       appState = data.state;
       renderAll();
-      showToast('Preferências de alerta salvas!');
+      showToast('Preferências de alerta e Webhook salvos!');
     }
   });
 
@@ -2229,4 +2244,270 @@ window.saveWorkplanToPipeline = async function saveWorkplanToPipeline() {
     window.closeWorkplanModal();
     showToast(`Plano de Trabalho e orçamento salvos na etapa "Escrevendo Projeto" do Kanban!`);
   }
+};
+
+// ===================== NOTIFICAÇÕES NATIVAS, WEBHOOK, BACKUP JSON & RELATÓRIO EXECUTIVO =====================
+window.enableBrowserNotifications = async function enableBrowserNotifications() {
+  if (!('Notification' in window)) {
+    showToast('Seu navegador não suporta notificações nativas.');
+    return;
+  }
+  const permission = await Notification.requestPermission();
+  renderAlertasTab();
+  if (permission === 'granted') {
+    showToast('Alertas Desktop ativados com sucesso!');
+    window.sendTestBrowserNotification();
+  } else {
+    showToast('Permissão de notificação não concedida pelo navegador.');
+  }
+};
+
+window.sendTestBrowserNotification = function sendTestBrowserNotification() {
+  const topEdital = [...(appState.editais || [])]
+    .filter(e => e.status === 'Aberto')
+    .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))[0];
+
+  const title = `RadarFAP Brasil • ${appState.alerts?.length || 0} Alertas Ativos`;
+  const body = topEdital
+    ? `Destaque (${topEdital.matchScore}% Match): ${topEdital.agencia} Nº ${topEdital.numero} — Prazo: ${formatDateBr(topEdital.prazoSubmissao)}`
+    : 'Monitoramento em tempo real ativo para FACEPE e 27 FAPs.';
+
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(title, { body });
+    } catch {}
+  }
+  showToast(`🔔 ${title}: ${body}`);
+};
+
+window.testAlertWebhook = async function testAlertWebhook() {
+  const webhookUrl = (document.getElementById('alertWebhookUrl')?.value || '').trim();
+  showToast('Preparando disparo do boletim de oportunidades...');
+  try {
+    const res = await fetch('/api/alerts/test-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ webhookUrl })
+    });
+    const data = await res.json();
+    if (webhookUrl && data.webhookDispatched) {
+      showToast(`Boletim enviado com sucesso para o Webhook às ${data.dispatchedAt}!`);
+    } else if (webhookUrl && !data.webhookDispatched) {
+      showToast(`Aviso: o endpoint de Webhook retornou erro ou bloqueio (${data.webhookStatus}).`);
+    } else {
+      await navigator.clipboard?.writeText(data.messageText || '');
+      showToast('Boletim executivo gerado e copiado para a área de transferência! (Informe uma URL para envio automático)');
+    }
+  } catch (err) {
+    showToast(`Erro ao testar boletim: ${err.message}`);
+  }
+};
+
+window.exportWorkspaceJson = function exportWorkspaceJson() {
+  const payload = {
+    version: '2.0',
+    exportedAt: new Date().toISOString(),
+    researcherProfile: appState.researcherProfile || {},
+    favoritos: appState.favoritos || [],
+    pipeline: appState.pipeline || [],
+    alertConfig: appState.alertConfig || {},
+    manualEditais: (appState.editais || []).filter(e => e.curadoriaManual)
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `radarfap-carteira-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Carteira de projetos e perfil exportados em .JSON!');
+};
+
+window.triggerImportWorkspaceJson = function triggerImportWorkspaceJson() {
+  const input = document.getElementById('importWorkspaceInput');
+  if (input) {
+    input.value = '';
+    input.click();
+  }
+};
+
+window.handleImportWorkspaceFile = function handleImportWorkspaceFile(event) {
+  const file = event.target?.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const imported = JSON.parse(String(e.target?.result || '{}'));
+      if (imported.researcherProfile) {
+        appState.researcherProfile = { ...(appState.researcherProfile || {}), ...imported.researcherProfile };
+        fetch('/api/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(appState.researcherProfile)
+        }).catch(() => {});
+      }
+      if (Array.isArray(imported.favoritos)) {
+        appState.favoritos = [...new Set([...(appState.favoritos || []), ...imported.favoritos])];
+      }
+      if (Array.isArray(imported.pipeline)) {
+        const pipeMap = new Map((appState.pipeline || []).map(p => [p.id, p]));
+        for (const item of imported.pipeline) {
+          pipeMap.set(item.id, item);
+          fetch('/api/pipeline', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+          }).catch(() => {});
+        }
+        appState.pipeline = Array.from(pipeMap.values());
+      }
+      if (imported.alertConfig) {
+        appState.alertConfig = { ...(appState.alertConfig || {}), ...imported.alertConfig };
+      }
+      if (Array.isArray(imported.manualEditais)) {
+        const edMap = new Map((appState.editais || []).map(ed => [ed.id, ed]));
+        for (const me of imported.manualEditais) {
+          edMap.set(me.id, me);
+        }
+        appState.editais = Array.from(edMap.values());
+      }
+      saveWorkspaceBackup();
+      renderAll();
+      showToast('Carteira de projetos importada e sincronizada com sucesso!');
+    } catch {
+      showToast('Arquivo JSON inválido. Verifique o arquivo exportado pelo RadarFAP.');
+    }
+  };
+  reader.readAsText(file);
+};
+
+window.printPortfolioReport = function printPortfolioReport() {
+  const prof = appState.researcherProfile || {};
+  const pipe = appState.pipeline || [];
+
+  let totalPortfolio = 0;
+  let totalCusteio = 0;
+  let totalCapital = 0;
+  let totalBolsas = 0;
+
+  const enrichedRows = pipe.map(item => {
+    const ed = appState.editais.find(e => e.id === item.editalId) || {};
+    const val = Number(item.valorPleiteado) || 150000;
+    const cust = item.rubricaCusteio ?? Math.round(val * 0.45);
+    const cap = item.rubricaCapital ?? Math.round(val * 0.25);
+    const bol = item.rubricaBolsas ?? (val - cust - cap);
+
+    totalPortfolio += val;
+    totalCusteio += cust;
+    totalCapital += cap;
+    totalBolsas += bol;
+
+    const stageObj = KANBAN_STAGES.find(s => s.id === item.estagio) || { label: item.estagio };
+    const done = (item.checklist || []).filter(c => c.concluido).length;
+    const totalCk = (item.checklist || []).length || 1;
+
+    return {
+      item,
+      ed,
+      val,
+      cust,
+      cap,
+      bol,
+      stageLabel: stageObj.label,
+      progressPct: Math.round((done / totalCk) * 100)
+    };
+  });
+
+  const w = window.open('', '_blank', 'width=960,height=780');
+  if (!w) return;
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Relatório Executivo de Captação — RadarFAP Brasil</title>
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #14181f; padding: 36px; line-height: 1.5; }
+        .top-bar { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #14181f; padding-bottom: 16px; margin-bottom: 24px; }
+        .badge { display: inline-block; background: #14181f; color: #b6f53b; padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: bold; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+        .kpi-card { background: #f6f7f9; border: 1px solid #dcdfe5; border-radius: 14px; padding: 14px; }
+        .kpi-card strong { display: block; font-size: 18px; margin-top: 4px; color: #14181f; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12px; }
+        th { background: #14181f; color: #ffffff; padding: 10px 8px; text-align: left; }
+        td { border-bottom: 1px solid #dcdfe5; padding: 10px 8px; vertical-align: top; }
+      </style>
+    </head>
+    <body>
+      <div class="top-bar">
+        <div>
+          <span class="badge">RadarFAP Brasil • Relatório Executivo de Portfólio de Captação</span>
+          <h1 style="font-size: 22px; margin: 8px 0 4px;">Carteira de Projetos e Submissões em Fomento</h1>
+          <div style="font-size: 13px; color: #5a6270;">
+            <strong>Coordenação:</strong> ${escapeHtml(prof.nomePesquisador || 'Coordenação Principal')} •
+            <strong>Instituição:</strong> ${escapeHtml(prof.instituicao || 'UFPE / UFRPE / UPE / ICT')} (${escapeHtml(prof.ufPrincipal || 'PE')})
+          </div>
+        </div>
+        <div style="text-align: right; font-size: 12px; color: #5a6270;">
+          Emitido em: ${new Date().toLocaleDateString('pt-BR')}<br/>
+          <strong>${enrichedRows.length} propostas ativas</strong>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span style="font-size: 11px; color: #68707e;">Volume Global Pleiteado</span>
+          <strong>${formatCurrencyBRL(totalPortfolio)}</strong>
+        </div>
+        <div class="kpi-card">
+          <span style="font-size: 11px; color: #68707e;">Total Custeio (45%)</span>
+          <strong>${formatCurrencyBRL(totalCusteio)}</strong>
+        </div>
+        <div class="kpi-card">
+          <span style="font-size: 11px; color: #68707e;">Total Capital (25%)</span>
+          <strong>${formatCurrencyBRL(totalCapital)}</strong>
+        </div>
+        <div class="kpi-card">
+          <span style="font-size: 11px; color: #68707e;">Total Bolsas (30%)</span>
+          <strong>${formatCurrencyBRL(totalBolsas)}</strong>
+        </div>
+      </div>
+
+      <h2 style="font-size: 15px; margin-bottom: 6px;">Detalhamento das Propostas no Pipeline Kanban</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Agência / Edital</th>
+            <th>Título do Projeto / Chamada</th>
+            <th>Etapa Kanban</th>
+            <th>Prazo Final</th>
+            <th>Custeio / Capital / Bolsas</th>
+            <th>Total Pleiteado</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${enrichedRows.map(r => `
+            <tr>
+              <td><strong>${escapeHtml(r.ed.agencia || 'FAP')} (${escapeHtml(r.ed.uf || 'PE')})</strong><br/>Nº ${escapeHtml(r.ed.numero || 'S/N')}</td>
+              <td>
+                <strong>${escapeHtml(r.item.tituloProjeto || r.ed.titulo || 'Proposta')}</strong><br/>
+                <span style="color: #68707e;">Coord.: ${escapeHtml(r.item.pesquisadorResponsavel || prof.nomePesquisador || '')} • Checklist: ${r.progressPct}%</span>
+              </td>
+              <td>${escapeHtml(r.stageLabel)}</td>
+              <td><strong>${formatDateBr(r.ed.prazoSubmissao)}</strong><br/>via ${escapeHtml(r.ed.plataformaSubmissao || 'Portal')}</td>
+              <td>
+                Cust: ${formatCurrencyBRL(r.cust)}<br/>
+                Cap: ${formatCurrencyBRL(r.cap)}<br/>
+                Bol: ${formatCurrencyBRL(r.bol)}
+              </td>
+              <td><strong>${formatCurrencyBRL(r.val)}</strong></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <script>window.onload = () => window.print();</script>
+    </body>
+    </html>
+  `);
+  w.document.close();
 };
