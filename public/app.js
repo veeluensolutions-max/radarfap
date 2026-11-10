@@ -1314,224 +1314,6 @@ window.printPipelineProposal = function printPipelineProposal() {
   w.document.close();
 };
 
-// ===================== COMPARADOR LADO A LADO DE EDITAIS, SIMULADOR DE BOLSAS & LINK COMPARTILHÁVEL =====================
-window.compareSelectedIds = [];
-
-window.toggleCompareEdital = function toggleCompareEdital(editalId) {
-  const idx = window.compareSelectedIds.indexOf(editalId);
-  if (idx >= 0) {
-    window.compareSelectedIds.splice(idx, 1);
-  } else {
-    if (window.compareSelectedIds.length >= 3) {
-      showToast('Selecione no máximo 3 editais por vez para comparação lado a lado.');
-      return;
-    }
-    window.compareSelectedIds.push(editalId);
-  }
-  renderEditaisTab();
-};
-
-window.clearCompareSelection = function clearCompareSelection() {
-  window.compareSelectedIds = [];
-  renderEditaisTab();
-};
-
-window.renderCompareFloatingBar = function renderCompareFloatingBar() {
-  const bar = document.getElementById('compareFloatingBar');
-  if (!bar) return;
-  const ids = window.compareSelectedIds || [];
-  if (ids.length === 0) {
-    bar.classList.add('hidden');
-    return;
-  }
-  bar.classList.remove('hidden');
-  const selectedEditais = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
-
-  bar.innerHTML = `
-    <div class="flex flex-wrap items-center gap-2">
-      <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
-        ⚖️ Comparador (${selectedEditais.length}/3)
-      </span>
-      ${selectedEditais.map(e => `
-        <span class="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold flex items-center gap-1.5">
-          <span>${escapeHtml(e.agencia)} Nº ${escapeHtml(e.numero)} (${e.matchScore || 80}%)</span>
-          <button onclick="window.toggleCompareEdital('${e.id}')" class="text-[#9aa2b1] hover:text-white font-bold">✕</button>
-        </span>
-      `).join('')}
-    </div>
-    <div class="flex items-center gap-2">
-      <button onclick="window.clearCompareSelection()" class="btn-pill-outline-dark !py-1.5 !px-3 text-xs">
-        Limpar
-      </button>
-      <button onclick="window.openCompareModal()" class="btn-pill-lime !py-1.5 !px-4 text-xs">
-        ⚖️ Comparar Lado a Lado (${selectedEditais.length})
-      </button>
-    </div>
-  `;
-};
-
-window.openCompareModal = function openCompareModal() {
-  const ids = window.compareSelectedIds || [];
-  const list = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
-  if (list.length === 0) {
-    showToast('Selecione pelo menos 1 ou 2 editais clicando no botão ⚖️ do card.');
-    return;
-  }
-
-  const body = document.getElementById('compareModalBody');
-  const modal = document.getElementById('compareEditaisModal');
-  if (!body || !modal) return;
-
-  body.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-${Math.max(2, list.length)} gap-4 min-w-[600px]">
-      ${list.map(ed => {
-        const daysLeft = getDaysRemaining(ed.prazoSubmissao);
-        return `
-          <div class="p-5 rounded-3xl bg-[#f6f7f9] border border-[#dcdfe5] flex flex-col justify-between gap-4">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between gap-2">
-                <span class="px-3 py-1 rounded-full bg-[#14181f] text-white text-xs font-extrabold">
-                  ${escapeHtml(ed.agencia)} • ${escapeHtml(ed.uf)}
-                </span>
-                <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
-                  ${ed.matchScore || 80}% Match
-                </span>
-              </div>
-
-              <h4 class="text-sm font-extrabold text-[#14181f] leading-snug">
-                Nº ${escapeHtml(ed.numero)} — ${escapeHtml(ed.titulo)}
-              </h4>
-
-              <div class="space-y-2 text-xs bg-white p-3.5 rounded-2xl border border-[#ebedf2]">
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Status:</span>
-                  <strong class="text-[#14181f]">${escapeHtml(ed.status)} ${ed.prorrogado ? '(Prorrogado)' : ''}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Prazo Final:</span>
-                  <strong class="text-[#14181f]">${formatDateBr(ed.prazoSubmissao)} ${daysLeft !== null ? `(${daysLeft}d)` : ''}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Linha:</span>
-                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.area)}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Recursos:</span>
-                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.valorEstimado)}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Plataforma:</span>
-                  <strong class="text-[#14181f]">${escapeHtml(ed.plataformaSubmissao || 'Portal')}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Anexos / Erratas:</span>
-                  <strong class="text-[#14181f]">${(ed.anexos || []).length} doc(s)</strong>
-                </div>
-              </div>
-
-              <div class="space-y-1 text-[11px] text-[#4a5260]">
-                <strong class="text-[#14181f] block">Diagnóstico de Elegibilidade:</strong>
-                ${(ed.matchRazoes || []).map(r => `<div>${escapeHtml(r)}</div>`).join('')}
-              </div>
-            </div>
-
-            <div class="pt-3 border-t border-[#dcdfe5] flex flex-wrap items-center justify-between gap-2">
-              <button onclick="window.closeCompareModal(); window.openWorkplanModal('${ed.id}');" class="btn-pill-dark flex-1 text-xs">
-                ✨ Gerar Plano (${escapeHtml(ed.plataformaSubmissao || 'FAP')})
-              </button>
-              <button onclick="window.addToPipeline('${ed.id}')" class="btn-pill-lime text-xs">
-                + Kanban
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
-  `;
-
-  modal.classList.remove('hidden');
-};
-
-window.closeCompareModal = function closeCompareModal() {
-  document.getElementById('compareEditaisModal')?.classList.add('hidden');
-};
-
-window.addSimulatedBolsaToRubrica = function addSimulatedBolsaToRubrica() {
-  const select = document.getElementById('simBolsaModalidade');
-  const valMensal = Number(select?.value) || 3500;
-  const labelModalidade = select?.options[select.selectedIndex]?.text?.split('(')[0]?.trim() || 'Bolsa';
-  const qtd = Math.max(1, Number(document.getElementById('simBolsaQtd')?.value) || 1);
-  const meses = Math.max(1, Number(document.getElementById('simBolsaMeses')?.value) || 12);
-
-  const subtotalBolsa = valMensal * qtd * meses;
-  const inputBolsas = document.getElementById('pipeRubricaBolsas');
-  if (inputBolsas) {
-    inputBolsas.value = (Number(inputBolsas.value) || 0) + subtotalBolsa;
-  }
-
-  const notasEl = document.getElementById('pipeFormNotas');
-  if (notasEl) {
-    const notaBolsa = `[Bolsa Calculada: ${qtd}x ${labelModalidade} por ${meses}m = ${formatCurrencyBRL(subtotalBolsa)}]`;
-    notasEl.value = notasEl.value ? `${notasEl.value}\n${notaBolsa}` : notaBolsa;
-  }
-
-  const previewLbl = document.getElementById('bolsaPreviewCalc');
-  if (previewLbl) {
-    previewLbl.textContent = `+ ${formatCurrencyBRL(subtotalBolsa)} adicionado`;
-  }
-
-  updatePipeTotalPreview();
-  showToast(`Adicionado ${qtd}x ${labelModalidade} (${meses} meses = ${formatCurrencyBRL(subtotalBolsa)}) na rubrica Bolsas!`);
-};
-
-window.copyShareablePortfolioLink = async function copyShareablePortfolioLink() {
-  try {
-    const compactPayload = {
-      p: appState.researcherProfile || {},
-      f: appState.favoritos || [],
-      k: (appState.pipeline || []).map(item => ({
-        id: item.id,
-        editalId: item.editalId,
-        estagio: item.estagio,
-        tituloProjeto: item.tituloProjeto,
-        pesquisadorResponsavel: item.pesquisadorResponsavel,
-        instituicao: item.instituicao,
-        valorPleiteado: item.valorPleiteado,
-        rubricaCusteio: item.rubricaCusteio,
-        rubricaCapital: item.rubricaCapital,
-        rubricaBolsas: item.rubricaBolsas,
-        notas: item.notas
-      }))
-    };
-    const encoded = btoa(encodeURIComponent(JSON.stringify(compactPayload)));
-    const shareUrl = `${window.location.origin}${window.location.pathname}?carteira=${encoded}`;
-    await navigator.clipboard.writeText(shareUrl);
-    showToast('🔗 Link da Carteira copiado! Envie para qualquer pesquisador da sua equipe abrir na Vercel.');
-  } catch (err) {
-    showToast(`Erro ao gerar link compartilhável: ${err.message}`);
-  }
-};
-
-// Restaura automaticamente uma carteira compartilhada via URL (?carteira=...)
-try {
-  const params = new URLSearchParams(window.location.search);
-  const sharedParam = params.get('carteira');
-  if (sharedParam) {
-    const decoded = JSON.parse(decodeURIComponent(atob(sharedParam)));
-    const existingRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    const currentBackup = existingRaw ? JSON.parse(existingRaw) : {};
-    const mergedBackup = {
-      ...currentBackup,
-      researcherProfile: decoded.p || currentBackup.researcherProfile,
-      favoritos: decoded.f || currentBackup.favoritos || [],
-      pipeline: decoded.k || currentBackup.pipeline || []
-    };
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedBackup));
-    window.history.replaceState({}, document.title, window.location.pathname);
-    setTimeout(() => showToast('🔗 Carteira compartilhada pela equipe carregada com sucesso!'), 900);
-  }
-} catch {}
-
 // ===================== 5. RENDER ALERTAS & LOG =====================
 function renderAlertasTab() {
   const cfg = appState.alertConfig || {};
@@ -1569,6 +1351,45 @@ function renderAlertasTab() {
   }
 
   document.getElementById('activeAlertsSubtitle').textContent = `${appState.alerts.length} alertas`;
+
+  const timelineEl = document.getElementById('deadlinesTimelineList');
+  if (timelineEl) {
+    const userUf = appState.researcherProfile?.ufPrincipal || 'PE';
+    const upcoming = [...(appState.editais || [])]
+      .filter(e => e.status === 'Aberto' && e.prazoSubmissao)
+      .sort((a, b) => (a.prazoSubmissao || '9999').localeCompare(b.prazoSubmissao || '9999'))
+      .filter(e =>
+        (appState.favoritos || []).includes(e.id) ||
+        (appState.pipeline || []).some(p => p.editalId === e.id) ||
+        e.uf === userUf ||
+        e.uf === 'BR'
+      )
+      .slice(0, 6);
+
+    timelineEl.innerHTML = upcoming.map(ed => {
+      const days = getDaysRemaining(ed.prazoSubmissao);
+      const isUrgent = days !== null && days <= 15;
+      return `
+        <div onclick="window.openDetailModal('${ed.id}')" class="p-3.5 rounded-2xl bg-[#f6f7f9] hover:bg-[#ebedf2] cursor-pointer flex items-center justify-between gap-2 transition">
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#14181f] text-white">${escapeHtml(ed.agencia)} (${escapeHtml(ed.uf)})</span>
+              <span class="text-xs font-bold text-[#14181f] truncate">Nº ${escapeHtml(ed.numero)}</span>
+            </div>
+            <p class="text-[11px] text-[#5a6270] truncate mt-1">${escapeHtml(ed.titulo)}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              isUrgent ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-white text-[#14181f]'
+            }">
+              ${days !== null ? `${days}d` : formatDateBr(ed.prazoSubmissao)}
+            </span>
+            <div class="text-[10px] text-[#8a92a0] mt-0.5">${formatDateBr(ed.prazoSubmissao)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
   const fullAlertsEl = document.getElementById('fullAlertsList');
   if (fullAlertsEl) {
@@ -2426,224 +2247,6 @@ window.printWorkplanDocument = function printWorkplanDocument() {
   w.document.close();
 };
 
-// ===================== COMPARADOR LADO A LADO DE EDITAIS, SIMULADOR DE BOLSAS & LINK COMPARTILHÁVEL =====================
-window.compareSelectedIds = [];
-
-window.toggleCompareEdital = function toggleCompareEdital(editalId) {
-  const idx = window.compareSelectedIds.indexOf(editalId);
-  if (idx >= 0) {
-    window.compareSelectedIds.splice(idx, 1);
-  } else {
-    if (window.compareSelectedIds.length >= 3) {
-      showToast('Selecione no máximo 3 editais por vez para comparação lado a lado.');
-      return;
-    }
-    window.compareSelectedIds.push(editalId);
-  }
-  renderEditaisTab();
-};
-
-window.clearCompareSelection = function clearCompareSelection() {
-  window.compareSelectedIds = [];
-  renderEditaisTab();
-};
-
-window.renderCompareFloatingBar = function renderCompareFloatingBar() {
-  const bar = document.getElementById('compareFloatingBar');
-  if (!bar) return;
-  const ids = window.compareSelectedIds || [];
-  if (ids.length === 0) {
-    bar.classList.add('hidden');
-    return;
-  }
-  bar.classList.remove('hidden');
-  const selectedEditais = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
-
-  bar.innerHTML = `
-    <div class="flex flex-wrap items-center gap-2">
-      <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
-        ⚖️ Comparador (${selectedEditais.length}/3)
-      </span>
-      ${selectedEditais.map(e => `
-        <span class="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-semibold flex items-center gap-1.5">
-          <span>${escapeHtml(e.agencia)} Nº ${escapeHtml(e.numero)} (${e.matchScore || 80}%)</span>
-          <button onclick="window.toggleCompareEdital('${e.id}')" class="text-[#9aa2b1] hover:text-white font-bold">✕</button>
-        </span>
-      `).join('')}
-    </div>
-    <div class="flex items-center gap-2">
-      <button onclick="window.clearCompareSelection()" class="btn-pill-outline-dark !py-1.5 !px-3 text-xs">
-        Limpar
-      </button>
-      <button onclick="window.openCompareModal()" class="btn-pill-lime !py-1.5 !px-4 text-xs">
-        ⚖️ Comparar Lado a Lado (${selectedEditais.length})
-      </button>
-    </div>
-  `;
-};
-
-window.openCompareModal = function openCompareModal() {
-  const ids = window.compareSelectedIds || [];
-  const list = ids.map(id => appState.editais.find(e => e.id === id)).filter(Boolean);
-  if (list.length === 0) {
-    showToast('Selecione pelo menos 1 ou 2 editais clicando no botão ⚖️ do card.');
-    return;
-  }
-
-  const body = document.getElementById('compareModalBody');
-  const modal = document.getElementById('compareEditaisModal');
-  if (!body || !modal) return;
-
-  body.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-${Math.max(2, list.length)} gap-4 min-w-[600px]">
-      ${list.map(ed => {
-        const daysLeft = getDaysRemaining(ed.prazoSubmissao);
-        return `
-          <div class="p-5 rounded-3xl bg-[#f6f7f9] border border-[#dcdfe5] flex flex-col justify-between gap-4">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between gap-2">
-                <span class="px-3 py-1 rounded-full bg-[#14181f] text-white text-xs font-extrabold">
-                  ${escapeHtml(ed.agencia)} • ${escapeHtml(ed.uf)}
-                </span>
-                <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">
-                  ${ed.matchScore || 80}% Match
-                </span>
-              </div>
-
-              <h4 class="text-sm font-extrabold text-[#14181f] leading-snug">
-                Nº ${escapeHtml(ed.numero)} — ${escapeHtml(ed.titulo)}
-              </h4>
-
-              <div class="space-y-2 text-xs bg-white p-3.5 rounded-2xl border border-[#ebedf2]">
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Status:</span>
-                  <strong class="text-[#14181f]">${escapeHtml(ed.status)} ${ed.prorrogado ? '(Prorrogado)' : ''}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Prazo Final:</span>
-                  <strong class="text-[#14181f]">${formatDateBr(ed.prazoSubmissao)} ${daysLeft !== null ? `(${daysLeft}d)` : ''}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Linha:</span>
-                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.area)}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Recursos:</span>
-                  <strong class="text-[#14181f] text-right">${escapeHtml(ed.valorEstimado)}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Plataforma:</span>
-                  <strong class="text-[#14181f]">${escapeHtml(ed.plataformaSubmissao || 'Portal')}</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-[#8a92a0]">Anexos / Erratas:</span>
-                  <strong class="text-[#14181f]">${(ed.anexos || []).length} doc(s)</strong>
-                </div>
-              </div>
-
-              <div class="space-y-1 text-[11px] text-[#4a5260]">
-                <strong class="text-[#14181f] block">Diagnóstico de Elegibilidade:</strong>
-                ${(ed.matchRazoes || []).map(r => `<div>${escapeHtml(r)}</div>`).join('')}
-              </div>
-            </div>
-
-            <div class="pt-3 border-t border-[#dcdfe5] flex flex-wrap items-center justify-between gap-2">
-              <button onclick="window.closeCompareModal(); window.openWorkplanModal('${ed.id}');" class="btn-pill-dark flex-1 text-xs">
-                ✨ Gerar Plano (${escapeHtml(ed.plataformaSubmissao || 'FAP')})
-              </button>
-              <button onclick="window.addToPipeline('${ed.id}')" class="btn-pill-lime text-xs">
-                + Kanban
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('')}
-    </div>
-  `;
-
-  modal.classList.remove('hidden');
-};
-
-window.closeCompareModal = function closeCompareModal() {
-  document.getElementById('compareEditaisModal')?.classList.add('hidden');
-};
-
-window.addSimulatedBolsaToRubrica = function addSimulatedBolsaToRubrica() {
-  const select = document.getElementById('simBolsaModalidade');
-  const valMensal = Number(select?.value) || 3500;
-  const labelModalidade = select?.options[select.selectedIndex]?.text?.split('(')[0]?.trim() || 'Bolsa';
-  const qtd = Math.max(1, Number(document.getElementById('simBolsaQtd')?.value) || 1);
-  const meses = Math.max(1, Number(document.getElementById('simBolsaMeses')?.value) || 12);
-
-  const subtotalBolsa = valMensal * qtd * meses;
-  const inputBolsas = document.getElementById('pipeRubricaBolsas');
-  if (inputBolsas) {
-    inputBolsas.value = (Number(inputBolsas.value) || 0) + subtotalBolsa;
-  }
-
-  const notasEl = document.getElementById('pipeFormNotas');
-  if (notasEl) {
-    const notaBolsa = `[Bolsa Calculada: ${qtd}x ${labelModalidade} por ${meses}m = ${formatCurrencyBRL(subtotalBolsa)}]`;
-    notasEl.value = notasEl.value ? `${notasEl.value}\n${notaBolsa}` : notaBolsa;
-  }
-
-  const previewLbl = document.getElementById('bolsaPreviewCalc');
-  if (previewLbl) {
-    previewLbl.textContent = `+ ${formatCurrencyBRL(subtotalBolsa)} adicionado`;
-  }
-
-  updatePipeTotalPreview();
-  showToast(`Adicionado ${qtd}x ${labelModalidade} (${meses} meses = ${formatCurrencyBRL(subtotalBolsa)}) na rubrica Bolsas!`);
-};
-
-window.copyShareablePortfolioLink = async function copyShareablePortfolioLink() {
-  try {
-    const compactPayload = {
-      p: appState.researcherProfile || {},
-      f: appState.favoritos || [],
-      k: (appState.pipeline || []).map(item => ({
-        id: item.id,
-        editalId: item.editalId,
-        estagio: item.estagio,
-        tituloProjeto: item.tituloProjeto,
-        pesquisadorResponsavel: item.pesquisadorResponsavel,
-        instituicao: item.instituicao,
-        valorPleiteado: item.valorPleiteado,
-        rubricaCusteio: item.rubricaCusteio,
-        rubricaCapital: item.rubricaCapital,
-        rubricaBolsas: item.rubricaBolsas,
-        notas: item.notas
-      }))
-    };
-    const encoded = btoa(encodeURIComponent(JSON.stringify(compactPayload)));
-    const shareUrl = `${window.location.origin}${window.location.pathname}?carteira=${encoded}`;
-    await navigator.clipboard.writeText(shareUrl);
-    showToast('🔗 Link da Carteira copiado! Envie para qualquer pesquisador da sua equipe abrir na Vercel.');
-  } catch (err) {
-    showToast(`Erro ao gerar link compartilhável: ${err.message}`);
-  }
-};
-
-// Restaura automaticamente uma carteira compartilhada via URL (?carteira=...)
-try {
-  const params = new URLSearchParams(window.location.search);
-  const sharedParam = params.get('carteira');
-  if (sharedParam) {
-    const decoded = JSON.parse(decodeURIComponent(atob(sharedParam)));
-    const existingRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    const currentBackup = existingRaw ? JSON.parse(existingRaw) : {};
-    const mergedBackup = {
-      ...currentBackup,
-      researcherProfile: decoded.p || currentBackup.researcherProfile,
-      favoritos: decoded.f || currentBackup.favoritos || [],
-      pipeline: decoded.k || currentBackup.pipeline || []
-    };
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mergedBackup));
-    window.history.replaceState({}, document.title, window.location.pathname);
-    setTimeout(() => showToast('🔗 Carteira compartilhada pela equipe carregada com sucesso!'), 900);
-  }
-} catch {}
-
 window.saveWorkplanToPipeline = async function saveWorkplanToPipeline() {
   const editalId = document.getElementById('wpEditalId').value;
   const ed = appState.editais.find(e => e.id === editalId);
@@ -3182,3 +2785,117 @@ try {
     setTimeout(() => showToast('🔗 Carteira compartilhada pela equipe carregada com sucesso!'), 900);
   }
 } catch {}
+
+window.downloadAllDeadlinesIcs = function downloadAllDeadlinesIcs() {
+  const userUf = appState.researcherProfile?.ufPrincipal || 'PE';
+  const relevant = (appState.editais || []).filter(e =>
+    e.status === 'Aberto' &&
+    ((appState.favoritos || []).includes(e.id) ||
+      (appState.pipeline || []).some(p => p.editalId === e.id) ||
+      e.uf === userUf)
+  );
+
+  const events = relevant.map(ed => {
+    const dateClean = (ed.prazoSubmissao || '2026-12-01').replace(/-/g, '').slice(0, 8);
+    return [
+      'BEGIN:VEVENT',
+      `UID:radarfap-multi-${ed.id}@radarfap.br`,
+      `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+      `DTSTART;VALUE=DATE:${dateClean}`,
+      `DTEND;VALUE=DATE:${dateClean}`,
+      `SUMMARY:[Prazo FAP] ${ed.agencia} (${ed.uf}) - Edital ${ed.numero}`,
+      `DESCRIPTION:${(ed.titulo || '').replace(/\n/g, ' ')} | Submissao: ${ed.linkSubmissao || ''}`,
+      'END:VEVENT'
+    ].join('\r\n');
+  });
+
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//RadarFAP Brasil Cronograma Completo//PT-BR',
+    ...events,
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cronograma-radarfap-${userUf.toLowerCase()}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`Calendário unificado (.ics) exportado com ${relevant.length} prazos!`);
+};
+
+window.syncToSupabaseCloud = async function syncToSupabaseCloud(mode = 'push') {
+  const urlInput = document.getElementById('supabaseUrlInput')?.value?.trim() || localStorage.getItem('radarfap_sb_url') || '';
+  const keyInput = document.getElementById('supabaseKeyInput')?.value?.trim() || localStorage.getItem('radarfap_sb_key') || '';
+  const badge = document.getElementById('supabaseStatusBadge');
+
+  if (!urlInput || !keyInput) {
+    showToast('Informe a URL e a Anon Key do seu projeto Supabase (ou use "🔗 Compartilhar Link" / "💾 Exportar .json" sem precisar de conta).');
+    return;
+  }
+
+  localStorage.setItem('radarfap_sb_url', urlInput);
+  localStorage.setItem('radarfap_sb_key', keyInput);
+  const cleanUrl = urlInput.replace(/\/$/, '');
+
+  try {
+    if (mode === 'push') {
+      const payload = {
+        id: 'default-workspace',
+        updated_at: new Date().toISOString(),
+        data: {
+          researcherProfile: appState.researcherProfile || {},
+          favoritos: appState.favoritos || [],
+          pipeline: appState.pipeline || [],
+          alertConfig: appState.alertConfig || {}
+        }
+      };
+      const res = await fetch(`${cleanUrl}/rest/v1/radarfap_workspaces?on_conflict=id`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: keyInput,
+          Authorization: `Bearer ${keyInput}`,
+          Prefer: 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        if (badge) {
+          badge.textContent = 'Sincronizado • Supabase';
+          badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#b6f53b] text-[#14181f]';
+        }
+        showToast('☁️ Carteira salva na nuvem Supabase com sucesso!');
+      } else {
+        showToast(`Aviso Supabase (${res.status}): crie a tabela "radarfap_workspaces" (id text PK, data jsonb, updated_at timestamptz).`);
+      }
+    } else {
+      const res = await fetch(`${cleanUrl}/rest/v1/radarfap_workspaces?id=eq.default-workspace&select=*`, {
+        headers: {
+          apikey: keyInput,
+          Authorization: `Bearer ${keyInput}`
+        }
+      });
+      if (res.ok) {
+        const rows = await res.json();
+        const cloudData = rows?.[0]?.data;
+        if (cloudData) {
+          if (cloudData.researcherProfile) appState.researcherProfile = cloudData.researcherProfile;
+          if (Array.isArray(cloudData.favoritos)) appState.favoritos = cloudData.favoritos;
+          if (Array.isArray(cloudData.pipeline)) appState.pipeline = cloudData.pipeline;
+          if (cloudData.alertConfig) appState.alertConfig = cloudData.alertConfig;
+          saveWorkspaceBackup();
+          renderAll();
+          showToast('☁️ Carteira restaurada da nuvem Supabase!');
+        } else {
+          showToast('Nenhum workspace salvo ainda na tabela radarfap_workspaces.');
+        }
+      }
+    }
+  } catch (err) {
+    showToast(`Erro ao conectar ao Supabase: ${err.message}`);
+  }
+};

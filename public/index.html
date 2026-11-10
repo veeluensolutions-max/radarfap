@@ -696,11 +696,42 @@
               📊 Gerar Relatório Executivo (PDF)
             </button>
             <input type="file" id="importWorkspaceInput" accept=".json" class="hidden" onchange="window.handleImportWorkspaceFile(event)" />
+
+            <!-- Conector Opcional Supabase Cloud REST -->
+            <div class="pt-3 border-t border-[#f1f3f6] space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-[#14181f]">☁️ Sincronização Nuvem (Supabase)</span>
+                <span id="supabaseStatusBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f1f3f6] text-[#5a6270]">Local + Link</span>
+              </div>
+              <input id="supabaseUrlInput" type="url" placeholder="URL do Projeto Supabase (opcional)" class="input-well-light w-full !py-2 text-xs" />
+              <input id="supabaseKeyInput" type="password" placeholder="Anon Key do Supabase (opcional)" class="input-well-light w-full !py-2 text-xs" />
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="window.syncToSupabaseCloud('push')" class="btn-pill-dark !py-1.5 text-[11px]">
+                  ☁️ Salvar na Nuvem
+                </button>
+                <button type="button" onclick="window.syncToSupabaseCloud('pull')" class="btn-pill-outline-light !py-1.5 text-[11px]">
+                  🔄 Baixar da Nuvem
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Lista de Alertas + Log de Sincronização (Cards Brancos Limpos) -->
+        <!-- Lista de Alertas + Cronograma de Prazos + Log de Sincronização -->
         <div class="lg:col-span-8 space-y-6">
+          <div class="bento-light p-6 sm:p-7 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-[#14181f]">Cronograma de Prazos Críticos &amp; Agenda (.ics)</h3>
+                <p class="text-xs text-[#8a92a0]">Próximos vencimentos ordenados por urgência nos seus Favoritos, Pipeline e UF</p>
+              </div>
+              <button onclick="window.downloadAllDeadlinesIcs()" class="btn-pill-dark text-xs">
+                📅 Exportar Todos os Prazos (.ics)
+              </button>
+            </div>
+            <div id="deadlinesTimelineList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+
           <div class="bento-light p-6 sm:p-7 space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="text-base font-bold text-[#14181f]">Alertas Ativos no Radar</h3>
