@@ -1,0 +1,333 @@
+:root {
+  --bg-canvas: #e6e8ec;
+  --bg-tray: #dcdfe5;
+  --card-dark: #14181f;
+  --card-dark-2: #191e26;
+  --input-dark: #0d1015;
+  --card-light: #ffffff;
+  --text-dark: #14181f;
+  --text-muted: #8a92a0;
+  --accent-lime: #b6f53b;
+  --accent-lime-hover: #a5e629;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+}
+
+/* Molduras externas estilo Bento Tray da imagem de referência */
+.bento-tray {
+  background-color: var(--bg-tray);
+  border-radius: 34px;
+  padding: 14px;
+}
+
+/* Card Escuro (Graphics / Form option) */
+.bento-dark {
+  background: linear-gradient(165deg, #181c24 0%, #12161c 100%);
+  color: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 18px 40px -15px rgba(15, 20, 28, 0.28);
+}
+
+/* Card Branco (Direct messages / List cards) */
+.bento-light {
+  background-color: #ffffff;
+  color: var(--text-dark);
+  border-radius: 26px;
+  box-shadow: 0 10px 28px -12px rgba(20, 24, 31, 0.06);
+}
+
+/* Inputs escuros embutidos exatamente como "Form option" da imagem */
+.input-well-dark {
+  background-color: #0d1015;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-well-dark::placeholder {
+  color: #565e6d;
+}
+
+.input-well-dark:focus {
+  outline: none;
+  border-color: rgba(182, 245, 59, 0.55);
+  box-shadow: 0 0 0 3px rgba(182, 245, 59, 0.12);
+}
+
+/* Inputs claros suaves */
+.input-well-light {
+  background-color: #f3f5f8;
+  border: 1px solid transparent;
+  color: #14181f;
+  border-radius: 9999px;
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.input-well-light:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: #14181f;
+}
+
+/* Cápsula de navegação igual ao seletor Item 1..Item 4 da imagem */
+.pill-nav-shell {
+  background-color: var(--bg-tray);
+  border-radius: 9999px;
+  padding: 10px;
+}
+
+.pill-nav-inner {
+  background-color: #ffffff;
+  border-radius: 9999px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill-tab {
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a6270;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.pill-tab:hover {
+  color: #14181f;
+}
+
+.pill-tab.active {
+  background-color: #14181f;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(20, 24, 31, 0.18);
+}
+
+/* Botões em cápsula da referência */
+.btn-pill-dark {
+  background-color: #14181f;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.18s ease;
+}
+
+.btn-pill-dark:hover {
+  background-color: #232934;
+  transform: translateY(-1px);
+}
+
+.btn-pill-lime {
+  background-color: var(--accent-lime);
+  color: #14181f;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.18s ease;
+}
+
+.btn-pill-lime:hover {
+  background-color: var(--accent-lime-hover);
+  transform: translateY(-1px);
+}
+
+.btn-pill-outline-light {
+  background-color: transparent;
+  color: #14181f;
+  border: 1.5px solid #d5d9e0;
+  border-radius: 9999px;
+  padding: 9px 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.18s ease;
+}
+
+.btn-pill-outline-light:hover {
+  border-color: #14181f;
+  background-color: #f7f8fa;
+}
+
+.btn-pill-outline-dark {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+  padding: 9px 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.18s ease;
+}
+
+.btn-pill-outline-dark:hover {
+  border-color: var(--accent-lime);
+  color: var(--accent-lime);
+}
+
+/* Botões circulares de ícone (+ ou seta ->) */
+.circle-icon-dark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background-color: #14181f;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.circle-icon-dark:hover {
+  background-color: var(--accent-lime);
+  color: #14181f;
+}
+
+.circle-icon-lime {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background-color: var(--accent-lime);
+  color: #14181f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(182, 245, 59, 0.45);
+  transition: all 0.18s ease;
+}
+
+/* Gráfico de barras verticais em pílula ("Graphics 2") */
+.bar-track-vertical {
+  width: 14px;
+  height: 155px;
+  background-color: #0b0e13;
+  border-radius: 9999px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.bar-fill-lime {
+  width: 100%;
+  background: linear-gradient(180deg, #c6ff54 0%, #9ee825 100%);
+  border-radius: 9999px;
+  box-shadow: 0 0 12px rgba(182, 245, 59, 0.35);
+  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Toggle Switch minimalista idêntico à referência */
+.ui-switch {
+  width: 38px;
+  height: 20px;
+  border-radius: 9999px;
+  background-color: #14181f;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ui-switch-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  transform: translateX(18px);
+  transition: transform 0.2s ease;
+}
+
+.ui-switch.off {
+  background-color: #d0d5dd;
+}
+
+.ui-switch.off .ui-switch-dot {
+  transform: translateX(0);
+}
+
+/* Hover suave nos cards */
+.bento-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bento-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px -12px rgba(20, 24, 31, 0.11);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e6e8ec;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c7d0;
+  border-radius: 9999px;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-sync {
+  animation: spinSlow 1s linear infinite;
+}

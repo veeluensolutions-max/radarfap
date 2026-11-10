@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RadarFAP Brasil — Captação de Recursos para Pesquisas | FACEPE &amp; 27 FAPs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body class="min-h-screen antialiased selection:bg-[#b6f53b] selection:text-[#14181f]">
+
+  <!-- CONTAINER PRINCIPAL -->
+  <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-6 space-y-6">
+
+    <!-- HEADER CLEAN + SEGMENTED PILL NAVIGATION -->
+    <header class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <!-- Brand Minimalista -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-[#14181f] flex items-center justify-center shadow-md relative">
+          <span class="text-white font-extrabold text-base tracking-tight">RF</span>
+          <span class="w-3 h-3 rounded-full bg-[#b6f53b] border-2 border-[#e6e8ec] absolute -top-1 -right-1"></span>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl font-extrabold tracking-tight text-[#14181f]">RadarFAP Brasil</h1>
+            <span id="realtimeStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#b6f53b] text-[#14181f]">
+              <span class="w-2 h-2 rounded-full bg-[#14181f] animate-ping"></span>
+              <span id="realtimeBadgeText">Tempo Real Ativo • FACEPE</span>
+            </span>
+          </div>
+          <p class="text-xs text-[#767f8e] font-medium mt-0.5">
+            Radar Nacional de Fomento à Pesquisa • <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="text-[#14181f] font-semibold underline decoration-[#b6f53b] decoration-2">www2.facepe.br</a> + 27 Estados &amp; Federais
+          </p>
+        </div>
+      </div>
+
+      <!-- Segmented Pill Bar (Idêntico ao "Item 1 | Item 2 | Item 3 | Item 4" da referência) -->
+      <div class="pill-nav-shell w-full lg:w-auto overflow-x-auto no-scrollbar">
+        <nav class="pill-nav-inner">
+          <button data-tab="dashboard" class="pill-tab active">
+            Visão Geral
+          </button>
+          <button data-tab="editais" class="pill-tab flex items-center gap-2">
+            <span>Editais</span>
+            <span id="badgeTotalEditais" class="px-2 py-0.5 text-[11px] rounded-full bg-[#f1f3f6] text-[#14181f] font-bold">70</span>
+          </button>
+          <button data-tab="faps" class="pill-tab flex items-center gap-2">
+            <span>27 Estados &amp; FAPs</span>
+            <span class="px-2 py-0.5 text-[11px] rounded-full bg-[#f1f3f6] text-[#14181f] font-bold">31</span>
+          </button>
+          <button data-tab="pipeline" class="pill-tab flex items-center gap-2">
+            <span>Submissões</span>
+            <span id="badgePipelineCount" class="px-2 py-0.5 text-[11px] rounded-full bg-[#b6f53b] text-[#14181f] font-bold">3</span>
+          </button>
+          <button data-tab="alertas" class="pill-tab flex items-center gap-2">
+            <span>Alertas</span>
+            <span id="badgeAlertsCount" class="px-2 py-0.5 text-[11px] rounded-full bg-[#14181f] text-white font-bold">0</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Botões de Ação em Pílula + Círculo (Estilo da referência) -->
+      <div class="flex items-center gap-2.5 self-end lg:self-auto">
+        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm">
+          <button id="btnNewEdital" class="btn-pill-outline-light !py-2 !px-4 border-none hover:bg-[#f1f3f6]">
+            Novo Edital
+          </button>
+          <button onclick="window.openNewEditalModal()" class="circle-icon-dark" title="Cadastrar edital manualmente">
+            <span class="text-base leading-none font-bold">+</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-[#14181f] p-1.5 rounded-full shadow-md">
+          <button id="btnSyncNow" class="px-4 py-2 rounded-full text-xs font-bold text-white hover:text-[#b6f53b] transition">
+            <span id="syncBtnText">Sincronizar FACEPE</span>
+          </button>
+          <button onclick="window.triggerSync()" class="circle-icon-lime" title="Sincronizar agora com www2.facepe.br">
+            <svg id="syncIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md"></div>
+
+    <!-- ===================== ABA 1: VISÃO GERAL (BENTO GRID FIEL À IMAGEM) ===================== -->
+    <section id="tab-dashboard" class="tab-panel space-y-6">
+
+      <!-- TOP BENTO ROW -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- COLUNA ESQUERDA (5 cols): Card Escuro "Graphics 2" + Pílula Rápida de Regiões -->
+        <div class="lg:col-span-5 flex flex-col justify-between gap-6">
+
+          <!-- CARD ESCURO "GRAPHICS 2" (Barras Verticais em Cápsula Verde-Lima) -->
+          <div class="bento-tray flex-1 flex flex-col">
+            <div class="bento-dark p-7 flex-1 flex flex-col justify-between">
+              <!-- Topo do Card -->
+              <div class="flex items-start justify-between">
+                <div>
+                  <h2 class="text-lg font-bold text-white tracking-tight">Captação Nacional &amp; FACEPE</h2>
+                  <p id="graphicsTotalSubtitle" class="text-xs text-[#7e8694] font-medium mt-0.5">70 editais monitorados • 31 agências</p>
+                </div>
+                <button onclick="window.switchTab('editais')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest px-2" title="Ver todos os editais">•••</button>
+              </div>
+
+              <!-- Área do Gráfico de Cápsulas Verticais -->
+              <div class="my-6 flex items-end gap-4">
+                <!-- Eixo Y -->
+                <div class="flex flex-col justify-between h-[155px] text-[11px] text-[#6c7483] font-medium pr-2 select-none">
+                  <span>100%</span>
+                  <span>75%</span>
+                  <span>50%</span>
+                  <span>25%</span>
+                  <span>0%</span>
+                </div>
+
+                <!-- Barras Dinâmicas -->
+                <div id="verticalCapsuleChart" class="flex-1 flex items-end justify-between gap-2 pt-2"></div>
+              </div>
+
+              <!-- Rodapé "Add more data (+)" -->
+              <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                <span class="text-[11px] text-[#6c7483]">Clique em uma barra para filtrar os editais</span>
+                <button onclick="window.triggerSync()" class="inline-flex items-center gap-2 text-xs font-semibold text-[#9aa2b1] hover:text-white transition">
+                  <span>Atualizar dados</span>
+                  <span class="w-5 h-5 rounded-full bg-white/15 text-white inline-flex items-center justify-center text-xs font-bold">+</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PÍLULA HORIZONTAL DE FILTRO RÁPIDO (Idêntica à barra abaixo do Graphics 2 na imagem) -->
+          <div class="pill-nav-shell">
+            <div class="pill-nav-inner justify-between overflow-x-auto no-scrollbar">
+              <button onclick="window.quickDashboardRegion('ALL', this)" class="dash-pill pill-tab active flex-1 text-center !py-2.5 !px-4">
+                Brasil (70)
+              </button>
+              <button onclick="window.quickDashboardRegion('PE', this)" class="dash-pill pill-tab flex-1 text-center !py-2.5 !px-4">
+                FACEPE • PE
+              </button>
+              <button onclick="window.quickDashboardRegion('Federal', this)" class="dash-pill pill-tab flex-1 text-center !py-2.5 !px-4">
+                Federais
+              </button>
+              <button onclick="window.quickDashboardRegion('Nordeste', this)" class="dash-pill pill-tab flex-1 text-center !py-2.5 !px-4">
+                Nordeste
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- COLUNA DIREITA (7 cols): Bandeja Cinza com Card Branco Alto ("Direct messages") + Card 4 Categorias + Card Escuro Curva ("Graphics") -->
+        <div class="lg:col-span-7 bento-tray grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+
+          <!-- Card Branco Vertical Alto ("Direct messages" -> Editais FACEPE Ao Vivo) -->
+          <div class="md:col-span-6 bento-light p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-5">
+                <div>
+                  <h3 class="text-base font-bold text-[#14181f]">FACEPE • Editais Ao Vivo</h3>
+                  <p class="text-[11px] text-[#8a92a0]">Extraídos de www2.facepe.br/editais</p>
+                </div>
+                <button onclick="window.filterByFap('FACEPE')" class="text-[#8a92a0] hover:text-[#14181f] text-lg leading-none tracking-widest">•••</button>
+              </div>
+
+              <!-- Lista de Editais estilo "Direct messages" -->
+              <div id="facepeDirectList" class="divide-y divide-[#f1f3f6]"></div>
+            </div>
+
+            <!-- Rodapé com Toggle Switch minimalista igual a "Allow all" -->
+            <div class="pt-4 mt-4 border-t border-[#f1f3f6] flex items-center justify-between">
+              <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="text-xs font-bold text-[#14181f] hover:underline">
+                Portal Oficial ↗
+              </a>
+              <div class="flex items-center gap-2.5">
+                <span class="text-xs font-semibold text-[#5a6270]">Apenas abertos</span>
+                <button id="toggleOnlyOpenFacepe" onclick="window.toggleFacepeOpenSwitch()" class="ui-switch" title="Alternar entre apenas abertos ou todos da FACEPE">
+                  <span class="ui-switch-dot"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna Direita Interna (Card Branco 4 Linhas com Seta + Card Escuro "Graphics" Linha) -->
+          <div class="md:col-span-6 flex flex-col justify-between gap-4">
+
+            <!-- Card Branco 4 Categorias com Seta Circular (Idêntico ao topo-direito da imagem) -->
+            <div id="categoryQuickCard" class="bento-light p-5 divide-y divide-[#f1f3f6] flex-1 flex flex-col justify-center"></div>
+
+            <!-- Card Escuro "Graphics" (Curva Verde-Lima com Badge "40 PE") -->
+            <div class="bento-dark p-6 flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3 class="text-base font-bold text-white">Ritmo de Publicações</h3>
+                  <p id="lineChartSubtitle" class="text-xs text-[#7e8694]">40 chamadas FACEPE em 2026</p>
+                </div>
+                <button onclick="window.switchTab('alertas')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest">•••</button>
+              </div>
+
+              <!-- SVG Curva Verde-Lima igual ao "Graphics 251 items / 12 u." -->
+              <div class="my-3 relative pt-4">
+                <svg viewBox="0 0 260 95" class="w-full h-24 overflow-visible">
+                  <!-- Linha tracejada de referência -->
+                  <line x1="10" y1="45" x2="250" y2="45" stroke="#2a303c" stroke-width="1.5" stroke-dasharray="4 4" />
+                  <!-- Sombra sob a curva -->
+                  <path d="M 20 72 Q 65 62, 95 52 T 175 24 T 240 60 L 240 85 L 20 85 Z" fill="rgba(182, 245, 59, 0.08)" />
+                  <!-- Linha Verde-Lima -->
+                  <path d="M 20 72 Q 65 62, 95 52 T 175 24 T 240 60" fill="none" stroke="#b6f53b" stroke-width="2.5" stroke-linecap="round" />
+                  <!-- Pontos -->
+                  <circle cx="20" cy="72" r="3.5" fill="#14181f" stroke="#ffffff" stroke-width="2" />
+                  <circle cx="95" cy="52" r="3.5" fill="#14181f" stroke="#ffffff" stroke-width="2" />
+                  <!-- Ponto de Destaque com Halo -->
+                  <circle cx="175" cy="24" r="8" fill="rgba(182, 245, 59, 0.25)" />
+                  <circle cx="175" cy="24" r="4" fill="#ffffff" stroke="#b6f53b" stroke-width="2.5" />
+                  <circle cx="240" cy="60" r="3.5" fill="#14181f" stroke="#ffffff" stroke-width="2" />
+                  <!-- Badge Verde-Lima no Pico ("40 PE") -->
+                  <rect x="148" y="0" width="54" height="18" rx="9" fill="#b6f53b" />
+                  <text id="peakBadgeText" x="175" y="12.5" text-anchor="middle" fill="#14181f" font-size="10" font-weight="800">40 PE</text>
+                </svg>
+
+                <div class="flex items-center justify-between text-[11px] text-[#7e8694] px-2 mt-1">
+                  <span>Ago</span>
+                  <span>Set</span>
+                  <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] font-extrabold">Out/Nov</span>
+                  <span>Dez</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                <span class="text-[11px] text-[#6c7483]">Fonte: www2.facepe.br</span>
+                <button onclick="window.filterByFap('FACEPE')" class="inline-flex items-center gap-2 text-xs font-semibold text-[#9aa2b1] hover:text-white transition">
+                  <span>Ver todos</span>
+                  <span class="w-5 h-5 rounded-full bg-white/15 text-white inline-flex items-center justify-center text-xs font-bold">+</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BOTTOM BENTO ROW (Idêntico à metade inferior da imagem: 2 Cards de Botões + Card Largo Escuro "Form option") -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- Card 1 (Claro): Atalhos FACEPE & Exportação (Estilo do card branco de botões da imagem) -->
+        <div class="lg:col-span-3 bento-tray flex">
+          <div class="bento-light p-6 w-full flex flex-col justify-between gap-4">
+            <div class="space-y-3">
+              <div class="text-xs font-bold uppercase tracking-wider text-[#8a92a0]">Acesso Rápido PE</div>
+
+              <!-- Linha 1: Primary button + circle -->
+              <div class="flex items-center gap-2">
+                <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="btn-pill-dark flex-1">
+                  Portal FACEPE
+                </a>
+                <a href="https://www2.facepe.br/editais/" target="_blank" rel="noopener" class="circle-icon-dark" title="Abrir www2.facepe.br/editais">
+                  ↗
+                </a>
+              </div>
+
+              <!-- Linha 2: Primary button com ícone + circle -->
+              <div class="flex items-center gap-2">
+                <a href="https://agil.facepe.br/" target="_blank" rel="noopener" class="btn-pill-dark flex-1">
+                  <span class="w-4 h-4 rounded-full bg-white text-[#14181f] inline-flex items-center justify-center text-[10px] font-extrabold">A</span>
+                  <span>Sistema AgilFAP</span>
+                </a>
+                <a href="https://agil.facepe.br/" target="_blank" rel="noopener" class="circle-icon-dark" title="Submeter no AgilFAP">
+                  +
+                </a>
+              </div>
+
+              <!-- Linha 3: Secondary outline button + circle -->
+              <div class="flex items-center gap-2">
+                <button onclick="window.exportEditaisCsv()" class="btn-pill-outline-light flex-1">
+                  Exportar Planilha
+                </button>
+                <button onclick="window.exportEditaisCsv()" class="w-[34px] h-[34px] rounded-full border border-[#d5d9e0] text-[#14181f] inline-flex items-center justify-center font-bold hover:border-[#14181f]">
+                  ↓
+                </button>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-[#f1f3f6] flex items-center justify-between">
+              <span class="text-xs font-semibold text-[#5a6270]">Alertas PE</span>
+              <span class="ui-switch" onclick="window.switchTab('alertas')">
+                <span class="ui-switch-dot"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 (Escuro): Atalhos Agências Nacionais (Estilo do card escuro de botões da imagem) -->
+        <div class="lg:col-span-3 bento-tray flex">
+          <div class="bento-dark p-6 w-full flex flex-col justify-between gap-4">
+            <div class="space-y-3">
+              <div class="text-xs font-bold uppercase tracking-wider text-[#7e8694]">Agências Nacionais</div>
+
+              <!-- Linha 1: White pill button + white circle -->
+              <div class="flex items-center gap-2">
+                <button onclick="window.filterByFap('CNPq')" class="bg-white text-[#14181f] rounded-full py-2.5 px-4 text-xs font-bold flex-1 hover:bg-[#b6f53b] transition">
+                  Chamadas CNPq
+                </button>
+                <a href="http://memoria2.cnpq.br/web/guest/chamadas-publicas" target="_blank" rel="noopener" class="w-[34px] h-[34px] rounded-full bg-white text-[#14181f] inline-flex items-center justify-center font-bold hover:bg-[#b6f53b] transition">
+                  ↗
+                </a>
+              </div>
+
+              <!-- Linha 2: White pill with dark badge + circle -->
+              <div class="flex items-center gap-2">
+                <button onclick="window.filterByFap('FINEP')" class="bg-white text-[#14181f] rounded-full py-2.5 px-4 text-xs font-bold flex-1 inline-flex items-center justify-center gap-2 hover:bg-[#b6f53b] transition">
+                  <span class="w-4 h-4 rounded-full bg-[#14181f] text-white inline-flex items-center justify-center text-[10px] font-bold">F</span>
+                  <span>Editais FINEP</span>
+                </button>
+                <a href="http://www.finep.gov.br/chamadas-publicas?situacao=aberta" target="_blank" rel="noopener" class="w-[34px] h-[34px] rounded-full bg-white text-[#14181f] inline-flex items-center justify-center font-bold hover:bg-[#b6f53b] transition">
+                  +
+                </a>
+              </div>
+
+              <!-- Linha 3: Outline dark button + circle -->
+              <div class="flex items-center gap-2">
+                <button onclick="window.switchTab('faps')" class="btn-pill-outline-dark flex-1">
+                  Todas as 27 FAPs
+                </button>
+                <button onclick="window.switchTab('faps')" class="w-[34px] h-[34px] rounded-full border border-white/25 text-white inline-flex items-center justify-center font-bold hover:border-[#b6f53b] hover:text-[#b6f53b]">
+                  →
+                </button>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+              <span class="text-xs font-semibold text-[#8a92a0]">Coleta Auto</span>
+              <span class="w-[38px] h-[20px] rounded-full bg-white p-[3px] inline-flex items-center cursor-pointer" onclick="window.triggerSync()">
+                <span class="w-[14px] h-[14px] rounded-full bg-[#14181f] translate-x-[18px]"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 (Escuro Largo 6 cols): "Form option" -> Busca Inteligente & Comunicados FACEPE -->
+        <div class="lg:col-span-6 bento-dark p-7 flex flex-col justify-between">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-base font-bold text-white">Busca Rápida &amp; Enquadramento de Editais</h3>
+              <p class="text-xs text-[#7e8694] mt-1">
+                Filtre instantaneamente os 70 editais abertos e em andamento na FACEPE e nas 27 FAPs do país.
+              </p>
+            </div>
+            <button onclick="window.switchTab('editais')" class="text-[#7e8694] hover:text-white text-lg leading-none tracking-widest">•••</button>
+          </div>
+
+          <form onsubmit="event.preventDefault(); window.runQuickFormSearch();" class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+            <div>
+              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Tema, palavra-chave ou nº do edital</label>
+              <input
+                id="quickFormKeyword"
+                type="text"
+                placeholder="Ex: 35/2026, Pós-Graduação, Startups, IA..."
+                class="input-well-dark w-full"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Estado (UF) ou Esfera</label>
+              <select id="quickFormUf" class="input-well-dark w-full">
+                <option value="ALL">Todos os 27 Estados + Federal</option>
+                <option value="PE">PE — Pernambuco (FACEPE)</option>
+                <option value="BR">BR — Federal (CNPq / FINEP / CAPES)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Linha de Fomento</label>
+              <select id="quickFormArea" class="input-well-dark w-full">
+                <option value="ALL">Todas as Linhas de Fomento</option>
+                <option value="Pesquisa Científica (APQ / Missões)">Pesquisa Científica (APQ / Missões)</option>
+                <option value="Inovação & Startups">Inovação &amp; Startups</option>
+                <option value="Bolsas & Pós-Graduação">Bolsas &amp; Pós-Graduação</option>
+                <option value="Governo & Gestão Pública">Governo &amp; Gestão Pública</option>
+                <option value="Cooperação Internacional">Cooperação Internacional</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col justify-end">
+              <div class="flex items-center justify-between gap-3">
+                <label class="flex items-center gap-2 text-xs text-[#9aa2b1] cursor-pointer select-none">
+                  <input id="quickFormOnlyOpen" type="checkbox" checked class="accent-[#b6f53b] w-4 h-4 rounded" />
+                  <span>Somente editais abertos</span>
+                </label>
+                <button type="submit" class="btn-pill-lime">
+                  <span>Explorar</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Último comunicado oficial da FACEPE em rodapé elegante -->
+          <div id="latestFacepeTicker" class="pt-3 border-t border-white/10 flex items-center justify-between gap-3 text-xs"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== ABA 2: PAINEL DE EDITAIS ===================== -->
+    <section id="tab-editais" class="tab-panel hidden space-y-6">
+      <!-- Painel de Filtro Estilo "Form option" Escuro -->
+      <div class="bento-dark p-6 sm:p-7 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-white">Painel Nacional de Editais &amp; Chamadas Públicas</h2>
+            <p id="editaisCountLabel" class="text-xs text-[#7e8694] mt-0.5">Carregando oportunidades...</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="window.applyQuickFilter('all_open')" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#b6f53b] text-[#14181f]">
+              Somente Abertos
+            </button>
+            <button onclick="window.applyQuickFilter('facepe_only')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white hover:bg-white/20">
+              Só FACEPE (PE)
+            </button>
+            <button onclick="window.applyQuickFilter('federais')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white hover:bg-white/20">
+              Federais (CNPq/FINEP/CAPES)
+            </button>
+            <button onclick="window.applyQuickFilter('favoritos')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/10 text-white hover:bg-white/20">
+              ★ Favoritos
+            </button>
+            <button onclick="window.applyQuickFilter('reset')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#8a92a0] hover:text-white">
+              Limpar
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
+          <div class="lg:col-span-2">
+            <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Buscar por palavra-chave ou número</label>
+            <input id="filterSearch" type="text" placeholder="Ex: 35/2026, Cientista Arretado, Bolsas..." class="input-well-dark w-full" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Estado (UF)</label>
+            <select id="filterUf" class="input-well-dark w-full">
+              <option value="ALL">Todos (27 UFs + BR)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Agência / FAP</label>
+            <select id="filterAgencia" class="input-well-dark w-full">
+              <option value="ALL">Todas as Agências</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Linha de Fomento</label>
+            <select id="filterArea" class="input-well-dark w-full">
+              <option value="ALL">Todas as Áreas</option>
+              <option value="Pesquisa Científica (APQ / Missões)">Pesquisa Científica (APQ / Missões)</option>
+              <option value="Inovação & Startups">Inovação &amp; Startups</option>
+              <option value="Bolsas & Pós-Graduação">Bolsas &amp; Pós-Graduação</option>
+              <option value="Governo & Gestão Pública">Governo &amp; Gestão Pública</option>
+              <option value="Cooperação Internacional">Cooperação Internacional</option>
+              <option value="Eventos & Difusão Científica">Eventos &amp; Difusão Científica</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Status / Ordenação</label>
+            <div class="flex gap-2">
+              <select id="filterStatus" class="input-well-dark w-1/2 !px-2.5">
+                <option value="ALL">Todos</option>
+                <option value="Aberto">Abertos</option>
+                <option value="PRORROGADO">Prorrogados</option>
+                <option value="Em Julgamento / Resultado">Resultados</option>
+                <option value="Encerrado">Encerrados</option>
+              </select>
+              <select id="filterSort" class="input-well-dark w-1/2 !px-2.5">
+                <option value="match">Maior Match (%)</option>
+                <option value="recentes">Recentes</option>
+                <option value="prazo">Prazo</option>
+                <option value="valor">Valor</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid de Cards Claros e Escuros -->
+      <div id="editaisGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+    </section>
+
+    <!-- ===================== ABA 3: DIRETÓRIO DAS 27 FAPS ESTADUAIS + FEDERAIS ===================== -->
+    <section id="tab-faps" class="tab-panel hidden space-y-6">
+      <div class="bento-light p-6 sm:p-7 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-[#14181f]">Diretório Oficial das 27 FAPs Estaduais &amp; Agências Federais</h2>
+            <p class="text-xs text-[#767f8e] mt-0.5">
+              Conectado ao portal da FACEPE e aos portais de editais e plataformas de submissão de cada estado brasileiro.
+            </p>
+          </div>
+          <input
+            id="fapSearchInput"
+            type="text"
+            placeholder="Buscar estado, UF ou sigla (ex: PE, FACEPE, SP)..."
+            class="input-well-light w-72"
+          />
+        </div>
+
+        <!-- Seletor de Região em Pílula -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="window.setFapRegionFilter('ALL')" data-reg="ALL" class="fap-reg-btn btn-pill-dark">
+            Brasil Completo (31)
+          </button>
+          <button onclick="window.setFapRegionFilter('Federal')" data-reg="Federal" class="fap-reg-btn btn-pill-outline-light">
+            Federais (4)
+          </button>
+          <button onclick="window.setFapRegionFilter('Nordeste')" data-reg="Nordeste" class="fap-reg-btn btn-pill-outline-light">
+            Nordeste (9 • FACEPE)
+          </button>
+          <button onclick="window.setFapRegionFilter('Sudeste')" data-reg="Sudeste" class="fap-reg-btn btn-pill-outline-light">
+            Sudeste (4)
+          </button>
+          <button onclick="window.setFapRegionFilter('Sul')" data-reg="Sul" class="fap-reg-btn btn-pill-outline-light">
+            Sul (3)
+          </button>
+          <button onclick="window.setFapRegionFilter('Centro-Oeste')" data-reg="Centro-Oeste" class="fap-reg-btn btn-pill-outline-light">
+            Centro-Oeste (4)
+          </button>
+          <button onclick="window.setFapRegionFilter('Norte')" data-reg="Norte" class="fap-reg-btn btn-pill-outline-light">
+            Norte (7)
+          </button>
+        </div>
+
+        <!-- Pílulas das 27 UFs -->
+        <div id="ufPillsBar" class="flex flex-wrap gap-1.5 pt-3 border-t border-[#f1f3f6]"></div>
+      </div>
+
+      <!-- MAPA GEOGRÁFICO INTERATIVO DOS 27 ESTADOS + RAIO-X DA FAP -->
+      <div class="bento-tray grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <!-- Mapa Cartográfico Estilizado (7 cols) -->
+        <div class="lg:col-span-7 bento-dark p-6 sm:p-7 flex flex-col justify-between gap-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="text-base font-bold text-white">Mapa Interativo das 27 UFs &amp; Esfera Federal</h3>
+              <p class="text-xs text-[#7e8694] mt-0.5">Clique em qualquer estado para inspecionar sua FAP, orçamento e editais abertos.</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">27 UFs + BR</span>
+          </div>
+
+          <div id="brazilGeoGridMap" class="my-2 overflow-x-auto no-scrollbar"></div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10 text-[11px] text-[#8a92a0]">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#b6f53b]"></span> Destaque / Selecionado</span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-white"></span> FAP Monitorada</span>
+            </div>
+            <span>Dica: clique em PE para abrir o resumo direto da FACEPE</span>
+          </div>
+        </div>
+
+        <!-- Raio-X do Estado Selecionado (5 cols) -->
+        <div id="selectedStateInspector" class="lg:col-span-5 bento-light p-6 sm:p-7 flex flex-col justify-between"></div>
+      </div>
+
+      <div id="fapsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- ===================== ABA 4: PIPELINE KANBAN DE SUBMISSÕES ===================== -->
+    <section id="tab-pipeline" class="tab-panel hidden space-y-6">
+      <div class="bento-dark p-6 sm:p-7 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-white">Gestão de Submissões &amp; Captação (Kanban)</h2>
+          <p class="text-xs text-[#7e8694] mt-0.5">
+            Organize os projetos que sua equipe pretende submeter no AgilFAP (FACEPE), PICC (CNPq), SAGe (FAPESP) e demais sistemas.
+          </p>
+        </div>
+        <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-3"></div>
+      </div>
+
+      <div id="kanbanBoard" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-start"></div>
+    </section>
+
+    <!-- ===================== ABA 5: ALERTAS & LOG DO COLETOR ===================== -->
+    <section id="tab-alertas" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Configurar Alertas (Card Escuro estilo Form option) -->
+        <div class="lg:col-span-4 bento-dark p-7 space-y-5">
+          <div>
+            <h2 class="text-base font-bold text-white">Configurar Radar de Alertas</h2>
+            <p class="text-xs text-[#7e8694] mt-1">
+              Personalize avisos de prorrogação da FACEPE e vencimentos próximos por estado.
+            </p>
+          </div>
+
+          <form id="alertConfigForm" class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Aviso prévio de vencimento (dias)</label>
+              <input id="alertDaysInput" type="number" min="3" max="90" class="input-well-dark w-full" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Estados (UFs) Monitorados</label>
+              <div id="alertUfsCheckboxes" class="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto p-3 rounded-2xl bg-[#0d1015] text-xs"></div>
+            </div>
+
+            <label class="flex items-center gap-2.5 text-xs text-[#b0b7c3] cursor-pointer">
+              <input id="alertProrrogFacepe" type="checkbox" class="accent-[#b6f53b] w-4 h-4 rounded" />
+              <span>Destacar prorrogações e erratas da FACEPE</span>
+            </label>
+
+            <button type="submit" class="btn-pill-lime w-full !py-3">
+              Salvar Configuração
+            </button>
+          </form>
+        </div>
+
+        <!-- Lista de Alertas + Log de Sincronização (Cards Brancos Limpos) -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="bento-light p-6 sm:p-7 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-bold text-[#14181f]">Alertas Ativos no Radar</h3>
+              <span id="activeAlertsSubtitle" class="px-3 py-1 rounded-full text-xs font-bold bg-[#b6f53b] text-[#14181f]"></span>
+            </div>
+            <div id="fullAlertsList" class="divide-y divide-[#f1f3f6]"></div>
+          </div>
+
+          <div class="bento-light p-6 sm:p-7 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-base font-bold text-[#14181f]">Histórico do Coletor Ao Vivo (Web Scraper)</h3>
+                <p class="text-xs text-[#8a92a0]">Sincronizações realizadas com https://www2.facepe.br/editais/ e WP API</p>
+              </div>
+              <button onclick="window.triggerSync()" class="btn-pill-dark">
+                Sincronizar Agora
+              </button>
+            </div>
+            <div id="syncHistoryList" class="space-y-2.5"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MODAL DETALHES DO EDITAL & ANEXOS -->
+  <div id="editalDetailModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-light max-w-3xl w-full max-h-[90vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between gap-4 border-b border-[#f1f3f6] pb-4">
+        <div id="detailModalHeader"></div>
+        <button onclick="window.closeDetailModal()" class="circle-icon-dark">✕</button>
+      </div>
+      <div id="detailModalBody" class="space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- MODAL CADASTRAR / EDITAR EDITAL (Estilo "Form option" Escuro da imagem) -->
+  <div id="editalFormModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/65 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-dark max-w-2xl w-full max-h-[92vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <h3 id="editalFormTitle" class="text-lg font-bold text-white">Curadoria de Edital</h3>
+          <p class="text-xs text-[#7e8694]">Cadastre ou atualize manualmente qualquer edital estadual ou federal.</p>
+        </div>
+        <button onclick="window.closeEditalFormModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 inline-flex items-center justify-center">✕</button>
+      </div>
+
+      <form id="editalCrudForm" class="space-y-4">
+        <input type="hidden" id="formEditalId" />
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Agência / FAP *</label>
+            <select id="formEditalAgencia" required class="input-well-dark w-full"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Nº do Edital</label>
+            <input id="formEditalNumero" type="text" placeholder="Ex: 36/2026" class="input-well-dark w-full" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Status</label>
+            <select id="formEditalStatus" class="input-well-dark w-full">
+              <option value="Aberto">Aberto</option>
+              <option value="Em Julgamento / Resultado">Em Julgamento / Resultado</option>
+              <option value="Encerrado">Encerrado</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Título Completo do Edital *</label>
+          <input id="formEditalTitulo" type="text" required placeholder="Ex: Edital FACEPE nº 36/2026 – Apoio a Laboratórios Multiusuários" class="input-well-dark w-full" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Linha de Fomento</label>
+            <select id="formEditalArea" class="input-well-dark w-full">
+              <option value="Pesquisa Científica (APQ / Missões)">Pesquisa Científica (APQ / Missões)</option>
+              <option value="Inovação & Startups">Inovação &amp; Startups</option>
+              <option value="Bolsas & Pós-Graduação">Bolsas &amp; Pós-Graduação</option>
+              <option value="Governo & Gestão Pública">Governo &amp; Gestão Pública</option>
+              <option value="Cooperação Internacional">Cooperação Internacional</option>
+              <option value="Eventos & Difusão Científica">Eventos &amp; Difusão Científica</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Publicação</label>
+            <input id="formEditalDataPub" type="date" class="input-well-dark w-full" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Prazo Final</label>
+            <input id="formEditalPrazo" type="date" class="input-well-dark w-full" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Faixa de Valor / Bolsas</label>
+            <input id="formEditalValorTexto" type="text" placeholder="Ex: Até R$ 200.000 por projeto" class="input-well-dark w-full" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Valor Global Estimado (R$)</label>
+            <input id="formEditalValorNum" type="number" placeholder="2000000" class="input-well-dark w-full" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Link Direto do PDF / Edital</label>
+            <input id="formEditalLinkPdf" type="url" placeholder="https://www2.facepe.br/..." class="input-well-dark w-full" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Link da Plataforma de Submissão</label>
+            <input id="formEditalLinkSub" type="url" placeholder="https://agil.facepe.br/" class="input-well-dark w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Público-Alvo / Elegibilidade</label>
+          <input id="formEditalPublico" type="text" class="input-well-dark w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Resumo / Observações</label>
+          <textarea id="formEditalResumo" rows="3" class="input-well-dark w-full"></textarea>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-white/10">
+          <label class="flex items-center gap-2 text-xs text-[#b0b7c3] cursor-pointer">
+            <input id="formEditalProrrogado" type="checkbox" class="accent-[#b6f53b] w-4 h-4 rounded" />
+            <span>Marcar como Prazo Prorrogado / Com Adendo</span>
+          </label>
+
+          <div class="flex items-center gap-2.5">
+            <button type="button" onclick="window.closeEditalFormModal()" class="btn-pill-outline-dark">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-pill-lime">
+              Salvar Edital
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CALCULADORA DE ORÇAMENTO & GESTÃO DA PROPOSTA (KANBAN) -->
+  <div id="pipelineEditModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/65 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-dark max-w-2xl w-full max-h-[92vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <h3 id="pipeModalTitle" class="text-lg font-bold text-white">Planejamento &amp; Orçamento da Proposta</h3>
+          <p class="text-xs text-[#7e8694]">Simule rubricas (Custeio, Capital e Bolsas) e organize a submissão.</p>
+        </div>
+        <button onclick="window.closePipelineModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 inline-flex items-center justify-center">✕</button>
+      </div>
+
+      <form id="pipelineEditForm" class="space-y-4">
+        <input type="hidden" id="pipeFormId" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Coordenador / Pesquisador Responsável</label>
+            <input id="pipeFormPesquisador" type="text" class="input-well-dark w-full" placeholder="Ex: Prof. Dr. Nome do Coordenador" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8a92a0] mb-1">Instituição Executora (ICT / IES)</label>
+            <input id="pipeFormInstituicao" type="text" class="input-well-dark w-full" placeholder="Ex: UFPE / UFRPE / UPE / Instituto" />
+          </div>
+        </div>
+
+        <!-- Calculadora de Rubricas -->
+        <div class="p-4 rounded-2xl bg-[#0d1015] border border-white/5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white">Calculadora de Orçamento por Rubrica</span>
+            <span id="pipeTotalCalculated" class="px-3 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-xs font-extrabold">R$ 0</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] text-[#8a92a0] mb-1">Custeio / Serviços (R$)</label>
+              <input id="pipeRubricaCusteio" type="number" min="0" step="1000" class="input-well-dark w-full" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-[#8a92a0] mb-1">Capital / Equipamentos (R$)</label>
+              <input id="pipeRubricaCapital" type="number" min="0" step="1000" class="input-well-dark w-full" />
+            </div>
+            <div>
+              <label class="block text-[11px] text-[#8a92a0] mb-1">Bolsas IC / Pós / PD (R$)</label>
+              <input id="pipeRubricaBolsas" type="number" min="0" step="1000" class="input-well-dark w-full" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Notas Estratégicas &amp; Observações da Submissão</label>
+          <textarea id="pipeFormNotas" rows="2" class="input-well-dark w-full"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Adicionar nova tarefa ao Checklist (opcional)</label>
+          <input id="pipeNewCheckItem" type="text" placeholder="Ex: Solicitar carta de anuência da Pró-Reitoria de Pesquisa..." class="input-well-dark w-full" />
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/10">
+          <button type="button" onclick="window.printPipelineProposal()" class="btn-pill-outline-dark">
+            🖨️ Imprimir Ficha da Proposta
+          </button>
+
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="window.closePipelineModal()" class="btn-pill-outline-dark">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-pill-lime">
+              Salvar Planejamento
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

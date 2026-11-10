@@ -1,0 +1,25 @@
+{
+  "name": "radar-fap-captacao-pesquisa",
+  "version": "1.0.0",
+  "description": "Sistema Radar de Captação de Recursos para Pesquisas integrado à FACEPE (www2.facepe.br) e às 27 FAPs estaduais e agências federais do Brasil",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "sync": "node src/scripts/runSync.mjs"
+  },
+  "keywords": [
+    "facepe",
+    "faps",
+    "pesquisa",
+    "editais",
+    "fomento",
+    "cnpq",
+    "finep",
+    "capes"
+  ],
+  "author": "RadarFAP Brasil",
+  "license": "MIT"
+}
+
