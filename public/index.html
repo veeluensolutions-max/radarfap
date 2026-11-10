@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RadarFAP Brasil — Captação de Recursos para Pesquisas | FACEPE &amp; 27 FAPs</title>
+  <meta name="description" content="Radar inteligente de editais de fomento à pesquisa integrado ao vivo à FACEPE, às 27 FAPs estaduais e agências federais (CNPq, FINEP, CAPES)." />
+  <meta property="og:title" content="RadarFAP Brasil — Inteligência em Fomento à Pesquisa | FACEPE &amp; 27 FAPs" />
+  <meta property="og:description" content="Monitore 86+ editais ao vivo, calcule % Match de elegibilidade, simule bolsas BCT/BFD/IC e gere Planos de Trabalho AgilFAP." />
+  <meta property="og:image" content="/og-banner.svg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#14181F" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="shortcut icon" href="/favicon.svg" />
@@ -1019,16 +1025,19 @@
   <div id="researcherProfileModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/65 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bento-dark max-w-2xl w-full max-h-[92vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
       <div class="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[11px] font-extrabold">Inteligência de Enquadramento</span>
-            <h3 class="text-lg font-bold text-white">Perfil do Pesquisador / ICT &amp; Match (%)</h3>
+        <div class="flex items-center gap-3">
+          <img src="/logo-mark.svg" alt="RadarFAP" class="w-10 h-10 rounded-xl shrink-0" />
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[11px] font-extrabold">Inteligência de Enquadramento</span>
+              <h3 class="text-lg font-bold text-white">Perfil do Pesquisador / ICT &amp; Match (%)</h3>
+            </div>
+            <p class="text-xs text-[#7e8694] mt-1">
+              Personalize seus dados para recalcular o score de aderência (% Match) em todas as chamadas da FACEPE, 27 FAPs e agências federais.
+            </p>
           </div>
-          <p class="text-xs text-[#7e8694] mt-1">
-            Personalize seus dados para recalcular o score de aderência (% Match) em todas as chamadas da FACEPE, 27 FAPs e agências federais.
-          </p>
         </div>
-        <button onclick="window.closeProfileModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 inline-flex items-center justify-center">✕</button>
+        <button onclick="window.closeProfileModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 inline-flex items-center justify-center shrink-0">✕</button>
       </div>
 
       <form id="researcherProfileForm" class="space-y-4">
@@ -1113,12 +1122,15 @@
   <div id="workplanStudioModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bento-light max-w-4xl w-full max-h-[94vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
       <div class="flex items-start justify-between gap-4 border-b border-[#f1f3f6] pb-4">
-        <div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="px-3 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold">Estúdio AgilFAP &amp; FAPs</span>
-            <span id="wpTargetAgencyBadge" class="px-3 py-0.5 rounded-full bg-[#f1f3f6] text-[#14181f] text-xs font-bold">FACEPE • PE</span>
+        <div class="flex items-start gap-3">
+          <img src="/logo-mark.svg" alt="RadarFAP" class="w-10 h-10 rounded-xl shrink-0 mt-0.5" />
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-3 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold">Estúdio AgilFAP &amp; FAPs</span>
+              <span id="wpTargetAgencyBadge" class="px-3 py-0.5 rounded-full bg-[#f1f3f6] text-[#14181f] text-xs font-bold">FACEPE • PE</span>
+            </div>
+            <h3 id="wpModalEditalTitle" class="text-lg font-extrabold text-[#14181f] mt-1.5 leading-snug">Gerador de Plano de Trabalho e Rascunho Técnico</h3>
           </div>
-          <h3 id="wpModalEditalTitle" class="text-lg font-extrabold text-[#14181f] mt-1.5 leading-snug">Gerador de Plano de Trabalho e Rascunho Técnico</h3>
         </div>
         <button onclick="window.closeWorkplanModal()" class="circle-icon-dark shrink-0">✕</button>
       </div>
@@ -1206,14 +1218,17 @@
   <div id="compareEditaisModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bento-light max-w-5xl w-full max-h-[92vh] overflow-y-auto p-7 space-y-5 shadow-2xl">
       <div class="flex items-center justify-between border-b border-[#f1f3f6] pb-4">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold">Análise Estratégica</span>
-            <h3 class="text-lg font-extrabold text-[#14181f]">Comparador Lado a Lado de Editais</h3>
+        <div class="flex items-center gap-3">
+          <img src="/logo-mark.svg" alt="RadarFAP" class="w-10 h-10 rounded-xl shrink-0" />
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold">Análise Estratégica</span>
+              <h3 class="text-lg font-extrabold text-[#14181f]">Comparador Lado a Lado de Editais</h3>
+            </div>
+            <p class="text-xs text-[#767f8e] mt-1">Compare aderência (% Match), valores, prazos, plataformas e exigências para priorizar sua submissão.</p>
           </div>
-          <p class="text-xs text-[#767f8e] mt-1">Compare aderência (% Match), valores, prazos, plataformas e exigências para priorizar sua submissão.</p>
         </div>
-        <button onclick="window.closeCompareModal()" class="circle-icon-dark">✕</button>
+        <button onclick="window.closeCompareModal()" class="circle-icon-dark shrink-0">✕</button>
       </div>
       <div id="compareModalBody" class="overflow-x-auto"></div>
     </div>
