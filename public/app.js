@@ -105,9 +105,20 @@ function connectRealtimeStream() {
         }
       } catch {}
     };
-  } catch (err) {
-    console.warn('SSE fallback:', err);
-  }
+  // Fallback/Complemento Serverless (Vercel): sincroniza silenciosamente a cada 3 minutos
+  setInterval(async () => {
+    try {
+      const res = await fetch('/api/sync', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.state) {
+          appState = data.state;
+          renderAll();
+          updateRealtimeBadge(data.lastAutoSyncIso || new Date().toISOString());
+        }
+      }
+    } catch {}
+  }, 3 * 60 * 1000);
 }
 
 async function fetchInitialState() {

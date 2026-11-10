@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FAPS_CATALOG } from '../data/fapsCatalog.mjs';
@@ -7,80 +8,108 @@ import { scrapeFacepeEditais, scrapeFacepeNews, scrapeMultiFapPortals } from '..
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.resolve(__dirname, '../../data');
-const DB_FILE = path.join(DATA_DIR, 'database.json');
+const BUNDLED_DATA_DIR = path.resolve(__dirname, '../../data');
+const BUNDLED_DB_FILE = path.join(BUNDLED_DATA_DIR, 'database.json');
+
+// Na Vercel (Serverless), o sistema de arquivos do bundle é read-only, exceto /tmp
+const IS_SERVERLESS = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const RUNTIME_DB_FILE = IS_SERVERLESS
+  ? path.join(os.tmpdir(), 'radarfap-database.json')
+  : BUNDLED_DB_FILE;
+
+let memoryCacheDb = null;
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!IS_SERVERLESS && !fs.existsSync(BUNDLED_DATA_DIR)) {
+    try {
+      fs.mkdirSync(BUNDLED_DATA_DIR, { recursive: true });
+    } catch {}
   }
 }
 
 export function loadDatabase() {
   ensureDataDir();
-  if (!fs.existsSync(DB_FILE)) {
-    const initialDb = {
-      editais: [...INITIAL_NATIONAL_EDITAIS],
-      favoritos: ['facepe-35-2026', 'facepe-31-2026', 'facepe-25-2026', 'cnpq-universal-2026'],
-      pipeline: [...INITIAL_PIPELINE_ITEMS],
-      alertConfig: { ...INITIAL_ALERT_CONFIG },
-      noticiasFacepe: [
-        {
-          id: 'facepe-news-init-1',
-          agencia: 'FACEPE',
-          uf: 'PE',
-          titulo: 'Pesquisadora pernambucana é contemplada em chamada de mobilidade acadêmica para a Itália apoiada pela Facepe',
-          resumo: 'Chamada de mobilidade internacional fortalece parcerias científicas de Pernambuco com centros europeus.',
-          data: '2026-11-09',
-          link: 'https://www2.facepe.br/pesquisadora-pernambucana-e-contemplada-em-chamada-de-mobilidade-academica-para-a-italia-apoiada-pela-facepe/'
-        },
-        {
-          id: 'facepe-news-init-2',
-          agencia: 'FACEPE',
-          uf: 'PE',
-          titulo: 'Facepe anuncia prorrogação do edital Projetos Orientados a Missões (POM – nº 25/2026)',
-          resumo: 'Pesquisadores têm novo prazo para submeter propostas estruturantes no sistema AgilFAP.',
-          data: '2026-11-06',
-          link: 'https://www2.facepe.br/facepe-anuncia-prorrogacao-do-edital-projetos-orientados-a-missoes-pom-no-25-2026/'
-        },
-        {
-          id: 'facepe-news-init-3',
-          agencia: 'FACEPE',
-          uf: 'PE',
-          titulo: 'Facepe prorroga inscrições do edital Cientista Arretado (31/2026)',
-          resumo: '22ª Rodada do Programa Cientista Arretado recebe propostas de cooperação com o Governo de Pernambuco.',
-          data: '2026-11-03',
-          link: 'https://www2.facepe.br/facepe-prorroga-inscricoes-do-edital-cientista-arretado-31-2026/'
-        }
-      ],
-      syncHistory: [
-        {
-          id: 'sync-init',
-          timestamp: new Date().toISOString(),
-          origem: 'Inicialização do Sistema + Base Nacional 27 UFs',
-          facepeCount: 5,
-          totalCount: INITIAL_NATIONAL_EDITAIS.length,
-          status: 'sucesso'
-        }
-      ]
-    };
-    saveDatabase(initialDb);
-    return initialDb;
+
+  // 1. Tenta ler do arquivo de runtime (/tmp na Vercel ou data/database.json local)
+  if (fs.existsSync(RUNTIME_DB_FILE)) {
+    try {
+      const raw = fs.readFileSync(RUNTIME_DB_FILE, 'utf-8');
+      memoryCacheDb = JSON.parse(raw);
+      return memoryCacheDb;
+    } catch {}
   }
 
-  try {
-    const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(raw);
-  } catch (err) {
-    console.error('Erro ao ler database.json, recriando base:', err.message);
-    fs.unlinkSync(DB_FILE);
-    return loadDatabase();
+  // 2. Se estiver na Vercel e /tmp ainda não existir, carrega o database.json empacotado no repositório
+  if (IS_SERVERLESS && fs.existsSync(BUNDLED_DB_FILE)) {
+    try {
+      const raw = fs.readFileSync(BUNDLED_DB_FILE, 'utf-8');
+      memoryCacheDb = JSON.parse(raw);
+      saveDatabase(memoryCacheDb);
+      return memoryCacheDb;
+    } catch {}
   }
+
+  if (memoryCacheDb) {
+    return memoryCacheDb;
+  }
+
+  const initialDb = {
+    editais: [...INITIAL_NATIONAL_EDITAIS],
+    favoritos: ['facepe-35-2026', 'facepe-31-2026', 'facepe-25-2026', 'cnpq-universal-2026'],
+    pipeline: [...INITIAL_PIPELINE_ITEMS],
+    alertConfig: { ...INITIAL_ALERT_CONFIG },
+    noticiasFacepe: [
+      {
+        id: 'facepe-news-init-1',
+        agencia: 'FACEPE',
+        uf: 'PE',
+        titulo: 'Pesquisadora pernambucana é contemplada em chamada de mobilidade acadêmica para a Itália apoiada pela Facepe',
+        resumo: 'Chamada de mobilidade internacional fortalece parcerias científicas de Pernambuco com centros europeus.',
+        data: '2026-11-09',
+        link: 'https://www2.facepe.br/pesquisadora-pernambucana-e-contemplada-em-chamada-de-mobilidade-academica-para-a-italia-apoiada-pela-facepe/'
+      },
+      {
+        id: 'facepe-news-init-2',
+        agencia: 'FACEPE',
+        uf: 'PE',
+        titulo: 'Facepe anuncia prorrogação do edital Projetos Orientados a Missões (POM – nº 25/2026)',
+        resumo: 'Pesquisadores têm novo prazo para submeter propostas estruturantes no sistema AgilFAP.',
+        data: '2026-11-06',
+        link: 'https://www2.facepe.br/facepe-anuncia-prorrogacao-do-edital-projetos-orientados-a-missoes-pom-no-25-2026/'
+      },
+      {
+        id: 'facepe-news-init-3',
+        agencia: 'FACEPE',
+        uf: 'PE',
+        titulo: 'Facepe prorroga inscrições do edital Cientista Arretado (31/2026)',
+        resumo: '22ª Rodada do Programa Cientista Arretado recebe propostas de cooperação com o Governo de Pernambuco.',
+        data: '2026-11-03',
+        link: 'https://www2.facepe.br/facepe-prorroga-inscricoes-do-edital-cientista-arretado-31-2026/'
+      }
+    ],
+    syncHistory: [
+      {
+        id: 'sync-init',
+        timestamp: new Date().toISOString(),
+        origem: 'Inicialização do Sistema + Base Nacional 27 UFs',
+        facepeCount: 5,
+        totalCount: INITIAL_NATIONAL_EDITAIS.length,
+        status: 'sucesso'
+      }
+    ]
+  };
+  saveDatabase(initialDb);
+  return initialDb;
 }
 
 export function saveDatabase(db) {
+  memoryCacheDb = db;
   ensureDataDir();
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  try {
+    fs.writeFileSync(RUNTIME_DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Aviso ao gravar em disco (mantendo em memória):', err.message);
+  }
 }
 
 export async function syncFacepeAndPortals(limit = 35) {
