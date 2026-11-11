@@ -833,9 +833,36 @@
               </div>
 
               <div>
-                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Webhook da Equipe (Slack / Discord / n8n / WhatsApp API)</label>
+                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Alertas via WhatsApp (Link direto ou API)</label>
                 <div class="flex gap-2">
-                  <input id="alertWebhookUrl" type="url" placeholder="https://hooks.slack.com/... ou Discord/n8n" class="input-well-dark flex-1" />
+                  <input id="alertWhatsappInput" type="tel" placeholder="Ex: 5581999998888 (com DDI + DDD)" class="input-well-dark flex-1" />
+                  <button type="button" onclick="window.sendWhatsappAlert()" class="btn-pill-lime !px-3 shrink-0 text-xs font-bold" title="Abrir WhatsApp com boletim de editais">
+                    💬 WhatsApp
+                  </button>
+                </div>
+                <span class="text-[10px] text-[#7e8694] block mt-1">Dispare resumos de prazos e editais direto no chat do seu grupo ou pesquisador.</span>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Bot Telegram (Chat ID &amp; Token Opcional)</label>
+                <div class="grid grid-cols-2 gap-2 mb-1.5">
+                  <input id="alertTelegramChatId" type="text" placeholder="Chat ID (ex: 12345678)" class="input-well-dark w-full" />
+                  <input id="alertTelegramToken" type="password" placeholder="Bot Token (opcional)" class="input-well-dark w-full" />
+                </div>
+                <div class="flex gap-2">
+                  <button type="button" onclick="window.sendTelegramAlert()" class="btn-pill-outline-dark flex-1 !py-2 text-xs" title="Enviar para o Telegram">
+                    ✈️ Disparar Telegram
+                  </button>
+                  <button type="button" onclick="window.shareTelegramWeb()" class="btn-pill-outline-dark !px-3 text-xs" title="Compartilhar no Telegram Web">
+                    🔗 Compartilhar
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-[#8a92a0] mb-1.5">Webhook da Equipe (Slack / Discord / n8n / Evolution API)</label>
+                <div class="flex gap-2">
+                  <input id="alertWebhookUrl" type="url" placeholder="https://hooks.slack.com/... ou n8n/webhook" class="input-well-dark flex-1" />
                   <button type="button" onclick="window.testAlertWebhook()" class="btn-pill-outline-dark !px-3 shrink-0" title="Disparar boletim de teste">
                     🚀
                   </button>

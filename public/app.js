@@ -1452,6 +1452,14 @@ function renderAlertasTab() {
   if (prorrogCheck) prorrogCheck.checked = cfg.notificarProrrogacoesFacepe !== false;
   if (webhookInput && cfg.webhookUrl !== undefined) webhookInput.value = cfg.webhookUrl || '';
 
+  const waInput = document.getElementById('alertWhatsappInput');
+  const tgChatInput = document.getElementById('alertTelegramChatId');
+  const tgTokenInput = document.getElementById('alertTelegramToken');
+
+  if (waInput && cfg.whatsappNumber !== undefined) waInput.value = cfg.whatsappNumber || '';
+  if (tgChatInput && cfg.telegramChatId !== undefined) tgChatInput.value = cfg.telegramChatId || '';
+  if (tgTokenInput && cfg.telegramBotToken !== undefined) tgTokenInput.value = cfg.telegramBotToken || '';
+
   if (notifBadge && 'Notification' in window) {
     if (Notification.permission === 'granted') {
       notifBadge.textContent = 'Ativo • Desktop';
@@ -2067,6 +2075,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const dias = Number(document.getElementById('alertDaysInput').value) || 20;
     const prorrog = document.getElementById('alertProrrogFacepe').checked;
     const webhookUrl = (document.getElementById('alertWebhookUrl')?.value || '').trim();
+    const whatsappNumber = (document.getElementById('alertWhatsappInput')?.value || '').trim();
+    const telegramChatId = (document.getElementById('alertTelegramChatId')?.value || '').trim();
+    const telegramBotToken = (document.getElementById('alertTelegramToken')?.value || '').trim();
 
     const res = await fetch('/api/alerts/config', {
       method: 'POST',
@@ -2075,7 +2086,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ufsMonitoradas: checkedUfs,
         diasAntecedenciaVencimento: dias,
         notificarProrrogacoesFacepe: prorrog,
-        webhookUrl
+        webhookUrl,
+        whatsappNumber,
+        telegramChatId,
+        telegramBotToken
       })
     });
     const data = await res.json();
@@ -2505,12 +2519,16 @@ window.sendTestBrowserNotification = function sendTestBrowserNotification() {
 
 window.testAlertWebhook = async function testAlertWebhook() {
   const webhookUrl = (document.getElementById('alertWebhookUrl')?.value || '').trim();
+  const whatsappNumber = (document.getElementById('alertWhatsappInput')?.value || '').trim();
+  const telegramChatId = (document.getElementById('alertTelegramChatId')?.value || '').trim();
+  const telegramBotToken = (document.getElementById('alertTelegramToken')?.value || '').trim();
+
   showToast('Preparando disparo do boletim de oportunidades...');
   try {
     const res = await fetch('/api/alerts/test-webhook', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ webhookUrl })
+      body: JSON.stringify({ webhookUrl, whatsappNumber, telegramChatId, telegramBotToken })
     });
     const data = await res.json();
     if (webhookUrl && data.webhookDispatched) {
@@ -2519,11 +2537,73 @@ window.testAlertWebhook = async function testAlertWebhook() {
       showToast(`Aviso: o endpoint de Webhook retornou erro ou bloqueio (${data.webhookStatus}).`);
     } else {
       await navigator.clipboard?.writeText(data.messageText || '');
-      showToast('Boletim executivo gerado e copiado para a área de transferência! (Informe uma URL para envio automático)');
+      showToast('Boletim executivo gerado e copiado para a área de transferência!');
     }
   } catch (err) {
     showToast(`Erro ao testar boletim: ${err.message}`);
   }
+};
+
+window.sendWhatsappAlert = async function sendWhatsappAlert() {
+  const whatsappNumber = (document.getElementById('alertWhatsappInput')?.value || '').trim();
+  showToast('Gerando boletim para WhatsApp...');
+  try {
+    const res = await fetch('/api/alerts/test-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ whatsappNumber })
+    });
+    const data = await res.json();
+    if (data.waDirectLink) {
+      window.open(data.waDirectLink, '_blank');
+      showToast('Abrindo WhatsApp com o boletim de editais formatado!');
+    }
+  } catch (err) {
+    showToast(`Erro ao gerar alerta para WhatsApp: ${err.message}`);
+  }
+};
+
+window.sendTelegramAlert = async function sendTelegramAlert() {
+  const telegramChatId = (document.getElementById('alertTelegramChatId')?.value || '').trim();
+  const telegramBotToken = (document.getElementById('alertTelegramToken')?.value || '').trim();
+
+  if (!telegramChatId) {
+    showToast('Informe o Chat ID do Telegram para disparo via Bot API (ou use "Compartilhar").');
+    return;
+  }
+
+  showToast('Disparando mensagem para o Bot do Telegram...');
+  try {
+    const res = await fetch('/api/alerts/test-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telegramChatId, telegramBotToken })
+    });
+    const data = await res.json();
+    if (data.telegramDispatched) {
+      showToast('Boletim enviado com sucesso no Telegram!');
+    } else {
+      window.open(data.tgDirectLink, '_blank');
+      showToast('Abrindo Telegram Web com o boletim pronto para envio!');
+    }
+  } catch (err) {
+    showToast(`Erro no Telegram: ${err.message}`);
+  }
+};
+
+window.shareTelegramWeb = async function shareTelegramWeb() {
+  try {
+    const res = await fetch('/api/alerts/test-webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (data.tgDirectLink) {
+      window.open(data.tgDirectLink, '_blank');
+      showToast('Compartilhando no Telegram Web!');
+    }
+  } catch {}
 };
 
 window.exportWorkspaceJson = function exportWorkspaceJson() {

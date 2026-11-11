@@ -247,7 +247,7 @@ export default async function handler(req, res) {
     }
 
     if (pathname === '/api/alerts/test-webhook' && req.method === 'POST') {
-      const { webhookUrl } = await parseBody(req);
+      const { webhookUrl, whatsappNumber, telegramChatId, telegramBotToken } = await parseBody(req);
       const state = getFullState();
       const topEditais = (state.editais || [])
         .filter(e => e.status === 'Aberto')
@@ -255,16 +255,39 @@ export default async function handler(req, res) {
         .slice(0, 3);
 
       const messageText = [
-        `🔔 *RadarFAP Brasil — Boletim Ativo de Oportunidades & Alertas*`,
-        `• Perfil: ${state.researcherProfile?.nomePesquisador || 'Coordenação'} (${state.researcherProfile?.ufPrincipal || 'PE'})`,
-        `• Alertas Críticos Ativos: ${state.alerts?.length || 0}`,
-        `• Top Oportunidades Abertas por % Match:`,
-        ...topEditais.map(e => `  - [${e.matchScore}% Match] ${e.agencia} (${e.uf}) Nº ${e.numero}: ${e.titulo} (Prazo: ${e.prazoSubmissao})`)
+        `🔔 *RadarFAP Brasil — Boletim de Oportunidades & Alertas*`,
+        `👤 Coordenação: ${state.researcherProfile?.nomePesquisador || 'Pesquisador'} (${state.researcherProfile?.ufPrincipal || 'PE'})`,
+        `🚨 Alertas Ativos: ${state.alerts?.length || 0} aviso(s)`,
+        `⭐ Top Editais Abertos (Maior % Match):`,
+        ...topEditais.map(e => `• [${e.matchScore || 80}%] ${e.agencia} (${e.uf}) Nº ${e.numero}: ${e.titulo.slice(0, 80)}... (Prazo: ${e.prazoSubmissao})`),
+        `🌐 Acesse o painel: https://radarfap.vercel.app`
       ].join('\n');
 
       let webhookDispatched = false;
       let webhookStatus = 200;
+      let telegramDispatched = false;
 
+      // Disparo Telegram Bot API nativo se configurado
+      if (telegramChatId && (telegramBotToken || process.env.TELEGRAM_BOT_TOKEN)) {
+        try {
+          const token = (telegramBotToken || process.env.TELEGRAM_BOT_TOKEN).trim();
+          const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: telegramChatId.trim(),
+              text: messageText,
+              parse_mode: 'Markdown'
+            }),
+            signal: AbortSignal.timeout(7000)
+          });
+          telegramDispatched = tgRes.ok;
+        } catch {
+          telegramDispatched = false;
+        }
+      }
+
+      // Disparo Webhook (Slack, Discord, n8n, Z-API, Evolution WhatsApp API)
       if (webhookUrl && /^https?:\/\//i.test(webhookUrl.trim())) {
         try {
           const whRes = await fetch(webhookUrl.trim(), {
@@ -273,6 +296,9 @@ export default async function handler(req, res) {
             body: JSON.stringify({
               text: messageText,
               content: messageText,
+              phone: whatsappNumber ? whatsappNumber.replace(/\D/g, '') : undefined,
+              number: whatsappNumber ? whatsappNumber.replace(/\D/g, '') : undefined,
+              message: messageText,
               source: 'RadarFAP Brasil',
               timestamp: new Date().toISOString(),
               alertsCount: state.alerts?.length || 0,
@@ -287,10 +313,20 @@ export default async function handler(req, res) {
         }
       }
 
+      const waClean = (whatsappNumber || '').replace(/\D/g, '');
+      const waDirectLink = waClean
+        ? `https://api.whatsapp.com/send?phone=${waClean}&text=${encodeURIComponent(messageText)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(messageText)}`;
+
+      const tgDirectLink = `https://t.me/share/url?url=${encodeURIComponent('https://radarfap.vercel.app')}&text=${encodeURIComponent(messageText)}`;
+
       return sendJson(res, 200, {
         ok: true,
         webhookDispatched,
         webhookStatus,
+        telegramDispatched,
+        waDirectLink,
+        tgDirectLink,
         messageText,
         dispatchedAt: new Date().toLocaleTimeString('pt-BR')
       });
