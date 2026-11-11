@@ -85,30 +85,30 @@
       </div>
 
       <!-- Botões de Ação em Pílula + Círculo (Estilo da referência) -->
-      <div class="flex flex-wrap items-center gap-2.5 self-end lg:self-auto">
-        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm">
-          <button onclick="window.openProfileModal()" class="btn-pill-outline-light !py-2 !px-3.5 border-none hover:bg-[#f1f3f6]">
+      <div class="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-start">
+        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start">
+          <button onclick="window.openProfileModal()" class="btn-pill-outline-light !py-2 !px-3 border-none hover:bg-[#f1f3f6] text-xs font-bold truncate">
             <span id="headerProfileBtnLabel">🎯 Perfil &amp; Match (PE)</span>
           </button>
-          <button onclick="window.openProfileModal()" class="circle-icon-lime" title="Configurar Perfil do Pesquisador / ICT e recalcular Match (%)">
+          <button onclick="window.openProfileModal()" class="circle-icon-lime shrink-0" title="Configurar Perfil do Pesquisador / ICT e recalcular Match (%)">
             <span class="text-xs leading-none font-extrabold">%</span>
           </button>
         </div>
 
-        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm">
-          <button id="btnNewEdital" class="btn-pill-outline-light !py-2 !px-4 border-none hover:bg-[#f1f3f6]">
+        <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start">
+          <button id="btnNewEdital" class="btn-pill-outline-light !py-2 !px-3.5 border-none hover:bg-[#f1f3f6] text-xs font-bold truncate">
             Novo Edital
           </button>
-          <button onclick="window.openNewEditalModal()" class="circle-icon-dark" title="Cadastrar edital manualmente">
+          <button onclick="window.openNewEditalModal()" class="circle-icon-dark shrink-0" title="Cadastrar edital manualmente">
             <span class="text-base leading-none font-bold">+</span>
           </button>
         </div>
 
-        <div class="flex items-center gap-1.5 bg-[#14181f] p-1.5 rounded-full shadow-md">
-          <button id="btnSyncNow" class="px-4 py-2 rounded-full text-xs font-bold text-white hover:text-[#b6f53b] transition">
+        <div class="flex items-center gap-1.5 bg-[#14181f] p-1.5 rounded-full shadow-md flex-1 sm:flex-initial justify-between sm:justify-start">
+          <button id="btnSyncNow" class="px-3 sm:px-4 py-2 rounded-full text-xs font-bold text-white hover:text-[#b6f53b] transition truncate">
             <span id="syncBtnText">Sincronizar FACEPE</span>
           </button>
-          <button onclick="window.triggerSync()" class="circle-icon-lime" title="Sincronizar agora com www2.facepe.br">
+          <button onclick="window.triggerSync()" class="circle-icon-lime shrink-0" title="Sincronizar agora com www2.facepe.br">
             <svg id="syncIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
@@ -124,45 +124,45 @@
     <section id="tab-dashboard" class="tab-panel space-y-5">
 
       <!-- BARRA INTERATIVA DE ORGANIZAÇÃO DE CARDS E LAYOUTS -->
-      <div class="bento-light px-5 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-        <div class="flex flex-wrap items-center gap-2.5 text-xs">
-          <span class="px-2.5 py-1 rounded-full bg-[#14181f] text-[#b6f53b] font-extrabold inline-flex items-center gap-1.5">
+      <div class="bento-light px-4 sm:px-5 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="px-2.5 py-1 rounded-full bg-[#14181f] text-[#b6f53b] font-extrabold inline-flex items-center gap-1.5 shrink-0">
             <span>⋮⋮</span>
             <span>Cards Interativos</span>
           </span>
-          <span class="text-[#5a6270] font-medium">
+          <span class="text-[#5a6270] font-medium text-[11px] sm:text-xs">
             Arraste qualquer card para mudar de posição, use <strong>← →</strong> para reordenar ou <strong>↔</strong> para redimensionar.
           </span>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-between sm:justify-end">
           <button
             id="btnToggleLayoutEdit"
             onclick="window.toggleLayoutEditMode()"
-            class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#f1f3f6] text-[#14181f] hover:bg-[#14181f] hover:text-[#b6f53b] transition inline-flex items-center gap-1.5"
+            class="px-3 py-1.5 rounded-full text-xs font-bold bg-[#f1f3f6] text-[#14181f] hover:bg-[#14181f] hover:text-[#b6f53b] transition inline-flex items-center gap-1"
           >
-            <span>✋ Organizar Layout</span>
+            <span>✋ Organizar</span>
           </button>
           <button
             onclick="window.applyBentoPreset('facepe_focus')"
-            class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#f1f3f6] text-[#5a6270] hover:text-[#14181f] transition"
+            class="px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[#f1f3f6] text-[#5a6270] hover:text-[#14181f] transition"
             title="Destacar os editais ao vivo da FACEPE e busca rápida no topo"
           >
             🔬 Foco FACEPE
           </button>
           <button
             onclick="window.applyBentoPreset('expanded')"
-            class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[#f1f3f6] text-[#5a6270] hover:text-[#14181f] transition"
+            class="px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-[#f1f3f6] text-[#5a6270] hover:text-[#14181f] transition"
             title="Expandir gráficos e painéis em visão ampla"
           >
             📐 Expandido
           </button>
           <button
             onclick="window.resetBentoLayout()"
-            class="px-3 py-1.5 rounded-full text-xs font-semibold text-[#767f8e] hover:text-[#14181f] transition"
+            class="px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-[#767f8e] hover:text-[#14181f] transition"
             title="Restaurar a posição e o tamanho original de todos os cards"
           >
-            🔄 Restaurar Padrão
+            🔄 Reset
           </button>
         </div>
       </div>
@@ -628,8 +628,8 @@
         <!-- Barra de Inteligência do Perfil do Pesquisador / ICT -->
         <div id="activeProfileBanner" class="p-3.5 rounded-2xl bg-[#0d1015] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs"></div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
-          <div class="lg:col-span-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+          <div class="sm:col-span-2 lg:col-span-2">
             <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Buscar por palavra-chave ou número</label>
             <input id="filterSearch" type="text" placeholder="Ex: 35/2026, Cientista Arretado, Bolsas..." class="input-well-dark w-full" />
           </div>
@@ -659,20 +659,20 @@
           </div>
           <div>
             <label class="block text-[11px] font-medium text-[#8a92a0] mb-1">Status / Ordenação</label>
-            <div class="flex gap-2">
-              <select id="filterStatus" class="input-well-dark w-1/2 !px-2.5">
+            <div class="grid grid-cols-2 gap-2">
+              <select id="filterStatus" class="input-well-dark w-full !px-2">
                 <option value="ALL">Todos</option>
                 <option value="Aberto">Abertos</option>
                 <option value="PRORROGADO">Prorrogados</option>
                 <option value="Em Julgamento / Resultado">Resultados</option>
                 <option value="Encerrado">Encerrados</option>
               </select>
-              <select id="filterSort" class="input-well-dark w-1/2 !px-2.5">
-                <option value="match">Maior Match (%)</option>
+              <select id="filterSort" class="input-well-dark w-full !px-2">
+                <option value="match">Match (%)</option>
                 <option value="recentes">Recentes</option>
                 <option value="prazo">Prazo</option>
                 <option value="valor">Valor</option>
-                <option value="custom">Personalizada (⋮⋮)</option>
+                <option value="custom">Personalizada</option>
               </select>
             </div>
           </div>
@@ -765,25 +765,25 @@
 
     <!-- ===================== ABA 4: PIPELINE KANBAN DE SUBMISSÕES ===================== -->
     <section id="tab-pipeline" class="tab-panel hidden space-y-6">
-      <div class="bento-dark p-6 sm:p-7 flex flex-wrap items-center justify-between gap-4">
+      <div class="bento-dark p-5 sm:p-7 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 class="text-lg font-bold text-white">Gestão de Submissões &amp; Captação (Kanban)</h2>
+          <h2 class="text-base sm:text-lg font-bold text-white">Gestão de Submissões &amp; Captação (Kanban)</h2>
           <p class="text-xs text-[#7e8694] mt-0.5">
             Organize os projetos que sua equipe pretende submeter no AgilFAP (FACEPE), PICC (CNPq), SAGe (FAPESP) e demais sistemas.
           </p>
         </div>
-        <div class="flex flex-wrap items-center gap-2.5">
-          <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-2.5"></div>
-          <button onclick="window.printPortfolioReport()" class="btn-pill-lime !py-2 !px-4 text-xs" title="Gerar Relatório Executivo da Carteira de Projetos em PDF">
-            📊 Relatório Executivo (PDF)
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-2"></div>
+          <button onclick="window.printPortfolioReport()" class="btn-pill-lime !py-2 !px-3.5 text-xs font-bold" title="Gerar Relatório Executivo da Carteira de Projetos em PDF">
+            📊 PDF Executivo
           </button>
-          <button onclick="window.copyShareablePortfolioLink()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Gerar link compartilhável da sua carteira para enviar à equipe">
-            🔗 Compartilhar Link
+          <button onclick="window.copyShareablePortfolioLink()" class="btn-pill-outline-dark !py-2 !px-3 text-xs" title="Gerar link compartilhável da sua carteira para enviar à equipe">
+            🔗 Link
           </button>
-          <button onclick="window.exportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Exportar backup completo da carteira de projetos (.json)">
-            💾 Exportar Carteira
+          <button onclick="window.exportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3 text-xs" title="Exportar backup completo da carteira de projetos (.json)">
+            💾 Exportar
           </button>
-          <button onclick="window.triggerImportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3.5 text-xs" title="Importar ou restaurar carteira de projetos (.json)">
+          <button onclick="window.triggerImportWorkspaceJson()" class="btn-pill-outline-dark !py-2 !px-3 text-xs" title="Importar ou restaurar carteira de projetos (.json)">
             📂 Importar
           </button>
         </div>
