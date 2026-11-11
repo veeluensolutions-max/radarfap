@@ -1236,6 +1236,9 @@
             <button type="button" onclick="window.printPipelineProposal()" class="btn-pill-outline-dark">
               🖨️ Imprimir Ficha
             </button>
+            <button type="button" onclick="window.openCalendarModalFromPipeline()" class="btn-pill-outline-dark" title="Exportar prazo para Google Agenda ou iCal">
+              📅 Agendar Prazo
+            </button>
             <button type="button" onclick="window.openWorkplanFromPipelineModal()" class="btn-pill-lime">
               ✨ Gerar Plano de Trabalho (AgilFAP)
             </button>
@@ -1446,6 +1449,88 @@
       </div>
     </div>
   </div>
+
+  
+  <!-- MODAL EXPORTADOR DE PRAZOS & AGENDAMENTO (CALENDÁRIO / GOOGLE / OUTLOOK / ICS) -->
+  <div id="calendarExportModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-light max-w-xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-7 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#f1f3f6] pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#14181f] text-[#b6f53b] flex items-center justify-center font-bold text-lg shadow-inner">
+            📅
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-[11px] font-extrabold">Sincronização de Agenda</span>
+              <h3 id="calModalTitle" class="text-base sm:text-lg font-extrabold text-[#14181f]">Exportar Prazos &amp; Agendar</h3>
+            </div>
+            <p id="calModalSubtitle" class="text-xs text-[#767f8e] mt-0.5">Sincronize prazos de submissão com seu calendário de preferência com lembretes automáticos.</p>
+          </div>
+        </div>
+        <button onclick="window.closeCalendarModal()" class="circle-icon-dark shrink-0" title="Fechar">✕</button>
+      </div>
+
+      <!-- Resumo do Edital / Prazos Selecionados -->
+      <div id="calModalDetailsCard" class="p-4 rounded-2xl bg-[#f6f7f9] border border-[#e8ebf0] space-y-2">
+        <!-- Preenchido dinamicamente via JS -->
+      </div>
+
+      <!-- Escolha da Plataforma de Agenda -->
+      <div class="space-y-3">
+        <span class="block text-xs font-bold text-[#14181f]">Selecione onde deseja agendar ou salvar o lembrete:</span>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button
+            type="button"
+            id="calBtnGoogle"
+            onclick="window.triggerGoogleCalendarSync()"
+            class="p-3.5 rounded-2xl border-2 border-[#e8ebf0] hover:border-[#14181f] bg-white flex items-center gap-3 transition text-left group"
+          >
+            <div class="w-9 h-9 rounded-xl bg-[#ebf3ff] text-[#1a73e8] flex items-center justify-center font-bold text-base shrink-0 group-hover:scale-105 transition">
+              G
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold text-[#14181f]">Google Agenda</div>
+              <div class="text-[10px] text-[#6c7483]">Abrir direto no navegador com alarme</div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            id="calBtnIcs"
+            onclick="window.triggerIcsDownload()"
+            class="p-3.5 rounded-2xl border-2 border-[#e8ebf0] hover:border-[#14181f] bg-white flex items-center gap-3 transition text-left group"
+          >
+            <div class="w-9 h-9 rounded-xl bg-[#e6fce5] text-[#14181f] flex items-center justify-center font-bold text-base shrink-0 group-hover:scale-105 transition">
+              📥
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold text-[#14181f]">Arquivo iCal (.ics)</div>
+              <div class="text-[10px] text-[#6c7483]">Outlook, Apple Calendar e Thunderbird</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Alertas & Lembretes configurados -->
+      <div class="p-3.5 rounded-xl bg-[#14181f] text-white space-y-1.5 text-xs">
+        <div class="flex items-center justify-between font-bold text-[#b6f53b]">
+          <span>🔔 Lembretes Inteligentes Pré-Configurados:</span>
+          <span>7 dias e 48 horas antes</span>
+        </div>
+        <p class="text-[11px] text-[#9aa2b1] leading-relaxed">
+          O evento exportado inclui 2 alarmes automáticos (VALARM), link oficial de submissão do portal da FAP e instruções para a equipe não perder o encerramento do sistema.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#f1f3f6]">
+        <button type="button" onclick="window.closeCalendarModal()" class="btn-pill-dark text-xs">
+          Concluir / Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- MODAL COMPARADOR LADO A LADO DE EDITAIS -->
   <div id="compareEditaisModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">

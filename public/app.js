@@ -879,6 +879,13 @@ function renderEditaisTab() {
 
           <div class="flex items-center gap-1.5">
             <button
+              onclick="window.openCalendarModal('${ed.id}')"
+              class="circle-icon-light hover:bg-[#14181f] hover:text-[#b6f53b] transition"
+              title="Adicionar prazo ao Google Agenda ou baixar .ics"
+            >
+              📅
+            </button>
+            <button
               onclick="window.addToPipeline('${ed.id}')"
               class="${inPipeline ? 'btn-pill-lime' : 'btn-pill-outline-light'}"
             >
@@ -1317,19 +1324,26 @@ function renderPipelineKanban() {
                       <option value="${s.id}" ${s.id === item.estagio ? 'selected' : ''}>Etapa: ${s.label}</option>
                     `).join('')}
                   </select>
-                  <div class="grid grid-cols-2 gap-1.5">
+                  <div class="grid grid-cols-3 gap-1">
                     <button
                       onclick="window.openPipelineModal('${item.id}')"
-                      class="py-1.5 px-2.5 rounded-full text-[11px] font-bold bg-[#14181f] text-white hover:bg-[#252b36] transition flex items-center justify-center gap-1"
+                      class="py-1.5 px-1.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#14181f] text-white hover:bg-[#252b36] transition flex items-center justify-center gap-0.5"
                     >
                       <span>🧮 Orçamento</span>
                     </button>
                     <button
                       onclick="window.openWorkplanModal('${ed.id}')"
-                      class="py-1.5 px-2.5 rounded-full text-[11px] font-extrabold bg-[#b6f53b] text-[#14181f] hover:brightness-95 transition flex items-center justify-center gap-1"
+                      class="py-1.5 px-1.5 rounded-full text-[10px] sm:text-[11px] font-extrabold bg-[#b6f53b] text-[#14181f] hover:brightness-95 transition flex items-center justify-center gap-0.5"
                       title="Gerar Plano de Trabalho para o AgilFAP / FAP"
                     >
                       <span>✨ Plano</span>
+                    </button>
+                    <button
+                      onclick="window.openCalendarModal('${ed.id}')"
+                      class="py-1.5 px-1.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-[#f1f3f6] text-[#14181f] hover:bg-[#e2e5eb] transition flex items-center justify-center gap-0.5"
+                      title="Agendar prazo no Google Agenda / .ics"
+                    >
+                      <span>📅 Agenda</span>
                     </button>
                   </div>
                 </div>
@@ -1589,13 +1603,22 @@ function renderAlertasTab() {
             </div>
             <p class="text-[11px] text-[#5a6270] truncate mt-1">${escapeHtml(ed.titulo)}</p>
           </div>
-          <div class="text-right shrink-0">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-              isUrgent ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-white text-[#14181f]'
-            }">
-              ${days !== null ? `${days}d` : formatDateBr(ed.prazoSubmissao)}
-            </span>
-            <div class="text-[10px] text-[#8a92a0] mt-0.5">${formatDateBr(ed.prazoSubmissao)}</div>
+          <div class="flex items-center gap-2 shrink-0">
+            <div class="text-right">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+                isUrgent ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-white text-[#14181f]'
+              }">
+                ${days !== null ? `${days}d` : formatDateBr(ed.prazoSubmissao)}
+              </span>
+              <div class="text-[10px] text-[#8a92a0] mt-0.5">${formatDateBr(ed.prazoSubmissao)}</div>
+            </div>
+            <button
+              onclick="event.stopPropagation(); window.openCalendarModal('${ed.id}');"
+              class="circle-icon-dark !w-7 !h-7 !text-[11px] hover:bg-[#b6f53b] hover:text-[#14181f] transition"
+              title="Agendar este prazo no Google / .ics"
+            >
+              📅
+            </button>
           </div>
         </div>
       `;
@@ -1745,8 +1768,8 @@ window.openDetailModal = function openDetailModal(editalId) {
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="window.downloadEditalIcs('${ed.id}')" class="btn-pill-outline-light" title="Salvar prazo no Google Calendar / Outlook">
-          📅 Agendar (.ics)
+        <button onclick="window.openCalendarModal('${ed.id}')" class="btn-pill-outline-light" title="Salvar prazo no Google Agenda, Outlook ou baixar .ics">
+          📅 Agendar Prazo
         </button>
         <button onclick="window.addToPipeline('${ed.id}'); window.closeDetailModal();" class="btn-pill-outline-light">
           + Pipeline
@@ -1761,22 +1784,165 @@ window.openDetailModal = function openDetailModal(editalId) {
   modal.classList.remove('hidden');
 };
 
+// ===================== SISTEMA DE SINCRONIZAÇÃO DE AGENDA & CALENDÁRIO =====================
+let activeCalendarTarget = null; // editalId ou 'all'
+
+window.openCalendarModal = function openCalendarModal(editalId) {
+  const ed = appState.editais.find(e => e.id === editalId);
+  if (!ed) return;
+  activeCalendarTarget = editalId;
+
+  const titleEl = document.getElementById('calModalTitle');
+  const subEl = document.getElementById('calModalSubtitle');
+  const detailsEl = document.getElementById('calModalDetailsCard');
+
+  if (titleEl) titleEl.textContent = `Agendar Prazo — ${ed.agencia} (${ed.uf})`;
+  if (subEl) subEl.textContent = `Edital Nº ${ed.numero || ''} • ${ed.area || 'Fomento'}`;
+
+  const days = getDaysRemaining(ed.prazoSubmissao);
+  const daysTxt = days !== null ? (days >= 0 ? `Faltam ${days} dias` : 'Encerrado') : 'Prazo a confirmar';
+
+  if (detailsEl) {
+    detailsEl.innerHTML = `
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#14181f] text-[#b6f53b] inline-block mb-1">
+            ${escapeHtml(ed.agencia)} • ${escapeHtml(ed.uf)}
+          </span>
+          <h4 class="text-xs font-bold text-[#14181f] leading-snug line-clamp-2">${escapeHtml(ed.titulo)}</h4>
+        </div>
+        <div class="text-right shrink-0">
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold ${days !== null && days <= 15 ? 'bg-[#ff3b30] text-white' : 'bg-[#14181f] text-white'}">
+            ${daysTxt}
+          </span>
+          <div class="text-[11px] font-bold text-[#14181f] mt-1">Data: ${formatDateBr(ed.prazoSubmissao)}</div>
+        </div>
+      </div>
+      <div class="pt-2 border-t border-[#e2e5eb] flex flex-wrap items-center justify-between text-[11px] text-[#5a6270] gap-2">
+        <span>Submissão: <strong class="text-[#14181f]">${escapeHtml(ed.plataformaSubmissao || 'Portal Oficial')}</strong></span>
+        <span>Aporte Estimado: <strong class="text-[#14181f]">${escapeHtml(ed.valorEstimado || 'Sob demanda')}</strong></span>
+      </div>
+    `;
+  }
+
+  document.getElementById('calendarExportModal')?.classList.remove('hidden');
+};
+
+window.openCalendarModalFromPipeline = function openCalendarModalFromPipeline() {
+  const pipeId = document.getElementById('pipeFormId')?.value;
+  const item = appState.pipeline.find(p => p.id === pipeId);
+  if (item && item.editalId) {
+    window.openCalendarModal(item.editalId);
+  } else {
+    showToast('Edital vinculado não localizado.');
+  }
+};
+
+window.closeCalendarModal = function closeCalendarModal() {
+  document.getElementById('calendarExportModal')?.classList.add('hidden');
+  activeCalendarTarget = null;
+};
+
+// Gerador de URL para Google Agenda com lembretes e detalhes completos
+window.triggerGoogleCalendarSync = function triggerGoogleCalendarSync() {
+  if (!activeCalendarTarget) return;
+
+  if (activeCalendarTarget === 'all') {
+    window.downloadAllDeadlinesIcs();
+    showToast('Prazos múltiplos exportados em formato iCal para importar no Google Agenda!');
+    window.closeCalendarModal();
+    return;
+  }
+
+  const ed = appState.editais.find(e => e.id === activeCalendarTarget);
+  if (!ed) return;
+
+  const dateRaw = ed.prazoSubmissao || new Date().toISOString().slice(0, 10);
+  const cleanDate = dateRaw.replace(/-/g, '');
+  // Formato dia inteiro ou com horário (18:00 encerramento padrão AgilFAP/FACEPE)
+  const startIso = `${cleanDate}T080000Z`;
+  const endIso = `${cleanDate}T210000Z`;
+
+  const title = encodeURIComponent(`[Prazo FAP] ${ed.agencia} (${ed.uf}) - Edital ${ed.numero}`);
+  const details = encodeURIComponent(
+    `RadarFAP Brasil - Lembrete de Encerramento de Submissão\n\n` +
+    `• Edital: ${ed.numero}\n` +
+    `• Título: ${ed.titulo || ''}\n` +
+    `• Agência / FAP: ${ed.agencia} (${ed.uf})\n` +
+    `• Linha de Fomento: ${ed.area || ''}\n` +
+    `• Link para Submissão: ${ed.linkSubmissao || ed.linkEdital || 'https://www2.facepe.br/editais/'}\n` +
+    `• Link do Edital (PDF): ${ed.linkPdf || ''}\n\n` +
+    `Atenção: Submeta seus arquivos com 48h de antecedência para evitar sobrecarga no AgilFAP.`
+  );
+  const location = encodeURIComponent(`${ed.plataformaSubmissao || 'Portal Oficial FAP'} - ${ed.linkSubmissao || ''}`);
+
+  const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startIso}/${endIso}&details=${details}&location=${location}&sf=true&output=xml`;
+
+  window.open(gCalUrl, '_blank', 'noopener,noreferrer');
+  showToast('Google Agenda aberto em nova aba com o prazo!');
+  window.closeCalendarModal();
+};
+
+// Gerador de arquivo .ics com suporte a alarmes sonoros/notificações (RFC 5545)
+window.triggerIcsDownload = function triggerIcsDownload() {
+  if (!activeCalendarTarget) return;
+
+  if (activeCalendarTarget === 'all') {
+    window.downloadAllDeadlinesIcs();
+    window.closeCalendarModal();
+    return;
+  }
+
+  window.downloadEditalIcs(activeCalendarTarget);
+  window.closeCalendarModal();
+};
+
 window.downloadEditalIcs = function downloadEditalIcs(editalId) {
   const ed = appState.editais.find(e => e.id === editalId);
   if (!ed) return;
   const dateClean = (ed.prazoSubmissao || '2026-12-01').replace(/-/g, '').slice(0, 8);
+  const nowIso = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  const summary = `[Prazo FAP] ${ed.agencia} (${ed.uf}) - Edital ${ed.numero}`;
+  const description = [
+    `RadarFAP Brasil - Lembrete de Submissão Oficial`,
+    `Edital: ${ed.numero}`,
+    `Agência: ${ed.agencia} (${ed.uf})`,
+    `Área: ${ed.area || ''}`,
+    `Plataforma: ${ed.plataformaSubmissao || 'AgilFAP'}`,
+    `Submissão: ${ed.linkSubmissao || ''}`,
+    `PDF do Edital: ${ed.linkPdf || ''}`,
+    `Recomendação: Submeter a proposta com pelo menos 48h de antecedência para evitar instabilidades de rede.`
+  ].join('\\n');
+
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//RadarFAP Brasil//PT-BR',
+    'PRODID:-//RadarFAP Brasil//Gestao de Prazos PT-BR//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
     'BEGIN:VEVENT',
     `UID:radarfap-${ed.id}@radarfap.br`,
-    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+    `DTSTAMP:${nowIso}`,
     `DTSTART;VALUE=DATE:${dateClean}`,
     `DTEND;VALUE=DATE:${dateClean}`,
-    `SUMMARY:[Prazo FAP] ${ed.agencia} (${ed.uf}) - Edital ${ed.numero}`,
-    `DESCRIPTION:${(ed.titulo || '').replace(/\n/g, ' ')} | Submissao: ${ed.linkSubmissao || ''} | PDF: ${ed.linkPdf || ''}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    `LOCATION:${ed.plataformaSubmissao || 'Portal Oficial'} - ${ed.linkSubmissao || ''}`,
     `URL:${ed.linkSubmissao || ed.linkEdital || ''}`,
+    'STATUS:CONFIRMED',
+    // Alarme 1: 7 dias antes
+    'BEGIN:VALARM',
+    'TRIGGER:-P7D',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:Lembrete: Faltam 7 dias para o encerramento do Edital ${ed.numero} (${ed.agencia})`,
+    'END:VALARM',
+    // Alarme 2: 48 horas antes
+    'BEGIN:VALARM',
+    'TRIGGER:-P2D',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:URGENTE: Faltam 48h para submeter a proposta ao Edital ${ed.numero} (${ed.agencia})`,
+    'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');
@@ -1785,10 +1951,12 @@ window.downloadEditalIcs = function downloadEditalIcs(editalId) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `prazo-${ed.agencia.toLowerCase()}-${ed.numero.replace(/[^a-zA-Z0-9]/g, '-')}.ics`;
+  a.download = `prazo-${ed.agencia.toLowerCase()}-${(ed.numero || 'edital').replace(/[^a-zA-Z0-9]/g, '-')}.ics`;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('Arquivo de calendário (.ics) baixado!');
+  showToast(`Prazo do Edital ${ed.numero} exportado com lembretes (.ics)!`);
 };
 
 window.closeDetailModal = function closeDetailModal() {
