@@ -1147,6 +1147,7 @@
           </div>
 
           <!-- Simulador Oficial de Cotas de Bolsas (FACEPE / CNPq / CAPES) -->
+          <!-- SIMULADOR DE BOLSAS -->
           <div class="pt-3 border-t border-white/10 space-y-2">
             <div class="flex items-center justify-between text-[11px]">
               <span class="font-bold text-[#b6f53b]">🎓 Simulador de Cotas de Bolsas (FACEPE / CNPq / CAPES)</span>
@@ -1174,6 +1175,48 @@
                   + Somar
                 </button>
               </div>
+            </div>
+          </div>
+
+          <!-- SIMULADOR DE CONTRAPARTIDA FINANCEIRA & ECONÔMICA (FACEPE / FINEP / EMBRAPII) -->
+          <div class="pt-3 border-t border-white/10 space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between text-[11px] gap-2">
+              <span class="font-bold text-[#b6f53b]">🧮 Simulador de Contrapartida Obrigatória (Inovação / ICT / Empresa)</span>
+              <span class="text-[#8a92a0]">Exigência padrão: FACEPE Inovação, Tecnova, Centelha &amp; FINEP</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+              <div class="sm:col-span-4">
+                <label class="block text-[10px] text-[#8a92a0] mb-1">Porte do Proponente / Parceria</label>
+                <select id="simContrapartidaPorte" onchange="window.recalculateContrapartida()" class="input-well-dark w-full !py-2 text-xs">
+                  <option value="ict_publica">ICT Pública / Universidade (Isenta / 10% Econômica)</option>
+                  <option value="startup_me" selected>Startup / ME / EPP (5% Financeira + 5% Econômica)</option>
+                  <option value="media_empresa">Média Empresa (10% Financeira + 10% Econômica)</option>
+                  <option value="grande_empresa">Grande Empresa (20% Financeira + 20% Econômica)</option>
+                </select>
+              </div>
+
+              <div class="sm:col-span-3">
+                <label class="block text-[10px] text-[#8a92a0] mb-1">Contrapartida Financeira (R$)</label>
+                <input id="pipeContrapartidaFinanceira" type="number" readonly class="input-well-dark w-full !py-2 text-xs font-bold text-white bg-[#0b0e13]" />
+              </div>
+
+              <div class="sm:col-span-3">
+                <label class="block text-[10px] text-[#8a92a0] mb-1">Contrapartida Econômica / Horas (R$)</label>
+                <input id="pipeContrapartidaEconomica" type="number" readonly class="input-well-dark w-full !py-2 text-xs font-bold text-[#b6f53b] bg-[#0b0e13]" />
+              </div>
+
+              <div class="sm:col-span-2">
+                <button type="button" onclick="window.applyContrapartidaToNotes()" class="btn-pill-outline-dark w-full !py-2 text-[11px] font-bold" title="Inserir justificativa de contrapartida nas notas">
+                  + Anexar
+                </button>
+              </div>
+            </div>
+
+            <div id="contrapartidaSummaryText" class="p-2.5 rounded-xl bg-[#0b0e13] border border-white/5 text-[11px] text-[#9aa2b1] flex items-center justify-between">
+              <span>Aporte Solicitado FAP: <strong id="cpValSubvencao" class="text-white">R$ 0</strong></span>
+              <span>Contrapartida Total: <strong id="cpValTotal" class="text-[#b6f53b]">R$ 0</strong></span>
+              <span>Orçamento Global do Projeto: <strong id="cpValGlobal" class="text-white">R$ 0</strong></span>
             </div>
           </div>
         </div>

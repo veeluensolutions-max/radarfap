@@ -1350,8 +1350,72 @@ function updatePipeTotalPreview() {
   const total = custeio + capital + bolsas;
   const el = document.getElementById('pipeTotalCalculated');
   if (el) el.textContent = formatCurrencyBRL(total);
+  if (typeof window.recalculateContrapartida === 'function') {
+    window.recalculateContrapartida();
+  }
   return total;
 }
+
+window.recalculateContrapartida = function recalculateContrapartida() {
+  const custeio = Number(document.getElementById('pipeRubricaCusteio')?.value) || 0;
+  const capital = Number(document.getElementById('pipeRubricaCapital')?.value) || 0;
+  const bolsas = Number(document.getElementById('pipeRubricaBolsas')?.value) || 0;
+  const fapAporte = custeio + capital + bolsas;
+
+  const porte = document.getElementById('simContrapartidaPorte')?.value || 'startup_me';
+
+  // Taxas de contrapartida conforme padrões FINEP / FACEPE Inovação / Embrapii
+  let pctFinanceira = 0.05;
+  let pctEconomica = 0.05;
+
+  if (porte === 'ict_publica') {
+    pctFinanceira = 0.0;
+    pctEconomica = 0.10;
+  } else if (porte === 'startup_me') {
+    pctFinanceira = 0.05;
+    pctEconomica = 0.05;
+  } else if (porte === 'media_empresa') {
+    pctFinanceira = 0.10;
+    pctEconomica = 0.10;
+  } else if (porte === 'grande_empresa') {
+    pctFinanceira = 0.20;
+    pctEconomica = 0.20;
+  }
+
+  const valFinanceira = Math.round(fapAporte * pctFinanceira);
+  const valEconomica = Math.round(fapAporte * pctEconomica);
+  const totalContrapartida = valFinanceira + valEconomica;
+  const orcamentoGlobal = fapAporte + totalContrapartida;
+
+  const finInput = document.getElementById('pipeContrapartidaFinanceira');
+  const econInput = document.getElementById('pipeContrapartidaEconomica');
+  if (finInput) finInput.value = valFinanceira;
+  if (econInput) econInput.value = valEconomica;
+
+  const elSub = document.getElementById('cpValSubvencao');
+  const elTotal = document.getElementById('cpValTotal');
+  const elGlobal = document.getElementById('cpValGlobal');
+
+  if (elSub) elSub.textContent = formatCurrencyBRL(fapAporte);
+  if (elTotal) elTotal.textContent = `${formatCurrencyBRL(totalContrapartida)} (${Math.round((pctFinanceira + pctEconomica) * 100)}%)`;
+  if (elGlobal) elGlobal.textContent = formatCurrencyBRL(orcamentoGlobal);
+};
+
+window.applyContrapartidaToNotes = function applyContrapartidaToNotes() {
+  const porteSelect = document.getElementById('simContrapartidaPorte');
+  const porteLabel = porteSelect?.options[porteSelect.selectedIndex]?.text || 'Proponente';
+  const fin = Number(document.getElementById('pipeContrapartidaFinanceira')?.value) || 0;
+  const econ = Number(document.getElementById('pipeContrapartidaEconomica')?.value) || 0;
+  const total = fin + econ;
+
+  const text = `[Contrapartida Obrigatória: ${porteLabel}] -> Financeira: ${formatCurrencyBRL(fin)} | Econômica (Horas ICT/Equipe): ${formatCurrencyBRL(econ)} | Total: ${formatCurrencyBRL(total)}`;
+
+  const notasEl = document.getElementById('pipeFormNotas');
+  if (notasEl) {
+    notasEl.value = notasEl.value ? `${notasEl.value}\n${text}` : text;
+  }
+  showToast('Contrapartida calculada e adicionada às notas estratégicas!');
+};
 
 window.openPipelineModal = function openPipelineModal(pipeId) {
   const item = appState.pipeline.find(p => p.id === pipeId);
@@ -1370,6 +1434,11 @@ window.openPipelineModal = function openPipelineModal(pipeId) {
   document.getElementById('pipeFormNotas').value = item.notas || '';
   document.getElementById('pipeNewCheckItem').value = '';
 
+  if (item.contrapartidaPorte) {
+    const cpSelect = document.getElementById('simContrapartidaPorte');
+    if (cpSelect) cpSelect.value = item.contrapartidaPorte;
+  }
+
   updatePipeTotalPreview();
   document.getElementById('pipelineEditModal').classList.remove('hidden');
 };
@@ -1387,6 +1456,12 @@ window.printPipelineProposal = function printPipelineProposal() {
   const capital = Number(document.getElementById('pipeRubricaCapital').value) || 0;
   const bolsas = Number(document.getElementById('pipeRubricaBolsas').value) || 0;
   const total = custeio + capital + bolsas;
+
+  const cpPorte = document.getElementById('simContrapartidaPorte')?.value;
+  const cpFin = Number(document.getElementById('pipeContrapartidaFinanceira')?.value) || 0;
+  const cpEcon = Number(document.getElementById('pipeContrapartidaEconomica')?.value) || 0;
+  const cpTotal = cpFin + cpEcon;
+  const orcamentoGlobal = total + cpTotal;
 
   const w = window.open('', '_blank', 'width=850,height=700');
   if (!w) return;
@@ -1417,13 +1492,16 @@ window.printPipelineProposal = function printPipelineProposal() {
         <strong>Observações:</strong> ${escapeHtml(document.getElementById('pipeFormNotas').value)}
       </div>
       <div class="box">
-        <strong>Quadro Orçamentário Estimado</strong>
+        <strong>Quadro Orçamentário &amp; Contrapartida Obrigatória</strong>
         <table>
-          <tr><th>Rubrica</th><th>Valor Pleiteado</th></tr>
+          <tr><th>Rubrica / Componente</th><th>Valor Pleiteado</th></tr>
           <tr><td>Custeio &amp; Serviços de Terceiros</td><td>${formatCurrencyBRL(custeio)}</td></tr>
           <tr><td>Capital &amp; Equipamentos Permanentes</td><td>${formatCurrencyBRL(capital)}</td></tr>
           <tr><td>Bolsas de Pesquisa (IC / Pós / Apoio Técnico)</td><td>${formatCurrencyBRL(bolsas)}</td></tr>
-          <tr><th>TOTAL PLEITEADO</th><th>${formatCurrencyBRL(total)}</th></tr>
+          <tr><th>SUBTOTAL SOLICITADO À FAP</th><th>${formatCurrencyBRL(total)}</th></tr>
+          <tr><td>Contrapartida Financeira (Proponente/Empresa)</td><td>${formatCurrencyBRL(cpFin)}</td></tr>
+          <tr><td>Contrapartida Econômica (Horas de Doutores/Laboratório)</td><td>${formatCurrencyBRL(cpEcon)}</td></tr>
+          <tr style="background:#f1f3f6;"><th>ORÇAMENTO GLOBAL DA PROPOSTA</th><th>${formatCurrencyBRL(orcamentoGlobal)}</th></tr>
         </table>
       </div>
       <div class="box">
@@ -2132,6 +2210,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rubricaCapital: capital,
         rubricaBolsas: bolsas,
         valorPleiteado: total,
+        contrapartidaPorte: document.getElementById('simContrapartidaPorte')?.value,
+        contrapartidaFinanceira: Number(document.getElementById('pipeContrapartidaFinanceira')?.value) || 0,
+        contrapartidaEconomica: Number(document.getElementById('pipeContrapartidaEconomica')?.value) || 0,
         notas: document.getElementById('pipeFormNotas').value,
         checklist: updatedChecklist
       })
