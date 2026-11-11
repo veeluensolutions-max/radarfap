@@ -586,6 +586,29 @@ window.toggleFacepeOpenSwitch = function toggleFacepeOpenSwitch() {
   renderDashboard();
 };
 
+let peAlertsActive = true;
+window.toggleDashPeAlerts = function toggleDashPeAlerts(btnEl) {
+  peAlertsActive = !peAlertsActive;
+  const el = btnEl || document.getElementById('dashToggleAlertPe');
+  if (el) el.classList.toggle('off', !peAlertsActive);
+  showToast(peAlertsActive ? '🔔 Alertas prioritários de Pernambuco (FACEPE) ATIVADOS!' : '🔕 Alertas de PE pausados no painel.');
+};
+
+let autoSyncActive = true;
+window.toggleDashAutoSync = function toggleDashAutoSync(btnEl) {
+  autoSyncActive = !autoSyncActive;
+  const el = btnEl || document.getElementById('dashToggleAutoSync');
+  if (el) {
+    el.classList.toggle('off', !autoSyncActive);
+  }
+  if (autoSyncActive) {
+    showToast('⚡ Coleta Automática ATIVA em tempo real!');
+    window.triggerSync();
+  } else {
+    showToast('⏸️ Coleta Automática pausada.');
+  }
+};
+
 window.selectDashboardBar = function selectDashboardBar(key) {
   activeBarKey = key;
   renderDashboard();

@@ -224,7 +224,11 @@ export default async function handler(req, res) {
       return sendJson(res, 200, { ok: true, state: getFullState() });
     }
 
-    if (pathname === '/api/alerts/config' && req.method === 'POST') {
+    if (pathname === '/api/alerts/config' && req.method === 'GET') {
+    return sendJson(res, 200, { ok: true, config: appDatabase.alertConfig || {} });
+  }
+
+  if (pathname === '/api/alerts/config' && req.method === 'POST') {
       const body = await parseBody(req);
       const db = loadDatabase();
       db.alertConfig = {
