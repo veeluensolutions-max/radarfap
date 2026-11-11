@@ -225,7 +225,7 @@ export default async function handler(req, res) {
     }
 
     if (pathname === '/api/alerts/config' && req.method === 'GET') {
-    return sendJson(res, 200, { ok: true, config: appDatabase.alertConfig || {} });
+    const db = loadDatabase(); return sendJson(res, 200, { ok: true, config: db.alertConfig || {} });
   }
 
   if (pathname === '/api/alerts/config' && req.method === 'POST') {
