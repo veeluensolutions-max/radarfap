@@ -52,16 +52,16 @@
       </div>
 
       <!-- Segmented Pill Bar (Idêntico ao "Item 1 | Item 2 | Item 3 | Item 4" da referência) -->
-      <div class="pill-nav-shell w-full lg:w-auto overflow-x-auto no-scrollbar">
+      <div class="pill-nav-shell w-full lg:w-auto overflow-x-auto no-scrollbar shrink-0">
         <nav class="pill-nav-inner">
           <button data-tab="dashboard" class="pill-tab active">
             Visão Geral
           </button>
-          <button data-tab="editais" class="pill-tab flex items-center gap-2">
+          <button data-tab="editais" class="pill-tab">
             <span>Editais</span>
-            <span id="badgeTotalEditais" class="px-2 py-0.5 text-[11px] rounded-full bg-[#f1f3f6] text-[#14181f] font-bold">70</span>
+            <span id="badgeTotalEditais" class="px-2 py-0.5 text-[11px] rounded-full bg-[#f1f3f6] text-[#14181f] font-bold">86</span>
           </button>
-          <button data-tab="faps" class="pill-tab flex items-center gap-2">
+          <button data-tab="faps" class="pill-tab">
             <span>27 Estados &amp; FAPs</span>
             <span class="px-2 py-0.5 text-[11px] rounded-full bg-[#f1f3f6] text-[#14181f] font-bold">31</span>
           </button>
@@ -71,13 +71,13 @@
             ondragover="window.onPipelineTabDragOver(event)"
             ondragleave="window.onPipelineTabDragLeave(event)"
             ondrop="window.onPipelineTabDrop(event)"
-            class="pill-tab flex items-center gap-2"
+            class="pill-tab"
             title="Clique para abrir o Kanban ou arraste qualquer Edital para cá"
           >
             <span>Submissões</span>
             <span id="badgePipelineCount" class="px-2 py-0.5 text-[11px] rounded-full bg-[#b6f53b] text-[#14181f] font-bold">3</span>
           </button>
-          <button data-tab="alertas" class="pill-tab flex items-center gap-2">
+          <button data-tab="alertas" class="pill-tab">
             <span>Alertas</span>
             <span id="badgeAlertsCount" class="px-2 py-0.5 text-[11px] rounded-full bg-[#14181f] text-white font-bold">0</span>
           </button>

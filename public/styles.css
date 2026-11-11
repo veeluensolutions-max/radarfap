@@ -88,39 +88,52 @@ body {
 .pill-nav-shell {
   background-color: var(--bg-tray);
   border-radius: 9999px;
-  padding: 10px;
+  padding: 6px;
+  max-width: 100%;
 }
 
 .pill-nav-inner {
   background-color: #ffffff;
   border-radius: 9999px;
-  padding: 6px;
+  padding: 4px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  white-space: nowrap;
 }
 
 .pill-tab {
   border-radius: 9999px;
-  padding: 10px 22px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #5a6270;
   transition: all 0.2s ease;
   white-space: nowrap;
   cursor: pointer;
   border: none;
   background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .pill-tab:hover {
   color: #14181f;
+  background-color: #f7f8fa;
 }
 
 .pill-tab.active {
   background-color: #14181f;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(20, 24, 31, 0.18);
+}
+
+.pill-tab.active:hover {
+  background-color: #14181f;
+  color: #ffffff;
 }
 
 /* Botões em cápsula da referência */
@@ -454,17 +467,20 @@ body {
 
   /* Segmented pills com navegação touch natural */
   .pill-nav-shell {
-    padding: 6px;
+    padding: 4px;
+    width: 100%;
+    overflow-x: auto;
   }
 
   .pill-nav-inner {
-    padding: 4px;
-    gap: 3px;
+    padding: 3px;
+    gap: 2px;
+    width: max-content;
   }
 
   .pill-tab {
-    padding: 8px 14px;
-    font-size: 0.78rem;
+    padding: 7px 12px;
+    font-size: 0.74rem;
   }
 
   /* Mapa do Brasil interativo em telas pequenas */
