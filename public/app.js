@@ -973,12 +973,12 @@ function renderBrazilGeoMap() {
             onclick="window.selectMapState('${cellUf}')"
             class="h-12 rounded-2xl px-2 flex flex-col items-center justify-center transition ${
               isSelected
-                ? 'bg-[#b6f53b] text-[#14181f] shadow-lg scale-105 font-extrabold'
+                ? 'bg-[#b6f53b] text-[#14181f] shadow-lg scale-105 font-extrabold ring-2 ring-[#b6f53b]'
                 : isPe
                   ? 'bg-white text-[#14181f] font-extrabold hover:bg-[#b6f53b]'
                   : 'bg-[#0d1015] text-white hover:bg-white/15 border border-white/10 font-bold'
             }"
-            title="${fap?.estado || cellUf}: ${count} edital(is)"
+            title="${fap?.estado || cellUf}: ${count} edital(is) - Clique para ver todos à direita"
           >
             <span class="text-xs leading-none">${cellUf === 'BR' ? 'FED' : cellUf}</span>
             <span class="text-[10px] opacity-75 mt-0.5">${count} ed.</span>
@@ -993,62 +993,128 @@ function renderBrazilGeoMap() {
   const stateEditais = appState.editais.filter(e => e.uf === selectedMapUf);
 
   inspectorEl.innerHTML = `
-    <div class="space-y-4">
-      <div class="flex items-start justify-between gap-2 border-b border-[#f1f3f6] pb-3.5">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-0.5 rounded-full text-xs font-extrabold bg-[#b6f53b] text-[#14181f]">
-              ${escapeHtml(fap.uf)} • ${escapeHtml(fap.regiao)}
-            </span>
-            <h4 class="text-base font-extrabold text-[#14181f]">${escapeHtml(fap.sigla)}</h4>
-          </div>
-          <p class="text-xs text-[#68707e] mt-1 font-medium">${escapeHtml(fap.nome)}</p>
-        </div>
-        <span class="px-3 py-1 rounded-full bg-[#14181f] text-white text-xs font-bold shrink-0">
-          ${stateEditais.length} edital(is)
-        </span>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2.5 text-xs bg-[#f6f7f9] p-3.5 rounded-2xl">
-        <div>
-          <span class="text-[#8a92a0] block text-[11px]">Plataforma Oficial</span>
-          <strong class="text-[#14181f]">${escapeHtml(fap.plataformaSubmissao)}</strong>
-        </div>
-        <div>
-          <span class="text-[#8a92a0] block text-[11px]">Orçamento Anual Est.</span>
-          <strong class="text-[#14181f]">${escapeHtml(fap.orcamentoAnualEstimado || 'Consulte Portal')}</strong>
-        </div>
-      </div>
-
-      <div class="space-y-2">
-        <div class="text-xs font-bold text-[#14181f]">Oportunidades em destaque (${escapeHtml(fap.uf)}):</div>
-        <div class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-          ${stateEditais.slice(0, 4).map(ed => `
-            <div onclick="window.openDetailModal('${ed.id}')" class="p-2.5 rounded-xl bg-[#f6f7f9] hover:bg-[#ebedf2] cursor-pointer flex items-center justify-between gap-2 text-xs transition">
-              <span class="font-bold text-[#14181f] truncate">${escapeHtml(ed.numero)} — ${escapeHtml(ed.titulo)}</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-[#14181f] shrink-0">${formatDateBr(ed.prazoSubmissao)}</span>
+    <div class="space-y-4 flex-1 flex flex-col justify-between">
+      <div>
+        <!-- Cabeçalho do Estado Selecionado -->
+        <div class="flex items-start justify-between gap-2 border-b border-[#f1f3f6] pb-3.5">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-0.5 rounded-full text-xs font-extrabold bg-[#b6f53b] text-[#14181f]">
+                ${escapeHtml(fap.uf)} • ${escapeHtml(fap.regiao)}
+              </span>
+              <h4 class="text-base font-extrabold text-[#14181f] truncate">${escapeHtml(fap.sigla)}</h4>
             </div>
-          `).join('')}
+            <p class="text-xs text-[#68707e] mt-1 font-medium truncate">${escapeHtml(fap.nome)} — ${escapeHtml(fap.estado)}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-[#14181f] text-[#b6f53b] text-xs font-extrabold shrink-0">
+            ${stateEditais.length} ${stateEditais.length === 1 ? 'edital disponível' : 'editais disponíveis'}
+          </span>
+        </div>
+
+        <!-- Metadados da FAP / Plataforma -->
+        <div class="grid grid-cols-2 gap-2.5 text-xs bg-[#f6f7f9] p-3 rounded-2xl my-3">
+          <div>
+            <span class="text-[#8a92a0] block text-[10px]">Plataforma Oficial</span>
+            <strong class="text-[#14181f] truncate block">${escapeHtml(fap.plataformaSubmissao || 'Portal FAP')}</strong>
+          </div>
+          <div>
+            <span class="text-[#8a92a0] block text-[10px]">Orçamento Anual Est.</span>
+            <strong class="text-[#14181f] truncate block">${escapeHtml(fap.orcamentoAnualEstimado || 'Sob Demanda')}</strong>
+          </div>
+        </div>
+
+        <!-- Lista Completa e Interativa de Editais Disponíveis para este Estado -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold text-[#14181f]">
+            <span>📋 Editais Disponíveis em ${escapeHtml(fap.uf)} (${stateEditais.length}):</span>
+            <button onclick="window.filterByFap('${escapeHtml(fap.sigla)}')" class="text-[11px] text-[#5a6270] underline hover:text-[#14181f]">
+              Ver no Grid Geral →
+            </button>
+          </div>
+
+          <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1 no-scrollbar">
+            ${stateEditais.length === 0 ? `
+              <div class="py-8 text-center text-xs text-[#8a92a0] bg-[#f6f7f9] rounded-2xl p-4">
+                Nenhum edital cadastrado no momento para ${escapeHtml(fap.uf)}.
+                <br/><span class="text-[10px]">Use os botões abaixo para acessar o portal oficial da agência.</span>
+              </div>
+            ` : stateEditais.map(ed => {
+              const inPipe = (appState.pipeline || []).some(p => p.editalId === ed.id);
+              const daysLeft = getDaysRemaining(ed.prazoSubmissao);
+              return `
+                <div class="p-3.5 rounded-2xl bg-[#f6f7f9] border border-[#e8ebf0] hover:border-[#14181f] transition space-y-2 group">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1.5 mb-0.5">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#14181f] text-white">
+                          Nº ${escapeHtml(ed.numero)}
+                        </span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-[#14181f] border border-[#e2e5eb]">
+                          ${escapeHtml(ed.area || 'Fomento')}
+                        </span>
+                        ${ed.prorrogado ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#b6f53b] text-[#14181f]">Prorrogado</span>' : ''}
+                      </div>
+                      <h5 onclick="window.openDetailModal('${ed.id}')" class="text-xs font-bold text-[#14181f] hover:underline cursor-pointer leading-snug line-clamp-2">
+                        ${escapeHtml(ed.titulo)}
+                      </h5>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${daysLeft !== null && daysLeft <= 15 ? 'bg-[#ff3b30] text-white' : 'bg-white text-[#14181f] shadow-sm'}">
+                        ${daysLeft !== null ? (daysLeft >= 0 ? `${daysLeft}d restantes` : 'Encerrado') : formatDateBr(ed.prazoSubmissao)}
+                      </span>
+                      <div class="text-[10px] text-[#8a92a0] mt-0.5">Prazo: ${formatDateBr(ed.prazoSubmissao)}</div>
+                    </div>
+                  </div>
+
+                  <p class="text-[11px] text-[#68707e] line-clamp-2 leading-relaxed">
+                    ${escapeHtml(ed.resumo || 'Consulte o regulamento completo da chamada para requisitos de elegibilidade.')}
+                  </p>
+
+                  <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#e8ebf0]/80">
+                    <span class="text-[11px] font-extrabold text-[#14181f]">
+                      💰 ${escapeHtml(ed.valorEstimado || 'Consulte')}
+                    </span>
+
+                    <div class="flex items-center gap-1">
+                      <button onclick="window.openDetailModal('${ed.id}')" class="btn-pill-dark !py-1 !px-2.5 text-[10px]">
+                        Ver Detalhes
+                      </button>
+                      <button onclick="window.openWorkplanModal('${ed.id}')" class="btn-pill-outline-light !py-1 !px-2 text-[10px]" title="Gerar Plano de Trabalho">
+                        ✨ Plano
+                      </button>
+                      <button onclick="window.openCalendarModal('${ed.id}')" class="circle-icon-light !w-6 !h-6 !text-[10px]" title="Salvar no Calendário">
+                        📅
+                      </button>
+                      <button onclick="window.addToPipeline('${ed.id}')" class="${inPipe ? 'btn-pill-lime' : 'btn-pill-outline-light'} !py-1 !px-2.5 text-[10px]">
+                        ${inPipe ? '✓ Pipeline' : '+ Submeter'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#f1f3f6]">
-      <div class="flex items-center gap-1.5">
-        <button onclick="window.filterByFap('${escapeHtml(fap.sigla)}')" class="btn-pill-dark">
-          Filtrar ${escapeHtml(fap.uf)} (${stateEditais.length})
-        </button>
-        <button onclick="window.pingFapPortal('${escapeHtml(fap.sigla)}')" class="btn-pill-outline-light" title="Testar disponibilidade do portal ao vivo">
-          ${portalPingStatus[fap.sigla] ? `🟢 ${portalPingStatus[fap.sigla]}ms` : '⚡ Testar Portal'}
-        </button>
-      </div>
-      <div class="flex items-center gap-1.5">
-        <a href="${escapeHtml(fap.urlEditais)}" target="_blank" rel="noopener" class="btn-pill-outline-light">
-          Portal ↗
-        </a>
-        <a href="${escapeHtml(fap.urlPlataforma || fap.siteOficial)}" target="_blank" rel="noopener" class="circle-icon-lime" title="Sistema de Submissão">
-          →
-        </a>
+      <!-- Rodapé com Botões de Ação do Estado -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#f1f3f6] mt-3">
+        <div class="flex items-center gap-1.5">
+          <button onclick="window.filterByFap('${escapeHtml(fap.sigla)}')" class="btn-pill-dark !py-2 !px-3 text-xs">
+            Ver Todos os ${stateEditais.length} no Grid
+          </button>
+          <button onclick="window.pingFapPortal('${escapeHtml(fap.sigla)}')" class="btn-pill-outline-light !py-2 !px-3 text-xs" title="Testar disponibilidade do portal ao vivo">
+            ${portalPingStatus[fap.sigla] ? `🟢 ${portalPingStatus[fap.sigla]}ms` : '⚡ Testar Portal'}
+          </button>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <a href="${escapeHtml(fap.urlEditais)}" target="_blank" rel="noopener" class="btn-pill-outline-light !py-2 !px-3 text-xs">
+            Portal Oficial ↗
+          </a>
+          <a href="${escapeHtml(fap.urlPlataforma || fap.siteOficial)}" target="_blank" rel="noopener" class="circle-icon-lime shrink-0" title="Acessar Sistema de Submissão">
+            →
+          </a>
+        </div>
       </div>
     </div>
   `;
