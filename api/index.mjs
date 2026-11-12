@@ -1,3 +1,4 @@
+import { DEFAULT_CERTIDOES } from '../src/data/certidoesCatalog.mjs';
 import {
   loadDatabase,
   saveDatabase,
@@ -235,6 +236,44 @@ export default async function handler(req, res) {
         ...(db.alertConfig || {}),
         ...body
       };
+      saveDatabase(db);
+      return sendJson(res, 200, { ok: true, state: getFullState() });
+    }
+
+    if (pathname === '/api/certidoes' && req.method === 'GET') {
+      const db = loadDatabase();
+      return sendJson(res, 200, { ok: true, certidoes: db.certidoes || DEFAULT_CERTIDOES });
+    }
+
+    if (pathname === '/api/certidoes' && req.method === 'POST') {
+      const body = await parseBody(req);
+      const db = loadDatabase();
+      if (!Array.isArray(db.certidoes)) {
+        db.certidoes = [...DEFAULT_CERTIDOES];
+      }
+
+      if (Array.isArray(body.certidoes)) {
+        db.certidoes = body.certidoes;
+      } else if (body.id) {
+        const idx = db.certidoes.findIndex(c => c.id === body.id);
+        if (idx >= 0) {
+          db.certidoes[idx] = { ...db.certidoes[idx], ...body };
+        } else {
+          db.certidoes.push({
+            id: body.id || `cert-${Date.now()}`,
+            nome: body.nome || 'Certidão Institucional',
+            orgao: body.orgao || 'Órgão Expedidor',
+            tipo: body.tipo || 'Federal',
+            obrigatoria: body.obrigatoria !== false,
+            numeroCertidao: body.numeroCertidao || 'S/N',
+            dataEmissao: body.dataEmissao || new Date().toISOString().slice(0, 10),
+            dataValidade: body.dataValidade || '2027-01-30',
+            urlEmissao: body.urlEmissao || 'https://www.gov.br/',
+            descricao: body.descricao || 'Certidão de regularidade fiscal/jurídica.'
+          });
+        }
+      }
+
       saveDatabase(db);
       return sendJson(res, 200, { ok: true, state: getFullState() });
     }

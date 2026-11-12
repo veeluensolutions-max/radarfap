@@ -381,6 +381,7 @@ function renderAll() {
   renderFapsDirectory();
   renderPipelineKanban();
   renderAlertasTab();
+  if (typeof renderCertSummaries === 'function') renderCertSummaries();
 }
 
 // ===================== TAB NAVIGATION =====================
@@ -1660,15 +1661,15 @@ function renderAlertasTab() {
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${
                 a.tipo === 'prorrogacao' ? 'bg-[#b6f53b] text-[#14181f]' : 'bg-[#14181f] text-white'
               }">
-                ${a.tipo === 'prorrogacao' ? 'Prorrogação FACEPE' : 'Prazo Próximo'}
+                ${a.tipo === 'prorrogacao' ? 'Prorrogação FACEPE' : a.tipo === 'certidao' ? '🛡️ Certidão' : 'Prazo Próximo'}
               </span>
               <h4 class="text-sm font-bold text-[#14181f]">${escapeHtml(a.titulo)}</h4>
             </div>
             <p class="text-xs text-[#68707e]">${escapeHtml(a.mensagem)}</p>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <button onclick="window.openDetailModal('${a.editalId}')" class="btn-pill-outline-light">
-              Detalhes
+            <button onclick="${a.tipo === 'certidao' ? 'window.openCertidoesModal()' : `window.openDetailModal('${a.editalId}')`}" class="btn-pill-outline-light">
+              ${a.tipo === 'certidao' ? 'Validador' : 'Detalhes'}
             </button>
             <a href="${escapeHtml(a.link)}" target="_blank" rel="noopener" class="circle-icon-dark" title="Abrir edital">
               →
@@ -4000,3 +4001,260 @@ window.onKanbanColDrop = function onKanbanColDrop(event, stageId) {
   }
 };
 
+
+
+// ===================== VALIDADOR DE CONFORMIDADE & CERTIDÕES NEGATIVAS =====================
+const CERT_LOCAL_KEY = 'radarfap_certidoes_v1';
+let certFilter = 'ALL';
+
+function getCertidoes() {
+  if (Array.isArray(appState.certidoes) && appState.certidoes.length) return appState.certidoes;
+  try {
+    const local = JSON.parse(localStorage.getItem(CERT_LOCAL_KEY) || 'null');
+    if (Array.isArray(local)) {
+      appState.certidoes = local;
+      return local;
+    }
+  } catch {}
+  return [];
+}
+
+function getCertStatus(cert) {
+  const days = getDaysRemaining(cert.dataValidade);
+  if (days === null) return { key: 'regular', label: 'Sem validade', days, cls: 'bg-[#f1f3f6] text-[#14181f]' };
+  if (days <= 0) return { key: 'vencida', label: 'Vencida', days, cls: 'bg-[#ff3b30] text-white' };
+  if (days <= 15) return { key: 'alerta', label: `Vence em ${days}d`, days, cls: 'bg-[#ffcc00] text-[#14181f]' };
+  return { key: 'regular', label: `Regular • ${days}d`, days, cls: 'bg-[#b6f53b] text-[#14181f]' };
+}
+
+function computeCertStats() {
+  const list = getCertidoes();
+  const stats = { total: list.length, regular: 0, alerta: 0, vencida: 0, obrigPendentes: 0 };
+  list.forEach(c => {
+    const st = getCertStatus(c);
+    stats[st.key] += 1;
+    if (c.obrigatoria !== false && st.key === 'vencida') stats.obrigPendentes += 1;
+  });
+  stats.score = stats.total ? Math.round(((stats.regular + stats.alerta * 0.5) / stats.total) * 100) : 0;
+  stats.apto = stats.obrigPendentes === 0;
+  return stats;
+}
+
+function certKpiHtml(stats, dark = false) {
+  const box = dark ? 'bg-[#0d1015] border border-white/10' : 'bg-[#f6f7f9]';
+  const lbl = dark ? 'text-[#7e8694]' : 'text-[#8a92a0]';
+  const val = dark ? 'text-white' : 'text-[#14181f]';
+  return `
+    <div class="p-3.5 rounded-2xl ${box}">
+      <span class="block text-[11px] ${lbl}">Índice de Conformidade</span>
+      <strong class="text-xl ${stats.score >= 80 ? 'text-[#7ccf00]' : stats.score >= 50 ? 'text-[#e0a800]' : 'text-[#ff3b30]'}">${stats.score}%</strong>
+      <span class="block text-[10px] font-bold ${stats.apto ? 'text-[#7ccf00]' : 'text-[#ff3b30]'}">${stats.apto ? '✔ Apto para outorga' : '✖ Risco de inabilitação'}</span>
+    </div>
+    <div class="p-3.5 rounded-2xl ${box}">
+      <span class="block text-[11px] ${lbl}">Regulares</span>
+      <strong class="text-xl ${val}">${stats.regular}</strong><span class="text-[11px] ${lbl}"> / ${stats.total}</span>
+    </div>
+    <div class="p-3.5 rounded-2xl ${box}">
+      <span class="block text-[11px] ${lbl}">A vencer (≤15 dias)</span>
+      <strong class="text-xl text-[#e0a800]">${stats.alerta}</strong>
+    </div>
+    <div class="p-3.5 rounded-2xl ${box}">
+      <span class="block text-[11px] ${lbl}">Vencidas</span>
+      <strong class="text-xl text-[#ff3b30]">${stats.vencida}</strong>
+    </div>
+  `;
+}
+
+function renderCertSummaries() {
+  const stats = computeCertStats();
+  const badge = document.getElementById('certBadgeKanban');
+  if (badge) {
+    const pend = stats.vencida + stats.alerta;
+    badge.textContent = pend > 0 ? `${pend} ⚠` : '✔';
+    badge.className = `ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${pend > 0 ? 'bg-[#ff3b30] text-white' : 'bg-[#b6f53b] text-[#14181f]'}`;
+  }
+  const alertasBox = document.getElementById('certSummaryAlertas');
+  if (alertasBox) alertasBox.innerHTML = certKpiHtml(stats, true);
+}
+
+function renderCertidoesModal() {
+  const stats = computeCertStats();
+  const kpis = document.getElementById('certKpis');
+  if (kpis) kpis.innerHTML = certKpiHtml(stats, false);
+
+  document.querySelectorAll('.cert-filter-btn').forEach(b => {
+    const active = b.dataset.certFilter === certFilter;
+    b.classList.toggle('btn-pill-dark', active);
+    b.classList.toggle('btn-pill-outline-light', !active);
+  });
+
+  const listEl = document.getElementById('certList');
+  if (!listEl) return;
+  const list = getCertidoes()
+    .map(c => ({ c, st: getCertStatus(c) }))
+    .filter(x => certFilter === 'ALL' || x.st.key === certFilter)
+    .sort((a, b) => (a.st.days ?? 9999) - (b.st.days ?? 9999));
+
+  if (!list.length) {
+    listEl.innerHTML = '<div class="py-8 text-center text-xs text-[#8a92a0]">Nenhuma certidão neste filtro.</div>';
+    return;
+  }
+
+  listEl.innerHTML = list.map(({ c, st }) => `
+    <div class="p-4 rounded-2xl border ${st.key === 'vencida' ? 'border-[#ff3b30]/40 bg-[#fff5f4]' : st.key === 'alerta' ? 'border-[#ffcc00]/50 bg-[#fffbea]' : 'border-[#e8ebf0] bg-white'} grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+      <div class="lg:col-span-5 min-w-0">
+        <div class="flex flex-wrap items-center gap-1.5 mb-1">
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${st.cls}">${st.label}</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#14181f] text-white">${escapeHtml(c.tipo || '')}</span>
+          ${c.obrigatoria !== false ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f1f3f6] text-[#14181f]">Obrigatória</span>' : ''}
+        </div>
+        <h4 class="text-xs font-bold text-[#14181f] leading-snug">${escapeHtml(c.nome)}</h4>
+        <p class="text-[11px] text-[#68707e]">${escapeHtml(c.orgao || '')}${c.numeroCertidao ? ' • Nº ' + escapeHtml(c.numeroCertidao) : ''}</p>
+      </div>
+      <div class="lg:col-span-2">
+        <label class="block text-[10px] text-[#8a92a0]">Emissão</label>
+        <input type="date" id="certEm-${c.id}" value="${(c.dataEmissao || '').slice(0, 10)}" class="w-full rounded-lg border border-[#dcdfe5] px-2 py-1.5 text-xs bg-white" />
+      </div>
+      <div class="lg:col-span-2">
+        <label class="block text-[10px] text-[#8a92a0]">Validade</label>
+        <input type="date" id="certVal-${c.id}" value="${(c.dataValidade || '').slice(0, 10)}" class="w-full rounded-lg border border-[#dcdfe5] px-2 py-1.5 text-xs bg-white" />
+      </div>
+      <div class="lg:col-span-3 flex flex-wrap items-center justify-end gap-1.5">
+        <a href="${escapeHtml(c.urlEmissao || '#')}" target="_blank" rel="noopener" class="btn-pill-outline-light !py-1.5 !px-3 text-[11px]" title="Emitir/renovar no portal oficial">Renovar ↗</a>
+        <button type="button" onclick="window.saveCertidao('${c.id}')" class="btn-pill-dark !py-1.5 !px-3 text-[11px]">Salvar</button>
+        <button type="button" onclick="window.removeCertidao('${c.id}')" class="circle-icon-dark !w-7 !h-7 text-[11px]" title="Remover">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function persistCertidoes(list) {
+  appState.certidoes = list;
+  try { localStorage.setItem(CERT_LOCAL_KEY, JSON.stringify(list)); } catch {}
+  try {
+    const res = await fetch('/api/certidoes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ certidoes: list })
+    });
+    const data = await res.json();
+    if (data.state) {
+      appState = data.state;
+      renderAll();
+    }
+  } catch {
+    // Modo estático (sem API): mantém salvo no navegador
+    renderAll();
+  }
+  renderCertidoesModal();
+}
+
+window.openCertidoesModal = async function openCertidoesModal() {
+  if (!getCertidoes().length) {
+    try {
+      const res = await fetch('/api/certidoes');
+      const data = await res.json();
+      if (Array.isArray(data.certidoes)) appState.certidoes = data.certidoes;
+    } catch {}
+  }
+  renderCertidoesModal();
+  document.getElementById('certidoesModal')?.classList.remove('hidden');
+};
+
+window.closeCertidoesModal = function closeCertidoesModal() {
+  document.getElementById('certidoesModal')?.classList.add('hidden');
+};
+
+window.setCertFilter = function setCertFilter(f) {
+  certFilter = f;
+  renderCertidoesModal();
+};
+
+window.toggleNewCertForm = function toggleNewCertForm() {
+  document.getElementById('newCertForm')?.classList.toggle('hidden');
+};
+
+window.saveCertidao = async function saveCertidao(id) {
+  const list = getCertidoes().map(c => {
+    if (c.id !== id) return c;
+    return {
+      ...c,
+      dataEmissao: document.getElementById(`certEm-${id}`)?.value || c.dataEmissao,
+      dataValidade: document.getElementById(`certVal-${id}`)?.value || c.dataValidade
+    };
+  });
+  await persistCertidoes(list);
+  showToast('Certidão atualizada! Alertas de conformidade recalculados.');
+};
+
+window.removeCertidao = async function removeCertidao(id) {
+  const cert = getCertidoes().find(c => c.id === id);
+  if (!cert || !confirm(`Remover "${cert.nome}" do validador?`)) return;
+  await persistCertidoes(getCertidoes().filter(c => c.id !== id));
+  showToast('Certidão removida.');
+};
+
+window.printComplianceDossier = function printComplianceDossier() {
+  const stats = computeCertStats();
+  const prof = appState.researcherProfile || {};
+  const rows = getCertidoes().map(c => {
+    const st = getCertStatus(c);
+    return `<tr>
+      <td>${escapeHtml(c.nome)}<br/><small>${escapeHtml(c.orgao || '')}</small></td>
+      <td>${escapeHtml(c.numeroCertidao || '—')}</td>
+      <td>${formatDateBr(c.dataEmissao)}</td>
+      <td>${formatDateBr(c.dataValidade)}</td>
+      <td style="font-weight:bold;color:${st.key === 'vencida' ? '#d70015' : st.key === 'alerta' ? '#b38600' : '#2e7d32'}">${st.label}</td>
+    </tr>`;
+  }).join('');
+  const w = window.open('', '_blank', 'width=900,height=720');
+  if (!w) return;
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/>
+    <title>Dossiê de Habilitação — RadarFAP</title>
+    <style>
+      body{font-family:Arial,sans-serif;color:#14181f;padding:36px;line-height:1.45}
+      h1{font-size:20px;margin:8px 0 4px}
+      .badge{display:inline-block;background:#14181f;color:#fff;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:bold}
+      .box{border:1px solid #d5d9e0;border-radius:14px;padding:14px;margin-top:14px}
+      table{width:100%;border-collapse:collapse;margin-top:10px}
+      th,td{border-bottom:1px solid #e6e8ec;padding:8px 4px;text-align:left;font-size:12px;vertical-align:top}
+      small{color:#68707e}
+    </style></head><body>
+    <img src="/logo-full.svg" alt="RadarFAP" style="height:44px"/><br/>
+    <span class="badge">Dossiê de Habilitação Jurídica, Fiscal e Trabalhista</span>
+    <h1>${escapeHtml(prof.instituicao || 'Instituição Proponente')}</h1>
+    <p>Responsável: <strong>${escapeHtml(prof.nomePesquisador || '')}</strong> • Emitido em ${new Date().toLocaleDateString('pt-BR')}</p>
+    <div class="box">
+      <strong>Índice de Conformidade: ${stats.score}%</strong> — ${stats.apto ? 'APTO para celebração de termo de outorga' : 'PENDÊNCIAS que impedem a outorga'}<br/>
+      Regulares: ${stats.regular} • A vencer (≤15d): ${stats.alerta} • Vencidas: ${stats.vencida}
+    </div>
+    <table><tr><th>Certidão / Órgão</th><th>Número</th><th>Emissão</th><th>Validade</th><th>Situação</th></tr>${rows}</table>
+    <p style="font-size:11px;color:#68707e;margin-top:18px">Documento de controle interno gerado pelo RadarFAP Brasil. A validade jurídica depende das certidões originais emitidas pelos órgãos oficiais.</p>
+    <script>window.onload=()=>window.print();<\/script>
+    </body></html>`);
+  w.document.close();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('newCertForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = document.getElementById('newCertNome').value.trim();
+    const validade = document.getElementById('newCertValidade').value;
+    if (!nome || !validade) return;
+    const novo = {
+      id: `cert-${Date.now()}`,
+      nome,
+      orgao: document.getElementById('newCertOrgao').value.trim() || 'Órgão expedidor',
+      tipo: document.getElementById('newCertTipo').value,
+      obrigatoria: true,
+      numeroCertidao: '',
+      dataEmissao: document.getElementById('newCertEmissao').value || new Date().toISOString().slice(0, 10),
+      dataValidade: validade,
+      urlEmissao: document.getElementById('newCertUrl').value.trim() || 'https://www.gov.br/'
+    };
+    await persistCertidoes([...getCertidoes(), novo]);
+    e.target.reset();
+    e.target.classList.add('hidden');
+    showToast('Nova certidão adicionada ao validador!');
+  });
+});

@@ -774,6 +774,9 @@
         </div>
         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <div id="pipelineSummaryStats" class="flex flex-wrap items-center gap-2"></div>
+          <button onclick="window.openCertidoesModal()" class="btn-pill-outline-dark !py-2 !px-3 text-xs font-bold" title="Validador de Conformidade &amp; Certidões Negativas">
+            🛡️ Certidões <span id="certBadgeKanban" class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-[#b6f53b] text-[#14181f]">0</span>
+          </button>
           <button onclick="window.printPortfolioReport()" class="btn-pill-lime !py-2 !px-3.5 text-xs font-bold" title="Gerar Relatório Executivo da Carteira de Projetos em PDF">
             📊 PDF Executivo
           </button>
@@ -923,6 +926,16 @@
 
         <!-- Lista de Alertas + Cronograma de Prazos + Log de Sincronização -->
         <div class="lg:col-span-8 space-y-6">
+          <div class="bento-dark p-6 sm:p-7 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-base font-bold text-white">🛡️ Conformidade Documental (Certidões Negativas)</h3>
+                <p class="text-xs text-[#7e8694]">Regularidade fiscal, trabalhista e cadastral exigida para outorga e liberação de parcelas.</p>
+              </div>
+              <button onclick="window.openCertidoesModal()" class="btn-pill-lime text-xs">Abrir Validador →</button>
+            </div>
+            <div id="certSummaryAlertas" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+          </div>
           <div class="bento-light p-6 sm:p-7 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -1236,6 +1249,9 @@
             <button type="button" onclick="window.printPipelineProposal()" class="btn-pill-outline-dark">
               🖨️ Imprimir Ficha
             </button>
+            <button type="button" onclick="window.openCertidoesModal()" class="btn-pill-outline-dark" title="Verificar certidões antes de submeter">
+              🛡️ Certidões
+            </button>
             <button type="button" onclick="window.openCalendarModalFromPipeline()" class="btn-pill-outline-dark" title="Exportar prazo para Google Agenda ou iCal">
               📅 Agendar Prazo
             </button>
@@ -1531,6 +1547,83 @@
     </div>
   </div>
 
+
+
+  <!-- MODAL VALIDADOR DE CONFORMIDADE & CERTIDÕES NEGATIVAS -->
+  <div id="certidoesModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bento-light max-w-5xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-7 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-[#f1f3f6] pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#14181f] text-[#b6f53b] flex items-center justify-center text-lg shrink-0">🛡️</div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-[11px] font-extrabold">Habilitação Jurídica &amp; Fiscal</span>
+              <h3 class="text-base sm:text-lg font-extrabold text-[#14181f]">Validador de Conformidade &amp; Certidões</h3>
+            </div>
+            <p class="text-xs text-[#767f8e] mt-0.5">Monitore CND Federal, FGTS, CNDT, SEFAZ, CADIN e CEIS/CNEP. Evite inabilitação documental em editais FACEPE, FINEP e CNPq.</p>
+          </div>
+        </div>
+        <button onclick="window.closeCertidoesModal()" class="circle-icon-dark shrink-0" title="Fechar">✕</button>
+      </div>
+
+      <!-- KPIs de Conformidade -->
+      <div id="certKpis" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+
+      <!-- Filtros -->
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <button type="button" data-cert-filter="ALL" onclick="window.setCertFilter('ALL')" class="cert-filter-btn btn-pill-dark !py-1.5 !px-3">Todas</button>
+          <button type="button" data-cert-filter="vencida" onclick="window.setCertFilter('vencida')" class="cert-filter-btn btn-pill-outline-light !py-1.5 !px-3">🚨 Vencidas</button>
+          <button type="button" data-cert-filter="alerta" onclick="window.setCertFilter('alerta')" class="cert-filter-btn btn-pill-outline-light !py-1.5 !px-3">⏳ A vencer (≤15d)</button>
+          <button type="button" data-cert-filter="regular" onclick="window.setCertFilter('regular')" class="cert-filter-btn btn-pill-outline-light !py-1.5 !px-3">✅ Regulares</button>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button type="button" onclick="window.toggleNewCertForm()" class="btn-pill-outline-light !py-1.5 !px-3 text-xs">+ Nova Certidão</button>
+          <button type="button" onclick="window.printComplianceDossier()" class="btn-pill-lime !py-1.5 !px-3 text-xs">🖨️ Dossiê de Habilitação</button>
+        </div>
+      </div>
+
+      <!-- Formulário de nova certidão -->
+      <form id="newCertForm" class="hidden p-4 rounded-2xl bg-[#f6f7f9] border border-[#e8ebf0] grid grid-cols-1 sm:grid-cols-6 gap-2.5 text-xs">
+        <div class="sm:col-span-3">
+          <label class="block text-[10px] text-[#68707e] mb-1">Nome da certidão *</label>
+          <input id="newCertNome" required type="text" placeholder="Ex: Certidão de Regularidade do CREA" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+        </div>
+        <div class="sm:col-span-3">
+          <label class="block text-[10px] text-[#68707e] mb-1">Órgão expedidor</label>
+          <input id="newCertOrgao" type="text" placeholder="Ex: CREA-PE" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-[10px] text-[#68707e] mb-1">Esfera / Tipo</label>
+          <select id="newCertTipo" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white">
+            <option>Federal</option><option>Estadual</option><option>Municipal</option><option>Trabalhista</option><option>Institucional</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-[10px] text-[#68707e] mb-1">Emissão</label>
+          <input id="newCertEmissao" type="date" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-[10px] text-[#68707e] mb-1">Validade *</label>
+          <input id="newCertValidade" required type="date" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+        </div>
+        <div class="sm:col-span-4">
+          <label class="block text-[10px] text-[#68707e] mb-1">Link para emissão/renovação</label>
+          <input id="newCertUrl" type="url" placeholder="https://" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+        </div>
+        <div class="sm:col-span-2 flex items-end">
+          <button type="submit" class="btn-pill-dark w-full !py-2 text-xs">Adicionar</button>
+        </div>
+      </form>
+
+      <!-- Lista de certidões -->
+      <div id="certList" class="space-y-2.5"></div>
+
+      <p class="text-[11px] text-[#8a92a0] border-t border-[#f1f3f6] pt-3">
+        As datas são editáveis: após renovar uma certidão no portal oficial, atualize a emissão/validade e clique em <strong>Salvar</strong>. Os vencimentos alimentam automaticamente a aba <strong>Alertas</strong>.
+      </p>
+    </div>
+  </div>
 
   <!-- MODAL COMPARADOR LADO A LADO DE EDITAIS -->
   <div id="compareEditaisModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/75 backdrop-blur-sm flex items-center justify-center p-4">

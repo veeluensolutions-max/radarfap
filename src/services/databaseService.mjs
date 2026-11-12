@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { FAPS_CATALOG } from '../data/fapsCatalog.mjs';
 import { INITIAL_NATIONAL_EDITAIS, INITIAL_PIPELINE_ITEMS, INITIAL_ALERT_CONFIG } from '../data/seedEditais.mjs';
+import { DEFAULT_CERTIDOES } from '../data/certidoesCatalog.mjs';
 import { scrapeFacepeEditais, scrapeFacepeNews, scrapeMultiFapPortals } from '../scrapers/facepeScraper.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -250,6 +251,38 @@ export function computeAlerts(db) {
     }
   }
 
+  
+  // 3. Alertas de Certidões Negativas Próximas de Vencer ou Vencidas
+  const certList = db.certidoes || DEFAULT_CERTIDOES;
+  for (const cert of certList) {
+    if (cert.dataValidade) {
+      const due = new Date(`${cert.dataValidade}T12:00:00Z`);
+      const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+      if (diffDays <= 0) {
+        alerts.unshift({
+          id: `alert-cert-vencida-${cert.id}`,
+          tipo: 'certidao',
+          severidade: 'critica',
+          titulo: `🚨 Certidão Vencida: ${cert.nome.slice(0, 45)}...`,
+          mensagem: `A certidão expedida por ${cert.orgao} venceu em ${cert.dataValidade}. Risco de inabilitação imediata em editais FACEPE/FINEP!`,
+          prazo: cert.dataValidade,
+          link: cert.urlEmissao
+        });
+      } else if (diffDays <= 15) {
+        alerts.push({
+          id: `alert-cert-aviso-${cert.id}`,
+          tipo: 'certidao',
+          severidade: diffDays <= 7 ? 'alta' : 'media',
+          diasRestantes: diffDays,
+          titulo: `⏳ Certidão vence em ${diffDays} dias: ${cert.nome.slice(0, 40)}...`,
+          mensagem: `Vencimento previsto para ${cert.dataValidade} (${cert.orgao}). Providencie a renovação online no portal oficial.`,
+          prazo: cert.dataValidade,
+          link: cert.urlEmissao
+        });
+      }
+    }
+  }
+
   return alerts.sort((a, b) => {
     const rank = { critica: 0, alta: 1, media: 2 };
     return (rank[a.severidade] ?? 3) - (rank[b.severidade] ?? 3);
@@ -389,7 +422,8 @@ export function getFullState() {
     researcherProfile: profile,
     alerts,
     noticiasFacepe: db.noticiasFacepe || [],
-    syncHistory: db.syncHistory || []
+    syncHistory: db.syncHistory || [],
+    certidoes: db.certidoes || DEFAULT_CERTIDOES
   };
 }
 
