@@ -61,3 +61,4 @@ export const INITIAL_USERS = [
     ultimoAcesso: new Date().toISOString()
   }
 ];
+
