@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { FAPS_CATALOG } from '../data/fapsCatalog.mjs';
 import { INITIAL_NATIONAL_EDITAIS, INITIAL_PIPELINE_ITEMS, INITIAL_ALERT_CONFIG } from '../data/seedEditais.mjs';
 import { DEFAULT_CERTIDOES } from '../data/certidoesCatalog.mjs';
+import { INITIAL_USERS } from './authService.mjs';
 import { scrapeFacepeEditais, scrapeFacepeNews, scrapeMultiFapPortals } from '../scrapers/facepeScraper.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -423,7 +424,8 @@ export function getFullState() {
     alerts,
     noticiasFacepe: db.noticiasFacepe || [],
     syncHistory: db.syncHistory || [],
-    certidoes: db.certidoes || DEFAULT_CERTIDOES
+    certidoes: db.certidoes || DEFAULT_CERTIDOES,
+    users: (db.users || INITIAL_USERS).map(u => ({ id: u.id, nome: u.nome, email: u.email, role: u.role, instituicao: u.instituicao, ativo: u.ativo, criadoEm: u.criadoEm, ultimoAcesso: u.ultimoAcesso }))
   };
 }
 

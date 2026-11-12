@@ -1,3 +1,4 @@
+import { hashPassword, generateToken, verifyToken, INITIAL_USERS } from '../src/services/authService.mjs';
 import { DEFAULT_CERTIDOES } from '../src/data/certidoesCatalog.mjs';
 import {
   loadDatabase,
@@ -238,6 +239,164 @@ export default async function handler(req, res) {
       };
       saveDatabase(db);
       return sendJson(res, 200, { ok: true, state: getFullState() });
+    }
+
+    // ===================== AUTENTICAÇÃO E GESTÃO DE USUÁRIOS =====================
+    if (pathname === '/api/auth/login' && req.method === 'POST') {
+      const { email, password } = await parseBody(req);
+      if (!email || !password) {
+        return sendJson(res, 400, { error: 'E-mail e senha são obrigatórios.' });
+      }
+
+      const db = loadDatabase();
+      if (!Array.isArray(db.users) || db.users.length === 0) {
+        db.users = [...INITIAL_USERS];
+        saveDatabase(db);
+      }
+
+      const user = db.users.find(u => u.email.toLowerCase() === String(email).trim().toLowerCase());
+      if (!user) {
+        return sendJson(res, 401, { error: 'Credenciais inválidas ou usuário não encontrado.' });
+      }
+
+      if (user.ativo === false) {
+        return sendJson(res, 403, { error: 'Usuário desativado pelo administrador.' });
+      }
+
+      const passHash = hashPassword(password);
+      if (user.passwordHash !== passHash) {
+        return sendJson(res, 401, { error: 'Credenciais inválidas.' });
+      }
+
+      user.ultimoAcesso = new Date().toISOString();
+      saveDatabase(db);
+
+      const token = generateToken(user);
+      const safeUser = { id: user.id, nome: user.nome, email: user.email, role: user.role, instituicao: user.instituicao };
+      return sendJson(res, 200, { ok: true, token, user: safeUser, state: getFullState() });
+    }
+
+    if (pathname === '/api/auth/me' && req.method === 'GET') {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.replace(/^Bearer\s+/i, '');
+      const verified = verifyToken(token);
+      if (!verified) {
+        return sendJson(res, 401, { error: 'Sessão expirada ou não autenticada.' });
+      }
+
+      const db = loadDatabase();
+      const usersList = db.users || INITIAL_USERS;
+      const user = usersList.find(u => u.id === verified.userId);
+      if (!user || user.ativo === false) {
+        return sendJson(res, 401, { error: 'Usuário não localizado ou inativo.' });
+      }
+
+      const safeUser = { id: user.id, nome: user.nome, email: user.email, role: user.role, instituicao: user.instituicao };
+      return sendJson(res, 200, { ok: true, user: safeUser });
+    }
+
+    if (pathname === '/api/auth/change-password' && req.method === 'POST') {
+      const { email, currentPassword, newPassword } = await parseBody(req);
+      if (!email || !currentPassword || !newPassword) {
+        return sendJson(res, 400, { error: 'E-mail, senha atual e nova senha são obrigatórios.' });
+      }
+
+      if (String(newPassword).length < 6) {
+        return sendJson(res, 400, { error: 'A nova senha deve ter no mínimo 6 caracteres.' });
+      }
+
+      const db = loadDatabase();
+      if (!Array.isArray(db.users)) db.users = [...INITIAL_USERS];
+
+      const user = db.users.find(u => u.email.toLowerCase() === String(email).trim().toLowerCase());
+      if (!user) {
+        return sendJson(res, 404, { error: 'Usuário não encontrado.' });
+      }
+
+      if (user.passwordHash !== hashPassword(currentPassword)) {
+        return sendJson(res, 401, { error: 'Senha atual incorreta.' });
+      }
+
+      user.passwordHash = hashPassword(newPassword);
+      user.ultimoAcesso = new Date().toISOString();
+      saveDatabase(db);
+
+      const token = generateToken(user);
+      const safeUser = { id: user.id, nome: user.nome, email: user.email, role: user.role, instituicao: user.instituicao };
+      return sendJson(res, 200, { ok: true, message: 'Senha alterada com sucesso!', token, user: safeUser });
+    }
+
+    if (pathname === '/api/auth/admin/users' && req.method === 'POST') {
+      const body = await parseBody(req);
+      const { action } = body;
+      const db = loadDatabase();
+      if (!Array.isArray(db.users)) db.users = [...INITIAL_USERS];
+
+      if (action === 'create') {
+        const { nome, email, password, role, instituicao } = body;
+        if (!nome || !email || !password) {
+          return sendJson(res, 400, { error: 'Nome, e-mail e senha inicial são obrigatórios.' });
+        }
+
+        const cleanEmail = String(email).trim().toLowerCase();
+        if (db.users.some(u => u.email.toLowerCase() === cleanEmail)) {
+          return sendJson(res, 400, { error: 'Já existe um usuário cadastrado com este e-mail.' });
+        }
+
+        const newUser = {
+          id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          nome: String(nome).trim(),
+          email: cleanEmail,
+          passwordHash: hashPassword(password),
+          role: role === 'admin' ? 'admin' : 'pesquisador',
+          instituicao: String(instituicao || 'Instituição de Pesquisa / ICT').trim(),
+          ativo: true,
+          criadoEm: new Date().toISOString(),
+          ultimoAcesso: null
+        };
+        db.users.push(newUser);
+        saveDatabase(db);
+        return sendJson(res, 200, { ok: true, message: 'Usuário criado com sucesso!', state: getFullState() });
+      }
+
+      if (action === 'reset-password') {
+        const { userId, newPassword } = body;
+        const user = db.users.find(u => u.id === userId);
+        if (!user) {
+          return sendJson(res, 404, { error: 'Usuário não encontrado.' });
+        }
+
+        const tempPass = newPassword || 'mudar123';
+        user.passwordHash = hashPassword(tempPass);
+        saveDatabase(db);
+        return sendJson(res, 200, { ok: true, message: `Senha do usuário resetada com sucesso para: ${tempPass}`, tempPass, state: getFullState() });
+      }
+
+      if (action === 'toggle-active') {
+        const { userId } = body;
+        const user = db.users.find(u => u.id === userId);
+        if (!user) return sendJson(res, 404, { error: 'Usuário não encontrado.' });
+        if (user.email === 'admin@radarfap.br') {
+          return sendJson(res, 400, { error: 'O administrador principal não pode ser desativado.' });
+        }
+        user.ativo = user.ativo === false ? true : false;
+        saveDatabase(db);
+        return sendJson(res, 200, { ok: true, message: `Usuário ${user.ativo ? 'ativado' : 'desativado'} com sucesso.`, state: getFullState() });
+      }
+
+      if (action === 'delete') {
+        const { userId } = body;
+        const user = db.users.find(u => u.id === userId);
+        if (!user) return sendJson(res, 404, { error: 'Usuário não encontrado.' });
+        if (user.email === 'admin@radarfap.br') {
+          return sendJson(res, 400, { error: 'O administrador principal não pode ser removido.' });
+        }
+        db.users = db.users.filter(u => u.id !== userId);
+        saveDatabase(db);
+        return sendJson(res, 200, { ok: true, message: 'Usuário removido com sucesso.', state: getFullState() });
+      }
+
+      return sendJson(res, 400, { error: 'Ação não suportada.' });
     }
 
     if (pathname === '/api/certidoes' && req.method === 'GET') {

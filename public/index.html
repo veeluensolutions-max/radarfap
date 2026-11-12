@@ -86,6 +86,15 @@
 
       <!-- Botões de Ação em Pílula + Círculo (Estilo da referência) -->
       <div class="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-start">
+        <div id="headerAuthWidget" class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start">
+          <button id="headerAuthBtn" onclick="window.handleAuthHeaderClick()" class="btn-pill-outline-light !py-2 !px-3 border-none hover:bg-[#f1f3f6] text-xs font-bold truncate">
+            <span id="headerAuthLabel">🔐 Entrar / Login</span>
+          </button>
+          <button onclick="window.handleAuthHeaderClick()" class="circle-icon-dark shrink-0" id="headerAuthCircle" title="Área de Acesso e Conta">
+            <span id="headerAuthIcon" class="text-xs leading-none font-extrabold">👤</span>
+          </button>
+        </div>
+
         <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start">
           <button onclick="window.openProfileModal()" class="btn-pill-outline-light !py-2 !px-3 border-none hover:bg-[#f1f3f6] text-xs font-bold truncate">
             <span id="headerProfileBtnLabel">🎯 Perfil &amp; Match (PE)</span>
@@ -1622,6 +1631,191 @@
       <p class="text-[11px] text-[#8a92a0] border-t border-[#f1f3f6] pt-3">
         As datas são editáveis: após renovar uma certidão no portal oficial, atualize a emissão/validade e clique em <strong>Salvar</strong>. Os vencimentos alimentam automaticamente a aba <strong>Alertas</strong>.
       </p>
+    </div>
+  </div>
+
+
+  <!-- MODAL DE LOGIN / ACESSO -->
+  <div id="authLoginModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bento-dark max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-white/10">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3">
+          <img src="/logo-mark.svg" alt="RadarFAP" class="w-10 h-10 rounded-xl shrink-0" />
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[10px] font-extrabold">Acesso Seguro</span>
+              <h3 class="text-base font-bold text-white">Entrar no RadarFAP</h3>
+            </div>
+            <p class="text-xs text-[#7e8694] mt-0.5">Faça login para salvar propostas, gerenciar certidões e acessar ferramentas da sua ICT.</p>
+          </div>
+        </div>
+        <button onclick="window.closeAuthLoginModal()" class="circle-icon-dark shrink-0 text-white hover:text-[#b6f53b]" title="Fechar">✕</button>
+      </div>
+
+      <!-- Credenciais Rápidas de Demonstração -->
+      <div class="p-3 rounded-2xl bg-[#0b0e13] border border-white/5 space-y-1.5 text-xs">
+        <span class="text-[11px] font-bold text-[#b6f53b]">⚡ Acessos Prontos do Sistema:</span>
+        <div class="grid grid-cols-2 gap-2 text-[10px]">
+          <button type="button" onclick="window.quickFillAuth('admin@radarfap.br', 'admin123')" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-left border border-white/10">
+            <strong class="text-white block">👑 Administrador</strong>
+            <span class="text-[#8a92a0]">admin@radarfap.br (admin123)</span>
+          </button>
+          <button type="button" onclick="window.quickFillAuth('pesquisador@radarfap.br', 'pesquisador123')" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-left border border-white/10">
+            <strong class="text-white block">🔬 Pesquisador Comum</strong>
+            <span class="text-[#8a92a0]">pesquisador@... (pesquisador123)</span>
+          </button>
+        </div>
+      </div>
+
+      <form id="authLoginForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">E-mail Institucional</label>
+          <input id="loginEmail" type="email" required placeholder="seu.email@ict.br ou admin@radarfap.br" class="input-well-dark w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Senha de Acesso</label>
+          <input id="loginPassword" type="password" required placeholder="••••••••" class="input-well-dark w-full" />
+        </div>
+
+        <div id="loginErrorMsg" class="hidden text-xs text-[#ff3b30] bg-[#ff3b30]/10 p-2.5 rounded-xl border border-[#ff3b30]/20"></div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button type="button" onclick="window.openChangePasswordModal()" class="text-xs text-[#b6f53b] hover:underline">
+            Esqueceu ou quer mudar a senha?
+          </button>
+          <button type="submit" class="btn-pill-lime font-bold !py-2.5 !px-5 text-xs">
+            Entrar no Sistema →
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE MUDANÇA DE SENHA (PARA USUÁRIOS COMUNS / TODOS) -->
+  <div id="authChangePassModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bento-dark max-w-md w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-white/10">
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#14181f] text-[#b6f53b] flex items-center justify-center text-lg border border-white/10">
+            🔑
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Alterar Minha Senha</h3>
+            <p class="text-xs text-[#7e8694] mt-0.5">Atualize sua senha de acesso pessoal ao RadarFAP.</p>
+          </div>
+        </div>
+        <button onclick="window.closeChangePasswordModal()" class="circle-icon-dark shrink-0" title="Fechar">✕</button>
+      </div>
+
+      <form id="authChangePassForm" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Seu E-mail Cadastrado</label>
+          <input id="chPassEmail" type="email" required placeholder="Ex: pesquisador@radarfap.br" class="input-well-dark w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Senha Atual</label>
+          <input id="chPassCurrent" type="password" required placeholder="••••••••" class="input-well-dark w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Nova Senha (Mínimo 6 dígitos)</label>
+          <input id="chPassNew" type="password" minlength="6" required placeholder="Nova senha segura" class="input-well-dark w-full" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-[#8a92a0] mb-1">Confirme a Nova Senha</label>
+          <input id="chPassConfirm" type="password" minlength="6" required placeholder="Repita a nova senha" class="input-well-dark w-full" />
+        </div>
+
+        <div id="chPassFeedback" class="hidden text-xs p-2.5 rounded-xl"></div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+          <button type="button" onclick="window.closeChangePasswordModal()" class="btn-pill-outline-dark text-xs">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-pill-lime font-bold text-xs !py-2.5 !px-4">
+            Salvar Nova Senha
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE ADMINISTRAÇÃO & GESTÃO DE USUÁRIOS (EXCLUSIVO PARA ADM) -->
+  <div id="authAdminUsersModal" class="fixed inset-0 z-50 hidden bg-[#14181f]/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bento-light max-w-4xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-7 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between gap-3 border-b border-[#f1f3f6] pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#14181f] text-[#b6f53b] flex items-center justify-center text-lg font-bold">
+            👑
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-[#14181f] text-[#b6f53b] text-[10px] font-extrabold">Painel Administrativo</span>
+              <h3 class="text-base sm:text-lg font-extrabold text-[#14181f]">Gestão de Usuários &amp; Acessos</h3>
+            </div>
+            <p class="text-xs text-[#767f8e] mt-0.5">Crie novos usuários, resete senhas de pesquisadores e controle permissões de acesso ao sistema.</p>
+          </div>
+        </div>
+        <button onclick="window.closeAdminUsersModal()" class="circle-icon-dark shrink-0" title="Fechar">✕</button>
+      </div>
+
+      <!-- Barra de Ações Rápidas -->
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2 text-xs">
+          <span class="font-bold text-[#14181f]">Usuários Cadastrados:</span>
+          <span id="adminTotalUsersBadge" class="px-2.5 py-0.5 rounded-full bg-[#14181f] text-white font-extrabold">2</span>
+        </div>
+        <button type="button" onclick="window.toggleCreateUserForm()" class="btn-pill-lime !py-1.5 !px-3.5 text-xs font-bold">
+          + Criar Novo Usuário
+        </button>
+      </div>
+
+      <!-- Formulário para Criar Novo Usuário (Retrátil) -->
+      <form id="adminCreateUserForm" class="hidden p-4 rounded-2xl bg-[#f6f7f9] border border-[#e8ebf0] space-y-3 text-xs">
+        <div class="flex items-center justify-between font-bold text-[#14181f] border-b border-[#e8ebf0] pb-2">
+          <span>Cadastrar Novo Pesquisador ou Administrador</span>
+          <button type="button" onclick="window.toggleCreateUserForm()" class="text-[#8a92a0] hover:text-[#14181f]">✕</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] text-[#68707e] mb-1">Nome Completo *</label>
+            <input id="newUserName" type="text" required placeholder="Ex: Dra. Mariana Costa" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-[#68707e] mb-1">E-mail de Login *</label>
+            <input id="newUserEmail" type="email" required placeholder="mariana.costa@ufpe.br" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-[#68707e] mb-1">Senha Inicial *</label>
+            <input id="newUserPassword" type="password" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] text-[#68707e] mb-1">Perfil de Acesso / Nível</label>
+            <select id="newUserRole" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white">
+              <option value="pesquisador" selected>Pesquisador Comum (Acesso a propostas e certidões)</option>
+              <option value="admin">Administrador (Controle total de usuários e editais)</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-[11px] text-[#68707e] mb-1">Instituição de Origem / ICT</label>
+            <input id="newUserInstituicao" type="text" placeholder="Ex: UFPE / Departamento de Ciência da Computação" class="w-full rounded-xl border border-[#dcdfe5] px-3 py-2 bg-white" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#e8ebf0]">
+          <button type="button" onclick="window.toggleCreateUserForm()" class="btn-pill-outline-light !py-1.5 !px-3 text-xs">Cancelar</button>
+          <button type="submit" class="btn-pill-dark !py-1.5 !px-4 text-xs font-bold">Salvar e Criar Usuário</button>
+        </div>
+      </form>
+
+      <!-- Lista de Usuários do Sistema -->
+      <div id="adminUsersList" class="space-y-2.5">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
     </div>
   </div>
 

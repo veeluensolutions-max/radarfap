@@ -382,6 +382,7 @@ function renderAll() {
   renderPipelineKanban();
   renderAlertasTab();
   if (typeof renderCertSummaries === 'function') renderCertSummaries();
+  if (typeof updateAuthHeaderUi === 'function') updateAuthHeaderUi();
 }
 
 // ===================== TAB NAVIGATION =====================
@@ -4256,5 +4257,384 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.reset();
     e.target.classList.add('hidden');
     showToast('Nova certidão adicionada ao validador!');
+  });
+});
+
+
+// ===================== SISTEMA DE AUTENTICAÇÃO, CONTAS E GESTÃO ADM =====================
+const AUTH_TOKEN_KEY = 'radarfap_auth_token_v1';
+const AUTH_USER_KEY = 'radarfap_auth_user_v1';
+
+let currentUser = null;
+try {
+  const saved = localStorage.getItem(AUTH_USER_KEY);
+  if (saved) currentUser = JSON.parse(saved);
+} catch {}
+
+function getAuthHeaders() {
+  const token = localStorage.getItem(AUTH_TOKEN_KEY) || '';
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': token ? `Bearer ${token}` : ''
+  };
+}
+
+function updateAuthHeaderUi() {
+  const labelEl = document.getElementById('headerAuthLabel');
+  const iconEl = document.getElementById('headerAuthIcon');
+  const circleEl = document.getElementById('headerAuthCircle');
+
+  if (!currentUser) {
+    if (labelEl) labelEl.textContent = '🔐 Entrar / Login';
+    if (iconEl) iconEl.textContent = '👤';
+    if (circleEl) {
+      circleEl.className = 'circle-icon-dark shrink-0';
+      circleEl.title = 'Fazer Login no RadarFAP';
+    }
+  } else {
+    const isAdm = currentUser.role === 'admin';
+    const shortName = (currentUser.nome || 'Usuário').split(' ')[0];
+    if (labelEl) {
+      labelEl.innerHTML = `<span class="text-[#14181f] font-bold">${escapeHtml(shortName)}</span> <span class="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold ${isAdm ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#eef1f5] text-[#14181f]'}">${isAdm ? 'ADM' : 'USER'}</span>`;
+    }
+    if (iconEl) iconEl.textContent = isAdm ? '👑' : '🔬';
+    if (circleEl) {
+      circleEl.className = isAdm ? 'circle-icon-lime shrink-0' : 'circle-icon-dark shrink-0';
+      circleEl.title = isAdm ? 'Painel Administrativo de Usuários' : 'Minha Conta (Trocar Senha / Sair)';
+    }
+  }
+}
+
+window.handleAuthHeaderClick = function handleAuthHeaderClick() {
+  if (!currentUser) {
+    window.openAuthLoginModal();
+  } else if (currentUser.role === 'admin') {
+    window.openAdminUsersModal();
+  } else {
+    window.openChangePasswordModal(currentUser.email);
+  }
+};
+
+window.openAuthLoginModal = function openAuthLoginModal() {
+  const errEl = document.getElementById('loginErrorMsg');
+  if (errEl) errEl.classList.add('hidden');
+  document.getElementById('authLoginModal')?.classList.remove('hidden');
+};
+
+window.closeAuthLoginModal = function closeAuthLoginModal() {
+  document.getElementById('authLoginModal')?.classList.add('hidden');
+};
+
+window.quickFillAuth = function quickFillAuth(email, pass) {
+  const emEl = document.getElementById('loginEmail');
+  const psEl = document.getElementById('loginPassword');
+  if (emEl) emEl.value = email;
+  if (psEl) psEl.value = pass;
+};
+
+window.logoutUser = function logoutUser() {
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(AUTH_USER_KEY);
+  currentUser = null;
+  updateAuthHeaderUi();
+  window.closeAdminUsersModal();
+  window.closeChangePasswordModal();
+  showToast('Você encerrou a sessão com sucesso.');
+};
+
+window.openChangePasswordModal = function openChangePasswordModal(prefillEmail = '') {
+  const emailInput = document.getElementById('chPassEmail');
+  if (emailInput) {
+    emailInput.value = prefillEmail || (currentUser ? currentUser.email : '');
+  }
+  const fb = document.getElementById('chPassFeedback');
+  if (fb) fb.classList.add('hidden');
+  document.getElementById('authLoginModal')?.classList.add('hidden');
+  document.getElementById('authChangePassModal')?.classList.remove('hidden');
+};
+
+window.closeChangePasswordModal = function closeChangePasswordModal() {
+  document.getElementById('authChangePassModal')?.classList.add('hidden');
+};
+
+window.openAdminUsersModal = function openAdminUsersModal() {
+  if (!currentUser || currentUser.role !== 'admin') {
+    showToast('Acesso restrito ao Administrador do Sistema.');
+    return;
+  }
+  renderAdminUsersList();
+  document.getElementById('authAdminUsersModal')?.classList.remove('hidden');
+};
+
+window.closeAdminUsersModal = function closeAdminUsersModal() {
+  document.getElementById('authAdminUsersModal')?.classList.add('hidden');
+};
+
+window.toggleCreateUserForm = function toggleCreateUserForm() {
+  document.getElementById('adminCreateUserForm')?.classList.toggle('hidden');
+};
+
+function renderAdminUsersList() {
+  const listEl = document.getElementById('adminUsersList');
+  if (!listEl) return;
+
+  const users = appState.users || [];
+  const badge = document.getElementById('adminTotalUsersBadge');
+  if (badge) badge.textContent = users.length;
+
+  if (users.length === 0) {
+    listEl.innerHTML = '<div class="py-6 text-center text-xs text-[#8a92a0]">Nenhum usuário carregado.</div>';
+    return;
+  }
+
+  listEl.innerHTML = users.map(u => {
+    const isMe = currentUser && currentUser.id === u.id;
+    const isAdm = u.role === 'admin';
+    const isRoot = u.email === 'admin@radarfap.br';
+
+    return `
+      <div class="p-3.5 sm:p-4 rounded-2xl border border-[#e8ebf0] bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5 mb-0.5">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${isAdm ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#eef1f5] text-[#14181f]'}">
+              ${isAdm ? '👑 Administrador' : '🔬 Pesquisador'}
+            </span>
+            ${u.ativo === false ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#ff3b30] text-white">Inativo</span>' : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#b6f53b] text-[#14181f]">Ativo</span>'}
+            ${isMe ? '<span class="text-[10px] font-bold text-[#8a92a0]">(Você)</span>' : ''}
+          </div>
+          <h4 class="text-xs font-bold text-[#14181f] truncate">${escapeHtml(u.nome)}</h4>
+          <p class="text-[11px] text-[#68707e] truncate">${escapeHtml(u.email)} • ${escapeHtml(u.instituicao || 'ICT')}</p>
+          ${u.ultimoAcesso ? `<span class="text-[10px] text-[#8a92a0]">Último acesso: ${formatDateBr(u.ultimoAcesso)}</span>` : ''}
+        </div>
+
+        <div class="flex flex-wrap items-center gap-1.5 shrink-0 justify-end">
+          <button
+            type="button"
+            onclick="window.adminResetUserPassword('${u.id}', '${escapeHtml(u.nome)}')"
+            class="btn-pill-outline-light !py-1 !px-2.5 text-[11px] font-bold hover:bg-[#14181f] hover:text-[#b6f53b] transition"
+            title="Resetar senha para padrão provisório"
+          >
+            🔑 Resetar Senha
+          </button>
+          ${!isRoot ? `
+            <button
+              type="button"
+              onclick="window.adminToggleUserActive('${u.id}')"
+              class="btn-pill-outline-light !py-1 !px-2.5 text-[11px] font-bold"
+              title="${u.ativo ? 'Desativar acesso' : 'Reativar acesso'}"
+            >
+              ${u.ativo ? 'Pausar' : 'Ativar'}
+            </button>
+            <button
+              type="button"
+              onclick="window.adminDeleteUser('${u.id}', '${escapeHtml(u.nome)}')"
+              class="circle-icon-dark !w-7 !h-7 text-[11px]"
+              title="Excluir usuário permanentemente"
+            >
+              ✕
+            </button>
+          ` : '<span class="text-[10px] text-[#8a92a0] font-bold px-1">Principal</span>'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.adminResetUserPassword = async function adminResetUserPassword(userId, userName) {
+  const newPass = prompt(`Digite a nova senha para o usuário "${userName}":`, 'pesquisa2026');
+  if (!newPass) return;
+
+  try {
+    const res = await fetch('/api/auth/admin/users', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ action: 'reset-password', userId, newPassword: newPass })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (data.state) appState = data.state;
+      renderAdminUsersList();
+      alert(`✔ Senha de ${userName} resetada com sucesso para: ${data.tempPass || newPass}`);
+    } else {
+      alert(`Erro: ${data.error || 'Falha ao resetar senha'}`);
+    }
+  } catch (err) {
+    showToast(`Erro de conexão: ${err.message}`);
+  }
+};
+
+window.adminToggleUserActive = async function adminToggleUserActive(userId) {
+  try {
+    const res = await fetch('/api/auth/admin/users', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ action: 'toggle-active', userId })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (data.state) appState = data.state;
+      renderAdminUsersList();
+      showToast(data.message || 'Status do usuário atualizado.');
+    } else {
+      showToast(data.error || 'Erro ao alterar status.');
+    }
+  } catch (err) {
+    showToast(`Erro: ${err.message}`);
+  }
+};
+
+window.adminDeleteUser = async function adminDeleteUser(userId, userName) {
+  if (!confirm(`Tem certeza que deseja excluir permanentemente o usuário "${userName}"?`)) return;
+
+  try {
+    const res = await fetch('/api/auth/admin/users', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ action: 'delete', userId })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (data.state) appState = data.state;
+      renderAdminUsersList();
+      showToast('Usuário removido com sucesso.');
+    } else {
+      showToast(data.error || 'Erro ao excluir usuário.');
+    }
+  } catch (err) {
+    showToast(`Erro: ${err.message}`);
+  }
+};
+
+// Listeners de Formulários de Auth
+document.addEventListener('DOMContentLoaded', () => {
+  updateAuthHeaderUi();
+
+  // 1. Submit de Login
+  document.getElementById('authLoginForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+    const errEl = document.getElementById('loginErrorMsg');
+
+    if (errEl) errEl.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+        currentUser = data.user;
+        if (data.state) {
+          appState = data.state;
+          renderAll();
+        }
+        updateAuthHeaderUi();
+        window.closeAuthLoginModal();
+        showToast(`Bem-vindo, ${data.user.nome}! Sessão iniciada com sucesso.`);
+      } else {
+        if (errEl) {
+          errEl.textContent = data.error || 'Credenciais inválidas.';
+          errEl.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      if (errEl) {
+        errEl.textContent = `Erro de conexão: ${err.message}`;
+        errEl.classList.remove('hidden');
+      }
+    }
+  });
+
+  // 2. Submit de Mudança de Senha
+  document.getElementById('authChangePassForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('chPassEmail')?.value.trim();
+    const currentPassword = document.getElementById('chPassCurrent')?.value;
+    const newPassword = document.getElementById('chPassNew')?.value;
+    const confirmPass = document.getElementById('chPassConfirm')?.value;
+    const fb = document.getElementById('chPassFeedback');
+
+    if (fb) fb.classList.add('hidden');
+
+    if (newPassword !== confirmPass) {
+      if (fb) {
+        fb.textContent = 'A confirmação não confere com a nova senha.';
+        fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+      }
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, currentPassword, newPassword })
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        if (data.token) {
+          localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+          currentUser = data.user;
+          updateAuthHeaderUi();
+        }
+        if (fb) {
+          fb.textContent = '✔ Senha alterada com sucesso!';
+          fb.className = 'text-xs p-2.5 rounded-xl bg-[#b6f53b]/10 text-[#b6f53b] border border-[#b6f53b]/20 block';
+        }
+        setTimeout(() => {
+          window.closeChangePasswordModal();
+          showToast('Sua nova senha já está ativa!');
+        }, 1200);
+      } else {
+        if (fb) {
+          fb.textContent = data.error || 'Falha ao alterar senha.';
+          fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+        }
+      }
+    } catch (err) {
+      if (fb) {
+        fb.textContent = `Erro: ${err.message}`;
+        fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+      }
+    }
+  });
+
+  // 3. Submit de Criação de Usuário (Painel ADM)
+  document.getElementById('adminCreateUserForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = document.getElementById('newUserName')?.value.trim();
+    const email = document.getElementById('newUserEmail')?.value.trim();
+    const password = document.getElementById('newUserPassword')?.value;
+    const role = document.getElementById('newUserRole')?.value;
+    const instituicao = document.getElementById('newUserInstituicao')?.value.trim();
+
+    try {
+      const res = await fetch('/api/auth/admin/users', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ action: 'create', nome, email, password, role, instituicao })
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        if (data.state) appState = data.state;
+        renderAdminUsersList();
+        e.target.reset();
+        window.toggleCreateUserForm();
+        showToast(`Usuário ${nome} criado com sucesso!`);
+      } else {
+        alert(data.error || 'Erro ao criar usuário.');
+      }
+    } catch (err) {
+      alert(`Erro: ${err.message}`);
+    }
   });
 });
