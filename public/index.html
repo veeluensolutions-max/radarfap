@@ -290,6 +290,11 @@
           <button onclick="window.handleAuthHeaderClick()" class="circle-icon-dark shrink-0" id="headerAuthCircle" title="Área de Acesso e Conta">
             <span id="headerAuthIcon" class="text-xs leading-none font-extrabold">👤</span>
           </button>
+          <button id="headerLogoutBtn" onclick="window.logoutUser()" class="circle-icon-dark shrink-0 hidden !bg-[#ff3b30]/10 hover:!bg-[#ff3b30] hover:!text-white text-[#ff3b30] border border-[#ff3b30]/20" title="Sair da Plataforma (Logout)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
         </div>
 
         <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-full shadow-sm flex-1 sm:flex-initial justify-between sm:justify-start">
@@ -1928,13 +1933,18 @@
 
         <div id="chPassFeedback" class="hidden text-xs p-2.5 rounded-xl"></div>
 
-        <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
-          <button type="button" onclick="window.closeChangePasswordModal()" class="btn-pill-outline-dark text-xs">
-            Cancelar
+        <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/10">
+          <button type="button" onclick="window.logoutUser()" class="btn-pill-outline-dark !py-2 !px-3 text-xs text-[#ff3b30] hover:!bg-[#ff3b30] hover:!text-white border-[#ff3b30]/30">
+            🚪 Sair da Plataforma
           </button>
-          <button type="submit" class="btn-pill-lime font-bold text-xs !py-2.5 !px-4">
-            Salvar Nova Senha
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="window.closeChangePasswordModal()" class="btn-pill-outline-dark text-xs">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-pill-lime font-bold text-xs !py-2.5 !px-4">
+              Salvar Nova Senha
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -1965,9 +1975,14 @@
           <span class="font-bold text-[#14181f]">Usuários Cadastrados:</span>
           <span id="adminTotalUsersBadge" class="px-2.5 py-0.5 rounded-full bg-[#14181f] text-white font-extrabold">2</span>
         </div>
-        <button type="button" onclick="window.toggleCreateUserForm()" class="btn-pill-lime !py-1.5 !px-3.5 text-xs font-bold">
-          + Criar Novo Usuário
-        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="window.logoutUser()" class="btn-pill-outline-light !py-1.5 !px-3 text-xs font-bold text-[#ff3b30] hover:bg-[#ff3b30] hover:text-white border-[#ff3b30]/30 transition" title="Encerrar sessão de Administrador">
+            🚪 Sair da Plataforma
+          </button>
+          <button type="button" onclick="window.toggleCreateUserForm()" class="btn-pill-lime !py-1.5 !px-3.5 text-xs font-bold">
+            + Criar Novo Usuário
+          </button>
+        </div>
       </div>
 
       <!-- Formulário para Criar Novo Usuário (Retrátil) -->

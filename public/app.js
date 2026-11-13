@@ -4444,6 +4444,7 @@ function updateAuthHeaderUi() {
   const labelEl = document.getElementById('headerAuthLabel');
   const iconEl = document.getElementById('headerAuthIcon');
   const circleEl = document.getElementById('headerAuthCircle');
+  const logoutBtn = document.getElementById('headerLogoutBtn');
 
   if (!currentUser) {
     if (labelEl) labelEl.textContent = '🔐 Entrar / Login';
@@ -4452,17 +4453,19 @@ function updateAuthHeaderUi() {
       circleEl.className = 'circle-icon-dark shrink-0';
       circleEl.title = 'Fazer Login no RadarFAP';
     }
+    if (logoutBtn) logoutBtn.classList.add('hidden');
   } else {
     const isAdm = currentUser.role === 'admin';
     const shortName = (currentUser.nome || 'Usuário').split(' ')[0];
     if (labelEl) {
-      labelEl.innerHTML = `<span class="text-[#14181f] font-bold">${escapeHtml(shortName)}</span> <span class="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold ${isAdm ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#eef1f5] text-[#14181f]'}">${isAdm ? 'ADM' : 'USER'}</span>`;
+      labelEl.innerHTML = `<span class="text-[#14181f] font-bold">${escapeHtml(shortName)}</span> <span class="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold ${isAdm ? 'bg-[#14181f] text-[#b6f53b]' : 'bg-[#eef1f5] text-[#14181f]'}">${isAdm ? 'ADM' : (currentUser.role === 'estudante' ? 'ALUNO' : (currentUser.role === 'professor' ? 'PROF' : 'USER'))}</span>`;
     }
-    if (iconEl) iconEl.textContent = isAdm ? '👑' : '🔬';
+    if (iconEl) iconEl.textContent = isAdm ? '👑' : (currentUser.role === 'estudante' ? '🎓' : '🔬');
     if (circleEl) {
       circleEl.className = isAdm ? 'circle-icon-lime shrink-0' : 'circle-icon-dark shrink-0';
-      circleEl.title = isAdm ? 'Painel Administrativo de Usuários' : 'Minha Conta (Trocar Senha / Sair)';
+      circleEl.title = isAdm ? 'Painel Administrativo de Usuários' : 'Minha Conta (Trocar Senha / Perfil)';
     }
+    if (logoutBtn) logoutBtn.classList.remove('hidden');
   }
 }
 
@@ -4502,9 +4505,10 @@ window.logoutUser = function logoutUser() {
   localStorage.removeItem(AUTH_USER_KEY);
   currentUser = null;
   updateAuthHeaderUi();
+  checkAuthGate();
   window.closeAdminUsersModal();
   window.closeChangePasswordModal();
-  showToast('Você encerrou a sessão com sucesso.');
+  showToast('Você encerrou a sessão. Até logo!');
 };
 
 window.openChangePasswordModal = function openChangePasswordModal(prefillEmail = '') {
