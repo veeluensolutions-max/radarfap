@@ -4402,7 +4402,11 @@ function checkAuthGate() {
   }
 
   if (lockOverlay) {
-    lockOverlay.classList.toggle('hidden', isLogged);
+    if (isLogged) {
+      lockOverlay.classList.add('hidden');
+    } else {
+      lockOverlay.classList.remove('hidden');
+    }
   }
 }
 
@@ -4677,6 +4681,7 @@ window.adminDeleteUser = async function adminDeleteUser(userId, userName) {
 // Listeners de Formulários de Auth
 document.addEventListener('DOMContentLoaded', () => {
   updateAuthHeaderUi();
+  checkAuthGate();
 
   // 1. Submit de Login
   document.getElementById('authLoginForm')?.addEventListener('submit', async e => {
