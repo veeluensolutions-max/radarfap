@@ -23,23 +23,201 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-[#b6f53b] selection:text-[#14181f]">
 
-  <!-- TELA DE BLOQUEIO / GATEKEEPER DE ACESSO -->
-  <div id="authLockScreen" class="fixed inset-0 z-40 bg-[#0b0e13]/80 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center select-none hidden">
-    <div class="bento-dark max-w-md w-full p-8 space-y-5 border border-white/10 shadow-2xl">
-      <div class="w-14 h-14 rounded-3xl bg-[#14181f] text-[#b6f53b] flex items-center justify-center text-2xl mx-auto border border-white/10 shadow-inner">
-        🔒
+  <!-- TELA DE ENTRADA / LANDING PAGE COM CADASTRO, LOGIN E 7 DIAS GRÁTIS -->
+  <div id="authLockScreen" class="fixed inset-0 z-40 bg-[#07090d]/95 backdrop-blur-xl flex flex-col justify-between p-4 sm:p-8 select-none hidden overflow-y-auto min-h-screen">
+    
+    <!-- Topo da Entrada -->
+    <div class="max-w-6xl w-full mx-auto flex items-center justify-between py-2">
+      <div class="flex items-center gap-3">
+        <img src="/logo-mark.svg" alt="RadarFAP Logo" class="w-10 h-10 rounded-2xl shadow-md" />
+        <div class="flex items-center gap-1.5">
+          <span class="text-lg font-black tracking-tight text-white">RadarFAP</span>
+          <span class="px-2 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[10px] font-extrabold tracking-wide">BRASIL</span>
+        </div>
       </div>
-      <div>
-        <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[10px] font-extrabold uppercase">Acesso Restrito</span>
-        <h2 class="text-xl font-extrabold text-white mt-1.5">Área Exclusiva para Usuários</h2>
-        <p class="text-xs text-[#8a92a0] mt-1 leading-relaxed">
-          O RadarFAP Brasil é de uso restrito a pesquisadores e gestores autorizados. Faça login com suas credenciais institucionais para desbloquear a plataforma.
-        </p>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="window.switchAuthTab('login')" class="btn-pill-outline-dark !py-2 !px-4 text-xs font-bold text-white hover:text-[#b6f53b]">
+          Já tenho conta • Entrar
+        </button>
       </div>
-      <button type="button" onclick="window.openAuthLoginModal()" class="btn-pill-lime w-full !py-3 font-extrabold text-xs shadow-lg">
-        🔐 Entrar com Login e Senha
-      </button>
     </div>
+
+    <!-- Conteúdo Central Hero + Card Interativo de Cadastro/Login -->
+    <div class="max-w-6xl w-full mx-auto my-auto py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      
+      <!-- Coluna da Esquerda: Frase de Impacto e Proposta de Valor -->
+      <div class="lg:col-span-7 space-y-6 text-left">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#b6f53b] text-xs font-bold">
+          <span class="w-2 h-2 rounded-full bg-[#b6f53b] animate-ping"></span>
+          <span>⚡ Portal Nacional de Captação e Bolsas Científicas</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
+          Bolsas para Alunos.<br />
+          <span class="text-[#b6f53b]">Recursos Milionários</span> para Pesquisadores.
+        </h1>
+
+        <p class="text-sm sm:text-base text-[#9ba3af] leading-relaxed max-w-xl">
+          Monitore ao vivo editais da <strong>FACEPE</strong>, de todas as <strong>27 FAPs estaduais</strong> e agências federais (<span class="text-white font-semibold">CNPq, FINEP, CAPES</span>). Calcule o índice de aderência (<span class="text-[#b6f53b]">% Match</span>), simule bolsas e alavanque sua produção científica.
+        </p>
+
+        <!-- Benefícios em Destaque para Alunos e Professores -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2 max-w-xl">
+          <div class="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex items-start gap-3">
+            <span class="text-xl shrink-0 p-2 rounded-xl bg-white/5">🎓</span>
+            <div>
+              <h4 class="text-xs font-bold text-white">Para Estudantes</h4>
+              <p class="text-[11px] text-[#8a92a0] mt-0.5 leading-snug">Descubra bolsas de Iniciação Científica (IC), Mestrado, Doutorado e BCT abertas no seu estado.</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex items-start gap-3">
+            <span class="text-xl shrink-0 p-2 rounded-xl bg-white/5">🔬</span>
+            <div>
+              <h4 class="text-xs font-bold text-white">Para Professores &amp; ICTs</h4>
+              <p class="text-[11px] text-[#8a92a0] mt-0.5 leading-snug">Capte recursos para infraestrutura, custeio e capital com simulador orçamentário e prestação simplificada.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selo de 7 Dias Grátis -->
+        <div class="flex items-center gap-3 pt-2">
+          <div class="px-3.5 py-2 rounded-2xl bg-[#b6f53b]/10 border border-[#b6f53b]/30 flex items-center gap-2.5">
+            <span class="text-base">🎁</span>
+            <span class="text-xs font-bold text-[#b6f53b]">Experimente grátis por 7 dias com acesso completo e irrestrito</span>
+          </div>
+          <span class="text-xs text-[#6e7787] hidden sm:inline">• Sem cartão de crédito</span>
+        </div>
+      </div>
+
+      <!-- Coluna da Direita: Card Unificado de Cadastro & Login -->
+      <div class="lg:col-span-5">
+        <div class="bento-dark p-6 sm:p-8 rounded-3xl border border-white/15 shadow-2xl space-y-5 bg-[#10141b]/90 relative overflow-hidden">
+          
+          <div class="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-[#b6f53b]/10 blur-2xl pointer-events-none"></div>
+
+          <!-- Alternador de Abas Cadastro / Login -->
+          <div class="grid grid-cols-2 p-1 rounded-2xl bg-[#080b0f] border border-white/10 text-xs font-bold">
+            <button
+              id="authTabBtnRegister"
+              type="button"
+              onclick="window.switchAuthTab('register')"
+              class="py-2.5 rounded-xl transition bg-[#b6f53b] text-[#14181f] shadow"
+            >
+              🚀 Criar Conta (7 Dias Grátis)
+            </button>
+            <button
+              id="authTabBtnLogin"
+              type="button"
+              onclick="window.switchAuthTab('login')"
+              class="py-2.5 rounded-xl transition text-[#8a92a0] hover:text-white"
+            >
+              🔐 Entrar no Portal
+            </button>
+          </div>
+
+          <!-- ================= FORMULÁRIO 1: CADASTRO COM 7 DIAS GRÁTIS ================= -->
+          <form id="authLockRegisterForm" class="space-y-3.5 text-xs">
+            <div>
+              <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">Nome Completo *</label>
+              <input id="regNome" type="text" required placeholder="Ex: Lucas Silva ou Profa. Dra. Helena Mendes" class="input-well-dark w-full" />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">E-mail Acadêmico ou Institucional *</label>
+              <input id="regEmail" type="email" required placeholder="seu.nome@ufpe.br, upe.br ou gmail.com" class="input-well-dark w-full" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">Perfil Principal *</label>
+                <select id="regPerfil" class="input-well-dark w-full text-xs">
+                  <option value="estudante" selected>🎓 Estudante (Bolsas IC/PG)</option>
+                  <option value="professor">🔬 Professor / Pesquisador</option>
+                  <option value="pesquisador">🏢 Gestor de ICT / NIT / Startup</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">Instituição de Origem *</label>
+                <input id="regInstituicao" type="text" required placeholder="Ex: UFPE, UPE, IFPE, ICT" class="input-well-dark w-full" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">Senha de Acesso (Mínimo 6 dígitos) *</label>
+              <input id="regPassword" type="password" minlength="6" required placeholder="Crie uma senha segura" class="input-well-dark w-full" />
+            </div>
+
+            <div id="regFeedback" class="hidden text-xs p-2.5 rounded-xl"></div>
+
+            <button type="submit" class="btn-pill-lime w-full !py-3 font-extrabold text-xs shadow-lg mt-2 flex items-center justify-center gap-2">
+              <span>Começar Meus 7 Dias Gratuitos</span>
+              <span class="text-sm">→</span>
+            </button>
+
+            <p class="text-[10px] text-[#6e7787] text-center pt-1">
+              Ao cadastrar-se você concorda com os termos de uso para fins acadêmicos e científicos.
+            </p>
+          </form>
+
+          <!-- ================= FORMULÁRIO 2: LOGIN DIRETO ================= -->
+          <form id="authLockLoginForm" class="space-y-3.5 text-xs hidden">
+            <!-- Acesso Rápido de Demonstração -->
+            <div class="p-2.5 rounded-xl bg-[#080b0f] border border-white/5 space-y-1 text-[11px]">
+              <span class="text-[10px] font-bold text-[#b6f53b] block">⚡ Acessos Prontos para Teste:</span>
+              <div class="grid grid-cols-2 gap-1.5 text-[10px]">
+                <button type="button" onclick="window.quickFillAuthLock('admin@radarfap.br', 'admin123')" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10">
+                  <strong class="text-white block">👑 Administrador</strong>
+                  <span class="text-[#8a92a0]">admin@radarfap.br</span>
+                </button>
+                <button type="button" onclick="window.quickFillAuthLock('pesquisador@radarfap.br', 'pesquisador123')" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-left border border-white/10">
+                  <strong class="text-white block">🔬 Pesquisador</strong>
+                  <span class="text-[#8a92a0]">pesquisador@...</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">Seu E-mail Cadastrado</label>
+              <input id="lockLoginEmail" type="email" required placeholder="seu.email@ict.br" class="input-well-dark w-full" />
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-[#8a92a0] mb-1">Senha</label>
+              <input id="lockLoginPassword" type="password" required placeholder="••••••••" class="input-well-dark w-full" />
+            </div>
+
+            <div id="lockLoginFeedback" class="hidden text-xs p-2.5 rounded-xl"></div>
+
+            <button type="submit" class="btn-pill-lime w-full !py-3 font-extrabold text-xs shadow-lg mt-2 flex items-center justify-center gap-2">
+              <span>Entrar no RadarFAP</span>
+              <span class="text-sm">→</span>
+            </button>
+
+            <div class="text-center pt-2">
+              <button type="button" onclick="window.openChangePasswordModal()" class="text-[11px] text-[#b6f53b] hover:underline">
+                Esqueceu ou deseja alterar sua senha?
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Rodapé Minimalista -->
+    <div class="max-w-6xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 pt-4 border-t border-white/10 text-[11px] text-[#6e7787]">
+      <span>© RadarFAP Brasil • Monitoramento contínuo FACEPE &amp; 27 FAPs Estaduais</span>
+      <div class="flex items-center gap-4">
+        <span>FACEPE (PE)</span>
+        <span>FAPESP (SP)</span>
+        <span>FAPERJ (RJ)</span>
+        <span>CNPq / FINEP</span>
+      </div>
+    </div>
+
   </div>
 
   <!-- CONTAINER PRINCIPAL -->

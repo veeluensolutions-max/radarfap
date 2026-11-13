@@ -268,6 +268,74 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ===================== AUTENTICAÇÃO E GESTÃO DE USUÁRIOS =====================
+    if (pathname === '/api/auth/register' && req.method === 'POST') {
+      const { nome, email, password, perfil, instituicao, areaAtuacao } = await parseBody(req);
+      if (!nome || !email || !password) {
+        return sendJson(res, 400, { error: 'Nome completo, e-mail e senha são obrigatórios.' });
+      }
+
+      const cleanEmail = String(email).trim().toLowerCase();
+      if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+        return sendJson(res, 400, { error: 'Por favor, informe um endereço de e-mail válido.' });
+      }
+
+      if (String(password).length < 6) {
+        return sendJson(res, 400, { error: 'A senha de acesso deve ter no mínimo 6 dígitos.' });
+      }
+
+      const db = loadDatabase();
+      if (!Array.isArray(db.users) || db.users.length === 0) {
+        db.users = [...INITIAL_USERS];
+      }
+
+      if (db.users.some(u => u.email.toLowerCase() === cleanEmail)) {
+        return sendJson(res, 400, { error: 'Já existe uma conta cadastrada com este e-mail. Faça login ou solicite redefinição.' });
+      }
+
+      // Calcula expiração do teste grátis de 7 dias
+      const trialDays = 7;
+      const trialExpiresAt = new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000).toISOString();
+
+      const roleType = perfil === 'professor' ? 'professor' : (perfil === 'estudante' ? 'estudante' : 'pesquisador');
+
+      const newUser = {
+        id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        nome: String(nome).trim(),
+        email: cleanEmail,
+        passwordHash: hashPassword(password),
+        role: roleType,
+        instituicao: String(instituicao || 'Universidade / ICT').trim(),
+        areaAtuacao: String(areaAtuacao || 'Ciência & Tecnologia').trim(),
+        ativo: true,
+        trialActive: true,
+        trialExpiresAt,
+        criadoEm: new Date().toISOString(),
+        ultimoAcesso: new Date().toISOString()
+      };
+
+      db.users.push(newUser);
+      saveDatabase(db);
+
+      const token = generateToken(newUser);
+      const safeUser = {
+        id: newUser.id,
+        nome: newUser.nome,
+        email: newUser.email,
+        role: newUser.role,
+        instituicao: newUser.instituicao,
+        trialActive: newUser.trialActive,
+        trialExpiresAt: newUser.trialExpiresAt
+      };
+
+      return sendJson(res, 201, {
+        ok: true,
+        message: 'Cadastro realizado com sucesso! Seus 7 dias gratuitos foram ativados.',
+        token,
+        user: safeUser,
+        state: getFullState()
+      });
+    }
+
     if (pathname === '/api/auth/login' && req.method === 'POST') {
       const { email, password } = await parseBody(req);
       if (!email || !password) {
@@ -298,7 +366,15 @@ const server = http.createServer(async (req, res) => {
       saveDatabase(db);
 
       const token = generateToken(user);
-      const safeUser = { id: user.id, nome: user.nome, email: user.email, role: user.role, instituicao: user.instituicao };
+      const safeUser = {
+        id: user.id,
+        nome: user.nome,
+        email: user.email,
+        role: user.role,
+        instituicao: user.instituicao,
+        trialActive: user.trialActive,
+        trialExpiresAt: user.trialExpiresAt
+      };
       return sendJson(res, 200, { ok: true, token, user: safeUser, state: getFullState() });
     }
 

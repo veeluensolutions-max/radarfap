@@ -4404,11 +4404,41 @@ function checkAuthGate() {
   if (lockOverlay) {
     lockOverlay.classList.toggle('hidden', isLogged);
   }
-
-  if (!isLogged) {
-    window.openAuthLoginModal();
-  }
 }
+
+window.switchAuthTab = function switchAuthTab(tab) {
+  const regForm = document.getElementById('authLockRegisterForm');
+  const loginForm = document.getElementById('authLockLoginForm');
+  const btnReg = document.getElementById('authTabBtnRegister');
+  const btnLogin = document.getElementById('authTabBtnLogin');
+
+  if (tab === 'register') {
+    if (regForm) regForm.classList.remove('hidden');
+    if (loginForm) loginForm.classList.add('hidden');
+    if (btnReg) {
+      btnReg.className = 'py-2.5 rounded-xl transition bg-[#b6f53b] text-[#14181f] shadow';
+    }
+    if (btnLogin) {
+      btnLogin.className = 'py-2.5 rounded-xl transition text-[#8a92a0] hover:text-white';
+    }
+  } else {
+    if (regForm) regForm.classList.add('hidden');
+    if (loginForm) loginForm.classList.remove('hidden');
+    if (btnReg) {
+      btnReg.className = 'py-2.5 rounded-xl transition text-[#8a92a0] hover:text-white';
+    }
+    if (btnLogin) {
+      btnLogin.className = 'py-2.5 rounded-xl transition bg-[#b6f53b] text-[#14181f] shadow';
+    }
+  }
+};
+
+window.quickFillAuthLock = function quickFillAuthLock(email, pass) {
+  const emEl = document.getElementById('lockLoginEmail');
+  const psEl = document.getElementById('lockLoginPassword');
+  if (emEl) emEl.value = email;
+  if (psEl) psEl.value = pass;
+};
 
 function updateAuthHeaderUi() {
   const labelEl = document.getElementById('headerAuthLabel');
@@ -4770,6 +4800,97 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {
       alert(`Erro: ${err.message}`);
+    }
+  });
+
+  // 4. Submit de Cadastro da Tela de Entrada (Lock Screen - 7 Dias Grátis)
+  document.getElementById('authLockRegisterForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = document.getElementById('regNome')?.value.trim();
+    const email = document.getElementById('regEmail')?.value.trim();
+    const perfil = document.getElementById('regPerfil')?.value;
+    const instituicao = document.getElementById('regInstituicao')?.value.trim();
+    const password = document.getElementById('regPassword')?.value;
+    const fb = document.getElementById('regFeedback');
+
+    if (fb) fb.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, perfil, instituicao, password })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+        currentUser = data.user;
+        if (data.state) {
+          appState = data.state;
+          renderAll();
+        }
+        updateAuthHeaderUi();
+        checkAuthGate();
+        if (fb) {
+          fb.textContent = '🎉 Conta criada com sucesso! Seus 7 dias gratuitos estão liberados.';
+          fb.className = 'text-xs p-2.5 rounded-xl bg-[#b6f53b]/10 text-[#b6f53b] border border-[#b6f53b]/20 block';
+        }
+        showToast(`Bem-vindo ao RadarFAP, ${data.user.nome}! Seus 7 dias gratuitos foram ativados.`);
+      } else {
+        if (fb) {
+          fb.textContent = data.error || 'Erro ao realizar cadastro.';
+          fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+        }
+      }
+    } catch (err) {
+      if (fb) {
+        fb.textContent = `Erro de conexão: ${err.message}`;
+        fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+      }
+    }
+  });
+
+  // 5. Submit de Login da Tela de Entrada (Lock Screen)
+  document.getElementById('authLockLoginForm')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('lockLoginEmail')?.value.trim();
+    const password = document.getElementById('lockLoginPassword')?.value;
+    const fb = document.getElementById('lockLoginFeedback');
+
+    if (fb) fb.classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+
+      if (data.ok && data.token) {
+        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+        currentUser = data.user;
+        if (data.state) {
+          appState = data.state;
+          renderAll();
+        }
+        updateAuthHeaderUi();
+        checkAuthGate();
+        showToast(`Bem-vindo de volta, ${data.user.nome}!`);
+      } else {
+        if (fb) {
+          fb.textContent = data.error || 'Credenciais inválidas.';
+          fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+        }
+      }
+    } catch (err) {
+      if (fb) {
+        fb.textContent = `Erro: ${err.message}`;
+        fb.className = 'text-xs p-2.5 rounded-xl bg-[#ff3b30]/10 text-[#ff3b30] border border-[#ff3b30]/20 block';
+      }
     }
   });
 });
