@@ -383,6 +383,7 @@ function renderAll() {
   renderAlertasTab();
   if (typeof renderCertSummaries === 'function') renderCertSummaries();
   if (typeof updateAuthHeaderUi === 'function') updateAuthHeaderUi();
+  if (typeof checkAuthGate === 'function') checkAuthGate();
 }
 
 // ===================== TAB NAVIGATION =====================
@@ -3443,6 +3444,16 @@ window.syncToSupabaseCloud = async function syncToSupabaseCloud(mode = 'push') {
 
   try {
     if (mode === 'push') {
+      const usersToSync = (appState.users || []).map(u => ({
+        id: u.id,
+        nome: u.nome,
+        email: u.email,
+        role: u.role,
+        instituicao: u.instituicao,
+        ativo: u.ativo,
+        ultimo_acesso: u.ultimoAcesso || new Date().toISOString()
+      }));
+
       const payload = {
         id: 'default-workspace',
         updated_at: new Date().toISOString(),
@@ -3450,9 +3461,28 @@ window.syncToSupabaseCloud = async function syncToSupabaseCloud(mode = 'push') {
           researcherProfile: appState.researcherProfile || {},
           favoritos: appState.favoritos || [],
           pipeline: appState.pipeline || [],
-          alertConfig: appState.alertConfig || {}
+          alertConfig: appState.alertConfig || {},
+          users: usersToSync
         }
       };
+
+      // Tenta sincronizar também diretamente na tabela individual radarfap_users no Supabase
+      try {
+        if (usersToSync.length > 0) {
+          await fetch(`${cleanUrl}/rest/v1/radarfap_users?on_conflict=id`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey: keyInput,
+              Authorization: `Bearer ${keyInput}`,
+              Prefer: 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(usersToSync)
+          });
+        }
+      } catch (errUserSync) {
+        console.warn('Sincronização opcional radarfap_users:', errUserSync.message);
+      }
       const res = await fetch(`${cleanUrl}/rest/v1/radarfap_workspaces?on_conflict=id`, {
         method: 'POST',
         headers: {
@@ -3487,6 +3517,9 @@ window.syncToSupabaseCloud = async function syncToSupabaseCloud(mode = 'push') {
           if (Array.isArray(cloudData.favoritos)) appState.favoritos = cloudData.favoritos;
           if (Array.isArray(cloudData.pipeline)) appState.pipeline = cloudData.pipeline;
           if (cloudData.alertConfig) appState.alertConfig = cloudData.alertConfig;
+          if (Array.isArray(cloudData.users) && cloudData.users.length) {
+            appState.users = cloudData.users;
+          }
           saveWorkspaceBackup();
           renderAll();
           showToast('☁️ Carteira restaurada da nuvem Supabase!');
@@ -4356,6 +4389,27 @@ function getAuthHeaders() {
   };
 }
 
+function checkAuthGate() {
+  const isLogged = !!currentUser;
+  const mainContainer = document.getElementById('mainAppContainer');
+  const lockOverlay = document.getElementById('authLockScreen');
+
+  if (mainContainer) {
+    mainContainer.classList.toggle('filter', !isLogged);
+    mainContainer.classList.toggle('blur-sm', !isLogged);
+    mainContainer.classList.toggle('pointer-events-none', !isLogged);
+    mainContainer.classList.toggle('select-none', !isLogged);
+  }
+
+  if (lockOverlay) {
+    lockOverlay.classList.toggle('hidden', isLogged);
+  }
+
+  if (!isLogged) {
+    window.openAuthLoginModal();
+  }
+}
+
 function updateAuthHeaderUi() {
   const labelEl = document.getElementById('headerAuthLabel');
   const iconEl = document.getElementById('headerAuthIcon');
@@ -4399,6 +4453,10 @@ window.openAuthLoginModal = function openAuthLoginModal() {
 };
 
 window.closeAuthLoginModal = function closeAuthLoginModal() {
+  if (!currentUser) {
+    showToast('Acesso restrito: faça login com suas credenciais para desbloquear a plataforma.');
+    return;
+  }
   document.getElementById('authLoginModal')?.classList.add('hidden');
 };
 

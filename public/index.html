@@ -23,8 +23,27 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-[#b6f53b] selection:text-[#14181f]">
 
+  <!-- TELA DE BLOQUEIO / GATEKEEPER DE ACESSO -->
+  <div id="authLockScreen" class="fixed inset-0 z-40 bg-[#0b0e13]/80 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center select-none hidden">
+    <div class="bento-dark max-w-md w-full p-8 space-y-5 border border-white/10 shadow-2xl">
+      <div class="w-14 h-14 rounded-3xl bg-[#14181f] text-[#b6f53b] flex items-center justify-center text-2xl mx-auto border border-white/10 shadow-inner">
+        🔒
+      </div>
+      <div>
+        <span class="px-2.5 py-0.5 rounded-full bg-[#b6f53b] text-[#14181f] text-[10px] font-extrabold uppercase">Acesso Restrito</span>
+        <h2 class="text-xl font-extrabold text-white mt-1.5">Área Exclusiva para Usuários</h2>
+        <p class="text-xs text-[#8a92a0] mt-1 leading-relaxed">
+          O RadarFAP Brasil é de uso restrito a pesquisadores e gestores autorizados. Faça login com suas credenciais institucionais para desbloquear a plataforma.
+        </p>
+      </div>
+      <button type="button" onclick="window.openAuthLoginModal()" class="btn-pill-lime w-full !py-3 font-extrabold text-xs shadow-lg">
+        🔐 Entrar com Login e Senha
+      </button>
+    </div>
+  </div>
+
   <!-- CONTAINER PRINCIPAL -->
-  <div class="max-w-[1380px] mx-auto px-4 sm:px-8 py-6 space-y-6">
+  <div id="mainAppContainer" class="max-w-[1380px] mx-auto px-4 sm:px-8 py-6 space-y-6 transition-all duration-300">
 
     <!-- HEADER CLEAN + SEGMENTED PILL NAVIGATION -->
     <header class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -1649,7 +1668,7 @@
             <p class="text-xs text-[#7e8694] mt-0.5">Faça login para salvar propostas, gerenciar certidões e acessar ferramentas da sua ICT.</p>
           </div>
         </div>
-        <button onclick="window.closeAuthLoginModal()" class="circle-icon-dark shrink-0 text-white hover:text-[#b6f53b]" title="Fechar">✕</button>
+        <button id="authModalCloseBtn" onclick="window.closeAuthLoginModal()" class="circle-icon-dark shrink-0 text-white hover:text-[#b6f53b]" title="Fechar">✕</button>
       </div>
 
       <!-- Credenciais Rápidas de Demonstração -->
