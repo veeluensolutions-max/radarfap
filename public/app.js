@@ -1643,6 +1643,15 @@ function renderAlertasTab() {
   if (tgChatInput && cfg.telegramChatId !== undefined) tgChatInput.value = cfg.telegramChatId || '';
   if (tgTokenInput && cfg.telegramBotToken !== undefined) tgTokenInput.value = cfg.telegramBotToken || '';
 
+  // Configuração Supabase Nuvem pré-carregada
+  const sbUrlInput = document.getElementById('supabaseUrlInput');
+  const sbKeyInput = document.getElementById('supabaseKeyInput');
+  const defaultSbUrl = 'https://bnfkztjbpcfyqtzdddbg.supabase.co';
+  const defaultSbKey = 'sb_publishable_GvNp5uv8mHP-6oA8fSRu3Q_hFmE5-MG';
+
+  if (sbUrlInput) sbUrlInput.value = localStorage.getItem('radarfap_sb_url') || defaultSbUrl;
+  if (sbKeyInput) sbKeyInput.value = localStorage.getItem('radarfap_sb_key') || defaultSbKey;
+
   if (notifBadge && 'Notification' in window) {
     if (Notification.permission === 'granted') {
       notifBadge.textContent = 'Ativo • Desktop';
@@ -3417,12 +3426,14 @@ window.downloadAllDeadlinesIcs = function downloadAllDeadlinesIcs() {
 };
 
 window.syncToSupabaseCloud = async function syncToSupabaseCloud(mode = 'push') {
-  const urlInput = document.getElementById('supabaseUrlInput')?.value?.trim() || localStorage.getItem('radarfap_sb_url') || '';
-  const keyInput = document.getElementById('supabaseKeyInput')?.value?.trim() || localStorage.getItem('radarfap_sb_key') || '';
+  const defaultSbUrl = 'https://bnfkztjbpcfyqtzdddbg.supabase.co';
+  const defaultSbKey = 'sb_publishable_GvNp5uv8mHP-6oA8fSRu3Q_hFmE5-MG';
+  const urlInput = document.getElementById('supabaseUrlInput')?.value?.trim() || localStorage.getItem('radarfap_sb_url') || defaultSbUrl;
+  const keyInput = document.getElementById('supabaseKeyInput')?.value?.trim() || localStorage.getItem('radarfap_sb_key') || defaultSbKey;
   const badge = document.getElementById('supabaseStatusBadge');
 
   if (!urlInput || !keyInput) {
-    showToast('Informe a URL e a Anon Key do seu projeto Supabase (ou use "🔗 Compartilhar Link" / "💾 Exportar .json" sem precisar de conta).');
+    showToast('Informe a URL e a Anon Key do seu projeto Supabase.');
     return;
   }
 
