@@ -283,13 +283,24 @@ async function fetchInitialState() {
       ...appState,
       ...loadedState,
       editais: Array.isArray(loadedState.editais) ? loadedState.editais : [],
-      faps: Array.isArray(loadedState.faps) ? loadedState.faps : [],
+      faps: Array.isArray(loadedState.faps) && loadedState.faps.length > 0 ? loadedState.faps : appState.faps,
       favoritos: Array.isArray(loadedState.favoritos) ? loadedState.favoritos : [],
       pipeline: Array.isArray(loadedState.pipeline) ? loadedState.pipeline : [],
       alerts: Array.isArray(loadedState.alerts) ? loadedState.alerts : [],
       noticiasFacepe: Array.isArray(loadedState.noticiasFacepe) ? loadedState.noticiasFacepe : [],
       syncHistory: Array.isArray(loadedState.syncHistory) ? loadedState.syncHistory : []
     };
+  }
+
+  // Se por algum motivo as FAPs ainda não tiverem sido carregadas, busca faps-catalog.json
+  if (!Array.isArray(appState.faps) || appState.faps.length === 0) {
+    try {
+      const fapRes = await fetch('/data/faps-catalog.json');
+      if (fapRes.ok) {
+        const cat = await fapRes.json();
+        if (Array.isArray(cat)) appState.faps = cat;
+      }
+    } catch {}
   }
 
   mergeWorkspaceBackup();
@@ -989,9 +1000,17 @@ function renderBrazilGeoMap() {
     </div>
   `;
 
-  const selectedFaps = appState.faps.filter(f => f.uf === selectedMapUf);
-  const fap = selectedFaps[0] || appState.faps[0];
-  const stateEditais = appState.editais.filter(e => e.uf === selectedMapUf);
+  const selectedFaps = (appState.faps || []).filter(f => f.uf === selectedMapUf);
+  const fap = selectedFaps[0] || (appState.faps && appState.faps[0]) || {
+    uf: selectedMapUf,
+    sigla: `FAP-${selectedMapUf}`,
+    nome: `Fundação de Amparo à Pesquisa (${selectedMapUf})`,
+    estado: selectedMapUf,
+    regiao: 'Brasil',
+    plataformaSubmissao: 'Portal Oficial',
+    orcamentoAnualEstimado: 'Sob Demanda'
+  };
+  const stateEditais = (appState.editais || []).filter(e => e.uf === selectedMapUf);
 
   inspectorEl.innerHTML = `
     <div class="space-y-4 flex-1 flex flex-col justify-between">

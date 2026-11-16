@@ -26,7 +26,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 35/2026 da FACEPE (21 de outubro de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.775Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: bolsas, pós-graduação, missões"
+      ]
     },
     {
       "id": "facepe-33-2026",
@@ -59,7 +66,14 @@
       ],
       "resumo": "Chamada pública oficial nº 33/2026 da FACEPE (22 de outubro de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.775Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: startups, missões"
+      ]
     },
     {
       "id": "facepe-32-2026",
@@ -92,7 +106,14 @@
       ],
       "resumo": "Chamada pública oficial nº 32/2026 da FACEPE (22 de outubro de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.775Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, startups, missões"
+      ]
     },
     {
       "id": "facepe-31-2026",
@@ -137,7 +158,14 @@
       ],
       "resumo": "Chamada pública oficial nº 31/2026 da FACEPE (22 de outubro de 2026). Submissões via sistema AgilFAP. Conta com 4 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.775Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, cientista"
+      ]
     },
     {
       "id": "facepe-25-2026",
@@ -170,7 +198,14 @@
       ],
       "resumo": "Chamada pública oficial nº 25/2026 da FACEPE (15 de outubro de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "cnpq-universal-2026",
@@ -198,7 +233,14 @@
       "anexos": [],
       "resumo": "Principal chamada nacional de fomento à pesquisa científica, tecnológica e de inovação em qualquer área do conhecimento, custeio, capital e bolsas de IC e Apoio Técnico.",
       "origemColeta": "Conector CNPq / MCTI",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 98,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CNPq)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, inovação"
+      ]
     },
     {
       "id": "finep-mais-inovacao-2026",
@@ -226,7 +268,14 @@
       "anexos": [],
       "resumo": "Recursos não reembolsáveis (Subvenção Econômica e FNDCT/ICTs) para projetos cooperativos entre empresas e laboratórios acadêmicos em IA, semicondutores, bioindústria e hidrogênio verde.",
       "origemColeta": "Conector FINEP / FNDCT",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 98,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (FINEP)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "capes-pdse-2026",
@@ -254,7 +303,14 @@
       "anexos": [],
       "resumo": "Concessão de bolsas de doutorado sanduíche no exterior de 3 a 9 meses para fortalecimento da internacionalização dos programas de pós-graduação brasileiros.",
       "origemColeta": "Conector CAPES",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 94,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CAPES)",
+        "✓ Linha prioritária: Cooperação Internacional",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: bolsas, pós-graduação"
+      ]
     },
     {
       "id": "confap-horizon-2026",
@@ -282,7 +338,14 @@
       "anexos": [],
       "resumo": "Fomento a projetos colaborativos Brasil-União Europeia em biodiversidade, serviços ecossistêmicos e resiliência climática, cofinanciados pelas FAPs estaduais participantes (incluindo FACEPE).",
       "origemColeta": "Conector CONFAP Internacional",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CONFAP)",
+        "✓ Linha prioritária: Cooperação Internacional",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fapesp-pipe-2026",
@@ -310,7 +373,14 @@
       "anexos": [],
       "resumo": "Apoio à execução de pesquisa científica e tecnológica em pequenas empresas com alto potencial de retorno comercial ou social.",
       "origemColeta": "Conector FAPESP",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SP (FAPESP)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, startups"
+      ]
     },
     {
       "id": "faperj-cne-2026",
@@ -338,7 +408,14 @@
       "anexos": [],
       "resumo": "Concessão de bolsas de bancada para projetos coordenados por pesquisadores de excelência (CNE) e pesquisadores em fase de consolidação de carreira (JCNE) no estado do RJ.",
       "origemColeta": "Conector FAPERJ",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em RJ (FAPERJ)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, cientista"
+      ]
     },
     {
       "id": "fapemig-universal-2026",
@@ -366,7 +443,14 @@
       "anexos": [],
       "resumo": "Financiamento a projetos de pesquisa científica, tecnológica e de inovação em todas as áreas do conhecimento em Minas Gerais.",
       "origemColeta": "Conector FAPEMIG",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em MG (FAPEMIG)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, universal"
+      ]
     },
     {
       "id": "fapes-universal-2026",
@@ -394,7 +478,14 @@
       "anexos": [],
       "resumo": "Apoio financeiro a projetos de pesquisa básica ou aplicada que contribuam para o avanço científico e tecnológico do Espírito Santo.",
       "origemColeta": "Conector FAPES",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em ES (FAPES)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, universal"
+      ]
     },
     {
       "id": "funcap-cientista-chefe-2026",
@@ -422,7 +513,14 @@
       "anexos": [],
       "resumo": "Seleciona equipes de pesquisa aplicada para atuação direta na modernização de serviços públicos, recursos hídricos, saúde e educação no Ceará.",
       "origemColeta": "Conector FUNCAP",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FUNCAP/CE)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, cientista"
+      ]
     },
     {
       "id": "fapesb-inovacao-2026",
@@ -450,7 +548,14 @@
       "anexos": [],
       "resumo": "Fomenta pesquisas voltadas à convivência com o semiárido, energias renováveis, agricultura familiar e biotecnologia no estado da Bahia.",
       "origemColeta": "Conector FAPESB",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 86,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPESB/BA)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, tecnologia"
+      ]
     },
     {
       "id": "fapesq-pb-2026",
@@ -478,7 +583,14 @@
       "anexos": [],
       "resumo": "Apoio a projetos de desenvolvimento tecnológico em software, recursos hídricos e agroecologia articulados com os polos de João Pessoa e Campina Grande.",
       "origemColeta": "Conector FAPESQ",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPESQ/PB)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "fapern-rn-2026",
@@ -506,7 +618,14 @@
       "anexos": [],
       "resumo": "Incentivo a pesquisas aplicadas na cadeia produtiva de energias renováveis, dessalinização e sustentabilidade costeira no Rio Grande do Norte.",
       "origemColeta": "Conector FAPERN",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 82,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPERN/RN)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fapeal-al-2026",
@@ -534,7 +653,14 @@
       "anexos": [],
       "resumo": "Fomento à pós-graduação stricto sensu e projetos de pesquisa em saúde, química, biotecnologia e ciências humanas em Alagoas.",
       "origemColeta": "Conector FAPEAL",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEAL/AL)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, pós-graduação"
+      ]
     },
     {
       "id": "fapitec-se-2026",
@@ -562,7 +688,14 @@
       "anexos": [],
       "resumo": "Financia projetos voltados a demandas prioritárias do estado de Sergipe em recursos hídricos, saúde pública, energia e agroindústria.",
       "origemColeta": "Conector FAPITEC",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 86,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPITEC/SE/SE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "fapema-ma-2026",
@@ -590,7 +723,14 @@
       "anexos": [],
       "resumo": "Apoia investigações científicas e desenvolvimento tecnológico em todas as áreas do conhecimento nas instituições maranhenses.",
       "origemColeta": "Conector FAPEMA",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEMA/MA)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, universal"
+      ]
     },
     {
       "id": "fapepi-pi-2026",
@@ -618,7 +758,14 @@
       "anexos": [],
       "resumo": "Estímulo a pesquisas aplicadas em governo digital, energias limpas, apicultura, ovinocaprinocultura e saúde no Piauí.",
       "origemColeta": "Conector FAPEPI",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 82,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEPI/PI)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fapergs-rs-2026",
@@ -646,7 +793,14 @@
       "anexos": [],
       "resumo": "Financiamento a projetos de pesquisa liderados por pesquisadores no RS, com faixa especial para adaptação climática, infraestrutura hídrica e prevenção de eventos extremos.",
       "origemColeta": "Conector FAPERGS",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em RS (FAPERGS)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "araucaria-pr-2026",
@@ -674,7 +828,14 @@
       "anexos": [],
       "resumo": "Fomento a redes colaborativas orientadas ao desenvolvimento regional sustentável, biotecnologia, agroindústria 4.0 e cidades inteligentes no Paraná.",
       "origemColeta": "Conector Fundação Araucária",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em PR (Fundação Araucária)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "fapesc-sc-2026",
@@ -702,7 +863,14 @@
       "anexos": [],
       "resumo": "Impulsiona projetos de pesquisa aplicada e desenvolvimento de produtos inovadores integrados à Rede Catarinense de Centros de Inovação.",
       "origemColeta": "Conector FAPESC",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, inovação, startups"
+      ]
     },
     {
       "id": "fapdf-df-2026",
@@ -730,7 +898,14 @@
       "anexos": [],
       "resumo": "Apoio financeiro a projetos científicos, tecnológicos e de inovação de demanda espontânea nas diversas áreas do conhecimento no DF.",
       "origemColeta": "Conector FAPDF",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em DF (FAPDF)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "fapeg-go-2026",
@@ -758,7 +933,14 @@
       "anexos": [],
       "resumo": "Fomenta soluções de Inteligência Artificial, agricultura de precisão e aproveitamento sustentável da biodiversidade do Cerrado goiano.",
       "origemColeta": "Conector FAPEG",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em GO (FAPEG)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, startups"
+      ]
     },
     {
       "id": "fapemat-mt-2026",
@@ -786,7 +968,14 @@
       "anexos": [],
       "resumo": "Apoia projetos voltados à conservação ambiental, monitoramento de incêndios florestais, piscicultura e produção agropecuária de baixo carbono em MT.",
       "origemColeta": "Conector FAPEMAT",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em MT (FAPEMAT)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fundect-ms-2026",
@@ -814,7 +1003,14 @@
       "anexos": [],
       "resumo": "Financiamento a pesquisas sobre logística e impactos socioeconômicos da Rota Bioceânica, biodiversidade do Pantanal e transição energética.",
       "origemColeta": "Conector FUNDECT",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em MS (FUNDECT)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fapeam-am-2026",
@@ -842,7 +1038,14 @@
       "anexos": [],
       "resumo": "Fomenta projetos científicos e tecnológicos voltados às cadeias da sociobiodiversidade, biotecnologia, fármacos e conservação da Floresta Amazônica.",
       "origemColeta": "Conector FAPEAM",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em AM (FAPEAM)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, tecnologia"
+      ]
     },
     {
       "id": "fapespa-pa-2026",
@@ -870,7 +1073,14 @@
       "anexos": [],
       "resumo": "Apoia pesquisas em restauração florestal, mercados de carbono, bioeconomia comunitária e tecnologias verdes no estado do Pará.",
       "origemColeta": "Conector FAPESPA",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em PA (FAPESPA)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, tecnologia"
+      ]
     },
     {
       "id": "fapt-to-2026",
@@ -898,7 +1108,14 @@
       "anexos": [],
       "resumo": "Incentiva estudos em sistemas agroflorestais, recursos hídricos da bacia Tocantins-Araguaia e desenvolvimento regional.",
       "origemColeta": "Conector FAPT",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em TO (FAPT)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "fapero-ro-2026",
@@ -926,7 +1143,14 @@
       "anexos": [],
       "resumo": "Fomento a projetos científicos aplicados à vigilância em saúde, manejo sustentável e cadeias produtivas amazônicas em Rondônia.",
       "origemColeta": "Conector FAPERO",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em RO (FAPERO)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fapac-ac-2026",
@@ -954,7 +1178,14 @@
       "anexos": [],
       "resumo": "Apoia pesquisas voltadas à valorização de produtos florestais não madeireiros, manejo comunitário e biodiversidade acreana.",
       "origemColeta": "Conector FAPAC",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em AC (FAPAC)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "fapeap-ap-2026",
@@ -982,7 +1213,14 @@
       "anexos": [],
       "resumo": "Fomenta pesquisas científicas no estuário amazônico, fitoterápicos e desenvolvimento sustentável no estado do Amapá.",
       "origemColeta": "Conector FAPEAP",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em AP (FAPEAP)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "faperr-rr-2026",
@@ -1010,7 +1248,14 @@
       "anexos": [],
       "resumo": "Financia projetos de investigação científica em agroecologia do Lavrado, saúde coletiva e sustentabilidade em Roraima.",
       "origemColeta": "Conector FAPERR",
-      "ultimaSincronizacao": "2026-11-10T11:30:00Z"
+      "ultimaSincronizacao": "2026-11-10T11:30:00Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em RR (FAPERR)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "facepe-30-2026",
@@ -1047,7 +1292,14 @@
       ],
       "resumo": "Chamada pública oficial nº 30/2026 da FACEPE (9 de setembro de 2026). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.775Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pós-graduação, missões"
+      ]
     },
     {
       "id": "facepe-28-2026",
@@ -1088,7 +1340,14 @@
       ],
       "resumo": "Chamada pública oficial nº 28/2026 da FACEPE (25 de agosto de 2026). Submissões via sistema AgilFAP. Conta com 3 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, universal"
+      ]
     },
     {
       "id": "facepe-27-2026",
@@ -1121,7 +1380,14 @@
       ],
       "resumo": "Chamada pública oficial nº 27/2026 da FACEPE (27 de agosto de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-26-2026",
@@ -1149,7 +1415,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 26/2026 da FACEPE (25 de agosto de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-23-2026",
@@ -1182,7 +1455,14 @@
       ],
       "resumo": "Chamada pública oficial nº 23/2026 da FACEPE (1 de julho de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, inovação, missões"
+      ]
     },
     {
       "id": "facepe-22-2026",
@@ -1215,7 +1495,14 @@
       ],
       "resumo": "Chamada pública oficial nº 22/2026 da FACEPE (2 de julho de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-20-2026",
@@ -1243,7 +1530,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 20/2026 da FACEPE (26 de junho de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-19-2026",
@@ -1276,7 +1570,14 @@
       ],
       "resumo": "Chamada pública oficial nº 19/2026 da FACEPE (8 de junho de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, missões"
+      ]
     },
     {
       "id": "facepe-18-2026",
@@ -1304,7 +1605,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 18/2026 da FACEPE (9 de junho de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 85,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "• Linha complementar: Eventos & Difusão Científica",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, tecnologia"
+      ]
     },
     {
       "id": "facepe-17-2026",
@@ -1332,7 +1640,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 17/2026 da FACEPE (29 de maio de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-16-2026",
@@ -1369,7 +1684,14 @@
       ],
       "resumo": "Chamada pública oficial nº 16/2026 da FACEPE (25 de maio de 2026). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.776Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, cientista"
+      ]
     },
     {
       "id": "facepe-15-2026",
@@ -1397,7 +1719,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 15/2026 da FACEPE (3 de julho de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, tecnologia"
+      ]
     },
     {
       "id": "facepe-14-2026",
@@ -1434,7 +1763,14 @@
       ],
       "resumo": "Chamada pública oficial nº 14/2026 da FACEPE (29 de abril de 2026). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-13-2026",
@@ -1467,7 +1803,14 @@
       ],
       "resumo": "Chamada pública oficial nº 13/2026 da FACEPE (17 de abril de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: bolsas, pós-graduação, missões"
+      ]
     },
     {
       "id": "facepe-12-2026",
@@ -1495,7 +1838,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 12/2026 da FACEPE (30 de março de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, missões"
+      ]
     },
     {
       "id": "facepe-11-2026",
@@ -1528,7 +1878,14 @@
       ],
       "resumo": "Chamada pública oficial nº 11/2026 da FACEPE (7 de abril de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Cooperação Internacional",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-10-2026",
@@ -1556,7 +1913,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 10/2026 da FACEPE (19 de março de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-09-2026",
@@ -1593,7 +1957,14 @@
       ],
       "resumo": "Chamada pública oficial nº 09/2026 da FACEPE (19 de março de 2026). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, missões"
+      ]
     },
     {
       "id": "facepe-08-2026",
@@ -1626,7 +1997,14 @@
       ],
       "resumo": "Chamada pública oficial nº 08/2026 da FACEPE (5 de março de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-07-2026",
@@ -1659,7 +2037,14 @@
       ],
       "resumo": "Chamada pública oficial nº 07/2026 da FACEPE (5 de março de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: startups, missões"
+      ]
     },
     {
       "id": "facepe-06-2026",
@@ -1692,7 +2077,14 @@
       ],
       "resumo": "Chamada pública oficial nº 06/2026 da FACEPE (5 de março de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-04-2026",
@@ -1729,7 +2121,15 @@
       ],
       "resumo": "Chamada pública oficial nº 04/2026 da FACEPE (11 de fevereiro de 2026). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.777Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões",
+        "⚠ Submissões encerradas (útil como referência para próxima rodada)"
+      ]
     },
     {
       "id": "facepe-03-2026",
@@ -1757,7 +2157,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 03/2026 da FACEPE (4 de fevereiro de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.402Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, cientista"
+      ]
     },
     {
       "id": "facepe-02-2026",
@@ -1790,7 +2197,14 @@
       ],
       "resumo": "Chamada pública oficial nº 02/2026 da FACEPE (3 de fevereiro de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.403Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Cooperação Internacional",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, missões"
+      ]
     },
     {
       "id": "facepe-01-2026",
@@ -1823,7 +2237,14 @@
       ],
       "resumo": "Chamada pública oficial nº 01/2026 da FACEPE (9 de janeiro de 2026). Submissões via sistema AgilFAP. Conta com 1 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.404Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, missões"
+      ]
     },
     {
       "id": "facepe-42-2025",
@@ -1860,7 +2281,14 @@
       ],
       "resumo": "Chamada pública oficial nº 42/2025 da FACEPE (28 de novembro de 2025). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.404Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-41-2025",
@@ -1897,7 +2325,14 @@
       ],
       "resumo": "Chamada pública oficial nº 41/2025 da FACEPE (5 de fevereiro de 2026). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.404Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-40-2025",
@@ -1938,7 +2373,14 @@
       ],
       "resumo": "Chamada pública oficial nº 40/2025 da FACEPE (6 de fevereiro de 2026). Submissões via sistema AgilFAP. Conta com 3 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.404Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-39-2025",
@@ -1975,7 +2417,15 @@
       ],
       "resumo": "Chamada pública oficial nº 39/2025 da FACEPE (20 de outubro de 2025). Submissões via sistema AgilFAP. Conta com 2 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.404Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.778Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, missões",
+        "⚠ Submissões encerradas (útil como referência para próxima rodada)"
+      ]
     },
     {
       "id": "facepe-38-2025",
@@ -2003,7 +2453,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 38/2025 da FACEPE (26 de março de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z"
+      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pós-graduação, missões"
+      ]
     },
     {
       "id": "facepe-37-2025",
@@ -2044,7 +2501,14 @@
       ],
       "resumo": "Chamada pública oficial nº 37/2025 da FACEPE (31 de outubro de 2025). Submissões via sistema AgilFAP. Conta com 3 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z"
+      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-34-2025",
@@ -2093,7 +2557,14 @@
       ],
       "resumo": "Chamada pública oficial nº 34/2025 da FACEPE (17 de novembro de 2025). Submissões via sistema AgilFAP. Conta com 5 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z"
+      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-33-2025",
@@ -2138,7 +2609,15 @@
       ],
       "resumo": "Chamada pública oficial nº 33/2025 da FACEPE (22 de dezembro de 2025). Submissões via sistema AgilFAP. Conta com 4 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z"
+      "ultimaSincronizacao": "2026-11-13T19:30:30.679Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, missões",
+        "⚠ Submissões encerradas (útil como referência para próxima rodada)"
+      ]
     },
     {
       "id": "facepe-32-2025",
@@ -2203,7 +2682,14 @@
       ],
       "resumo": "Chamada pública oficial nº 32/2025 da FACEPE (15 de dezembro de 2025). Submissões via sistema AgilFAP. Conta com 9 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-13T19:30:30.680Z"
+      "ultimaSincronizacao": "2026-11-13T19:30:30.680Z",
+      "matchScore": 96,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, missões"
+      ]
     },
     {
       "id": "facepe-30-2025",
@@ -2231,7 +2717,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 30/2025 da FACEPE (8 de agosto de 2025). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-13T14:27:30.689Z"
+      "ultimaSincronizacao": "2026-11-13T14:27:30.689Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, missões, cientista"
+      ]
     },
     {
       "id": "live-fapeal-158933",
@@ -2259,7 +2752,14 @@
       "anexos": [],
       "resumo": "Edital Nº 06/2026 – Programa Nacional de Apoio à Geração de Empreendimentos Inovadores Programa Centelha 3 Alagoas – Fapeal/Secti-AL/Sebrae-AL Resultado Final – Fase 1 Retificação de Cronograma – 23/10/26 1° Retificação – 17/07/2026 Chamada original",
       "origemColeta": "Web Scraping Ao Vivo (FAPEAL)",
-      "ultimaSincronizacao": "2026-11-16T13:55:33.008Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:54.679Z",
+      "matchScore": 82,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEAL/AL)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-fapeal-160156",
@@ -2287,7 +2787,14 @@
       "anexos": [],
       "resumo": "Edital",
       "origemColeta": "Web Scraping Ao Vivo (FAPEAL)",
-      "ultimaSincronizacao": "2026-11-10T20:23:57.753Z"
+      "ultimaSincronizacao": "2026-11-10T20:23:57.753Z",
+      "matchScore": 82,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEAL/AL)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-fundect-18940",
@@ -2315,7 +2822,14 @@
       "anexos": [],
       "resumo": "Durante muito tempo, a hidroponia parecia distante da realidade de pequenos produtores rurais de Naviraí….",
       "origemColeta": "Web Scraping Ao Vivo (FUNDECT)",
-      "ultimaSincronizacao": "2026-11-16T13:55:33.549Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:55.592Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em MS (FUNDECT)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, tecnologia"
+      ]
     },
     {
       "id": "live-fundect-18858",
@@ -2343,7 +2857,14 @@
       "anexos": [],
       "resumo": "A Fundação de Apoio ao Desenvolvimento do Ensino, Ciência e Tecnologia de Mato Grosso do…",
       "origemColeta": "Web Scraping Ao Vivo (FUNDECT)",
-      "ultimaSincronizacao": "2026-11-16T13:55:33.549Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:55.592Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em MS (FUNDECT)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "live-fapeam-365356",
@@ -2371,7 +2892,14 @@
       "anexos": [],
       "resumo": "O Conselho Nacional das Fundações Estaduais de Amparo à Pesquisa (CONFAP) lançou a chamada para apoio complementar à MSCA Doctoral Networks 2026, da União Europeia, destinada a apoiar a implementação [&hellip;]",
       "origemColeta": "Web Scraping Ao Vivo (FAPEAM)",
-      "ultimaSincronizacao": "2026-11-13T14:52:22.628Z"
+      "ultimaSincronizacao": "2026-11-13T14:52:22.628Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em AM (FAPEAM)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-confap-44882",
@@ -2399,7 +2927,14 @@
       "anexos": [],
       "resumo": "O Conselho Nacional das Fundações Estaduais de Amparo à Pesquisa (CONFAP) publicou, nesta sexta-feira (6), o primeiro resultado da chamada MCI – Mobility CONFAP Italy 2026, que apoia a mobilidade de pesquisadores brasileiros para universidades italianas. A cha",
       "origemColeta": "Web Scraping Ao Vivo (CONFAP)",
-      "ultimaSincronizacao": "2026-11-13T19:31:31.263Z"
+      "ultimaSincronizacao": "2026-11-13T19:31:31.263Z",
+      "matchScore": 86,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CONFAP)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-confap-44870",
@@ -2427,7 +2962,14 @@
       "anexos": [],
       "resumo": "O Conselho Nacional das Fundações Estaduais de Amparo à Pesquisa (CONFAP) lançou, nesta quinta-feira (5), a chamada para apoio complementar à MSCA Doctoral Networks 2026, da União Europeia, destinada a apoiar a implementação de redes internacionais de formação",
       "origemColeta": "Web Scraping Ao Vivo (CONFAP)",
-      "ultimaSincronizacao": "2026-11-12T17:34:26.947Z"
+      "ultimaSincronizacao": "2026-11-12T17:34:26.947Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CONFAP)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-fapesc-58251",
@@ -2455,7 +2997,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) vem a público informar a primeira retificação do Edital de Chamada Pública FAPESC N.º 043/2026, que passa a vigorar com as seguintes alterações. CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-11T17:10:14.347Z"
+      "ultimaSincronizacao": "2026-11-11T17:10:14.347Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, pós-graduação"
+      ]
     },
     {
       "id": "live-fapesc-58245",
@@ -2483,7 +3032,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público o resultado final de mérito no âmbito do Edital de Chamada Pública n.º 039/2026 NÚCLEO CATARINENSE DE MOBILIDADE ELÉTRICA (NCME). CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-11T17:01:15.125Z"
+      "ultimaSincronizacao": "2026-11-11T17:01:15.125Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapesc-58240",
@@ -2511,7 +3067,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) vem a público informar a primeira retificação do Edital de Chamada Pública FAPESC N.º 044/2026, que passa a vigorar com as seguintes alterações. CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-10T17:24:21.259Z"
+      "ultimaSincronizacao": "2026-11-10T17:24:21.259Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, pós-graduação"
+      ]
     },
     {
       "id": "live-fapesc-58236",
@@ -2539,7 +3102,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público o resultado preliminar de admissibilidade no âmbito do Edital de Chamada Pública FAPESC/SSP N.º 041/2026 Programa INOVASEG/SC. CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-10T16:54:21.044Z"
+      "ultimaSincronizacao": "2026-11-10T16:54:21.044Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "live-fapesc-58232",
@@ -2567,7 +3137,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina – FAPESC torna público o resultado dos finalistas das candidaturas, por categoria, em ordem alfabética, no Edital de Chamada Pública Nº 15/2026 Prêmio Inovação Catarinense Professor Caspar ",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-10T16:48:20.509Z"
+      "ultimaSincronizacao": "2026-11-10T16:48:20.509Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapesc-58272",
@@ -2595,7 +3172,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) vem a público informar a alteração no item 04 – Quadro 01 do referido Edital, conforme cronograma abaixo. CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-13T18:58:34.134Z"
+      "ultimaSincronizacao": "2026-11-13T18:58:34.134Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "live-fapesc-58275",
@@ -2623,7 +3207,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público o resultado parcial de mérito das propostas no âmbito do Edital de Chamada Pública n.º 051/2025 PROGRAMA DE CIÊNCIA, TECNOLOGIA E INOVAÇÃO EM PESQUISAS NA ÁREA DE GES",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-13T19:31:34.477Z"
+      "ultimaSincronizacao": "2026-11-13T19:31:34.477Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "live-fapesc-58280",
@@ -2651,7 +3242,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) vem a público informar a segunda alteração do item 11. CRONOGRAMA, do referido Edital, que passa a vigorar conforme abaixo. CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.737Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.746Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapema-35252",
@@ -2679,7 +3277,14 @@
       "anexos": [],
       "resumo": "Mobility CONFAP – Italy 2026",
       "origemColeta": "Web Scraping Ao Vivo (FAPEMA)",
-      "ultimaSincronizacao": "2026-11-16T13:55:33.553Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:55.223Z",
+      "matchScore": 82,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEMA/MA)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-fapesc-58288",
@@ -2707,7 +3312,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público a II retificação do resultado final de mérito no âmbito do Edital de Chamada Pública FAPESC/SEPLAN N.º 033/2026 Programa SEPLAN de Pesquisa, Desenvolvimento e Inovaçã",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.737Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.746Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapesc-58291",
@@ -2735,7 +3347,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público o resultado preliminar de mérito no âmbito do Edital de Chamada Pública FAPESC/SSP N.º 047/2026 Programa Inova PROCON/SC. CONFIRA AQUI",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.737Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.746Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapeal-160725",
@@ -2763,7 +3382,14 @@
       "anexos": [],
       "resumo": "Apoio a atividades científicas e tecnológicas dos graduandos em Alagoas passou a ter valores mais altos que os federais; alunos e professores da rede pública também foram beneficiados Naísia Xavier A Fundação de Amparo à Pesquisa do Estado de Alagoas (Fapeal) ",
       "origemColeta": "Web Scraping Ao Vivo (FAPEAL)",
-      "ultimaSincronizacao": "2026-11-12T18:48:50.457Z"
+      "ultimaSincronizacao": "2026-11-12T18:48:50.457Z",
+      "matchScore": 86,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEAL/AL)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas"
+      ]
     },
     {
       "id": "live-fapeam-365542",
@@ -2791,7 +3417,14 @@
       "anexos": [],
       "resumo": "O Governo do Amazonas, por meio da Fundação de Amparo à Pesquisa do Estado do Amazonas (Fapeam), divulgou, nesta quarta-feira (11/11), o resultado final de enquadramento das propostas submetidas no [&hellip;]",
       "origemColeta": "Web Scraping Ao Vivo (FAPEAM)",
-      "ultimaSincronizacao": "2026-11-13T14:52:22.628Z"
+      "ultimaSincronizacao": "2026-11-13T14:52:22.628Z",
+      "matchScore": 72,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em AM (FAPEAM)",
+        "✓ Linha prioritária: Governo & Gestão Pública",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-confap-44912",
@@ -2819,7 +3452,14 @@
       "anexos": [],
       "resumo": "A Parceria Europeia para a Segurança Hídrica (Water4All) divulgou o resultado da chamada transnacional conjunta 2025 – Water and Health. A iniciativa apoiará projetos de pesquisa e inovação voltados aos principais desafios relacionados à interconexão entre águ",
       "origemColeta": "Web Scraping Ao Vivo (CONFAP)",
-      "ultimaSincronizacao": "2026-11-16T13:55:34.527Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.323Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CONFAP)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-confap-44850",
@@ -2847,7 +3487,14 @@
       "anexos": [],
       "resumo": "A castanha do Baru pode se transformar em um novo produto alimentício nas prateleiras dos supermercados e empórios do país. A empresária Roza Maria Barros Ferreira, da Quero+ Alimentos, desenvolveu o Baruzito, um produto inovador derivado da base desse fruto n",
       "origemColeta": "Web Scraping Ao Vivo (CONFAP)",
-      "ultimaSincronizacao": "2026-11-16T13:55:34.527Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.323Z",
+      "matchScore": 90,
+      "matchRazoes": [
+        "✓ Chamada Nacional elegível em todo o país (CONFAP)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa"
+      ]
     },
     {
       "id": "live-fapeg-180101",
@@ -2875,7 +3522,14 @@
       "anexos": [],
       "resumo": "Com remuneração mensal de R$ 5,2 mil, oportunidades são destinadas a profissionais com pós-graduação e experiência em inovação; inscrições seguem até 28 de dezembro A Fundação de Amparo à Pesquisa do Estado de Goiás (Fapeg) está com inscrições abertas para a s",
       "origemColeta": "Web Scraping Ao Vivo (FAPEG)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.618Z"
+      "ultimaSincronizacao": "2026-11-16T14:26:00.168Z",
+      "matchScore": 84,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em GO (FAPEG)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, bolsas, pós-graduação"
+      ]
     },
     {
       "id": "facepe-36-2026",
@@ -2903,7 +3557,14 @@
       "anexos": [],
       "resumo": "Chamada pública oficial nº 36/2026 da FACEPE (13 de novembro de 2026). Submissões via sistema AgilFAP. Conta com 0 documento(s) complementar(es) entre adendos, erratas ou resultados.",
       "origemColeta": "Web Scraping Ao Vivo (www2.facepe.br/editais)",
-      "ultimaSincronizacao": "2026-11-16T13:55:32.401Z"
+      "ultimaSincronizacao": "2026-11-16T14:13:32.775Z",
+      "matchScore": 99,
+      "matchRazoes": [
+        "✓ Sede na mesma UF do seu perfil (PE • FACEPE)",
+        "✓ Linha prioritária: Pesquisa Científica (APQ / Missões)",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, missões"
+      ]
     },
     {
       "id": "live-fapeg-180104",
@@ -2931,7 +3592,14 @@
       "anexos": [],
       "resumo": "1ª RetificaçãoChamada Pública Fapeg/SECTI nº 19/2026 – Seleção de Bolsistas para Atuação em Ambientes de Inovação do Estado de Goiás – Apoio a Hubs de Inovação",
       "origemColeta": "Web Scraping Ao Vivo (FAPEG)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.618Z"
+      "ultimaSincronizacao": "2026-11-16T14:26:00.167Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em GO (FAPEG)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapesc-58313",
@@ -2959,7 +3627,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público o resultado final de admissibilidade no âmbito do Edital de Chamada Pública FAPESC/SED N.º 046/2026 PROGRAMA PARA AÇÕES COLABORATIVAS EM EDUCAÇÃO, TECNOLOGIA E SUPORT",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.737Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.746Z",
+      "matchScore": 80,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa, inovação, tecnologia"
+      ]
     },
     {
       "id": "live-fapesc-58318",
@@ -2987,7 +3662,14 @@
       "anexos": [],
       "resumo": "A Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina (FAPESC) torna público o resultado final dos Projetos de Fomento classificados na Fase 2, bem como o resultado final dos projetos aprovados e suplentes, em ordem classificatória, referentes",
       "origemColeta": "Web Scraping Ao Vivo (FAPESC)",
-      "ultimaSincronizacao": "2026-11-16T13:55:35.737Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:57.746Z",
+      "matchScore": 76,
+      "matchRazoes": [
+        "⚠ Exige ICT sediada ou co-execução em SC (FAPESC)",
+        "✓ Linha prioritária: Inovação & Startups",
+        "• Recomendado parceria ICT + Empresa/Startup ou spin-off acadêmica",
+        "✓ Temas compatíveis: pesquisa, inovação"
+      ]
     },
     {
       "id": "live-fapeal-160788",
@@ -3015,7 +3697,791 @@
       "anexos": [],
       "resumo": "Segunda edição do evento em Maceió reúne mais de 700 jovens em palestras, oficinas e experiências com pesquisadores brasileiros e estrangeiros Tárcila Cabral Estudantes de diferentes regiões de Alagoas participam, nesta quinta e sexta-feira (12 e 13), da segun",
       "origemColeta": "Web Scraping Ao Vivo (FAPEAL)",
-      "ultimaSincronizacao": "2026-11-16T13:55:33.008Z"
+      "ultimaSincronizacao": "2026-11-16T14:25:54.679Z",
+      "matchScore": 82,
+      "matchRazoes": [
+        "✓ Cooperação Regional Nordeste (FAPEAL/AL)",
+        "✓ Linha prioritária: Bolsas & Pós-Graduação",
+        "✓ Elegível para ICT Pública / Universidade (Doutorado)",
+        "✓ Temas compatíveis: pesquisa"
+      ]
+    }
+  ],
+  "faps": [
+    {
+      "id": "facepe-pe",
+      "sigla": "FACEPE",
+      "nome": "Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco",
+      "uf": "PE",
+      "estado": "Pernambuco",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": true,
+      "siteOficial": "https://www2.facepe.br/",
+      "urlEditais": "https://www2.facepe.br/editais/",
+      "urlPortalAntigo": "https://www.facepe.br/",
+      "plataformaSubmissao": "AgilFAP",
+      "urlPlataforma": "https://agil.facepe.br/",
+      "wpApiUrl": "https://www2.facepe.br/wp-json/wp/v2/posts",
+      "tipoConector": "scraper_facepe_nativo",
+      "orcamentoAnualEstimado": "R$ 185 milhões",
+      "areasFoco": [
+        "Bolsas Pós-Graduação (PBPG)",
+        "APQ Universal",
+        "Pró-Startups",
+        "Cientista Arretado",
+        "Desafios.Gov",
+        "Projetos Orientados a Missões (POM)"
+      ],
+      "descricao": "Principal agência de fomento à CT&I de Pernambuco, vinculada à SECTI-PE. Monitoramento direto em tempo real dos editais, adendos, erratas e resultados publicados em www2.facepe.br.",
+      "totalEditaisMonitorados": 41,
+      "editaisAbertos": 15
+    },
+    {
+      "id": "cnpq-br",
+      "sigla": "CNPq",
+      "nome": "Conselho Nacional de Desenvolvimento Científico e Tecnológico",
+      "uf": "BR",
+      "estado": "Nacional (Federal)",
+      "regiao": "Federal",
+      "esfera": "Federal",
+      "destaque": true,
+      "siteOficial": "https://www.gov.br/cnpq/pt-br",
+      "urlEditais": "http://memoria2.cnpq.br/web/guest/chamadas-publicas",
+      "plataformaSubmissao": "Plataforma Integrada Carlos Chagas (PICC)",
+      "urlPlataforma": "https://carloschagas.cnpq.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 1,9 bilhão",
+      "areasFoco": [
+        "Chamada Universal",
+        "Bolsas Produtividade (PQ/DT)",
+        "Iniciação Científica (PIBIC)",
+        "INCTs",
+        "Cooperação Internacional"
+      ],
+      "descricao": "Agência ligada ao MCTI responsável pelo fomento à pesquisa científica e tecnológica e formação de recursos humanos em todas as áreas do conhecimento no Brasil.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "finep-br",
+      "sigla": "FINEP",
+      "nome": "Financiadora de Estudos e Projetos — Inovação e Pesquisa",
+      "uf": "BR",
+      "estado": "Nacional (Federal)",
+      "regiao": "Federal",
+      "esfera": "Federal",
+      "destaque": true,
+      "siteOficial": "http://www.finep.gov.br/",
+      "urlEditais": "http://www.finep.gov.br/chamadas-publicas?situacao=aberta",
+      "plataformaSubmissao": "Sistema FINEP / FNDCT",
+      "urlPlataforma": "http://www.finep.gov.br/chamadas-publicas",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 12,0 bilhões (FNDCT)",
+      "areasFoco": [
+        "Subvenção Econômica",
+        "Infraestrutura de Pesquisa (Pró-Infra)",
+        "Centros Temáticos",
+        "Deep Techs & Startups",
+        "Transição Energética & Saúde"
+      ],
+      "descricao": "Empresa pública vinculada ao MCTI que gere recursos do FNDCT para subvenção econômica à inovação empresarial e infraestrutura científica em ICTs.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "capes-br",
+      "sigla": "CAPES",
+      "nome": "Coordenação de Aperfeiçoamento de Pessoal de Nível Superior",
+      "uf": "BR",
+      "estado": "Nacional (Federal)",
+      "regiao": "Federal",
+      "esfera": "Federal",
+      "destaque": false,
+      "siteOficial": "https://www.gov.br/capes/pt-br",
+      "urlEditais": "https://www.gov.br/capes/pt-br/assuntos/editais-e-resultados-capes",
+      "plataformaSubmissao": "SICAPES / Inscricao CAPES",
+      "urlPlataforma": "https://inscricao.capes.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 5,4 bilhões",
+      "areasFoco": [
+        "Pós-Graduação Stricto Sensu",
+        "PDPG Parcerias com FAPs",
+        "Bolsas no Exterior (PDSE)",
+        "Formação de Professores",
+        "PAEP Eventos"
+      ],
+      "descricao": "Fundação vinculada ao MEC dedicada à expansão e consolidação da pós-graduação stricto sensu (mestrado e doutorado) em todos os estados da Federação.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "confap-br",
+      "sigla": "CONFAP",
+      "nome": "Conselho Nacional das Fundações Estaduais de Amparo à Pesquisa",
+      "uf": "BR",
+      "estado": "Nacional (Consórcio das 27 FAPs)",
+      "regiao": "Federal",
+      "esfera": "Federal",
+      "destaque": false,
+      "siteOficial": "https://confap.org.br/",
+      "urlEditais": "https://confap.org.br/news/editais/",
+      "plataformaSubmissao": "Sistema CONFAP / Horizon Europe / ERC",
+      "urlPlataforma": "https://confap.org.br/news/editais/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "Chamadas Conjuntas Internacionais",
+      "areasFoco": [
+        "Cooperação Internacional (UE / UK / EUA)",
+        "Amazônia +10",
+        "Mobilidade Acadêmica Internacional",
+        "Chamadas Transnacionais"
+      ],
+      "descricao": "Articula as 27 FAPs estaduais em chamadas conjuntas nacionais (como Iniciativa Amazônia +10) e internacionais (União Europeia, Newton Fund, Belmont Forum).",
+      "totalEditaisMonitorados": 5,
+      "editaisAbertos": 3
+    },
+    {
+      "id": "funcap-ce",
+      "sigla": "FUNCAP",
+      "nome": "Fundação Cearense de Apoio ao Desenvolvimento Científico e Tecnológico",
+      "uf": "CE",
+      "estado": "Ceará",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.funcap.ce.gov.br/",
+      "urlEditais": "https://montenegro.funcap.ce.gov.br/sugba/editais/",
+      "plataformaSubmissao": "Plataforma Montenegro",
+      "urlPlataforma": "https://montenegro.funcap.ce.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 140 milhões",
+      "areasFoco": [
+        "Cientista Chefe",
+        "Mulheres na Ciência",
+        "Inovação & Startups (Corredores Digitais)",
+        "Bolsas Pós-Graduação"
+      ],
+      "descricao": "Agência de fomento do Ceará, referência nacional com o programa Cientista Chefe e editais de inovação tecnológica.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapesb-ba",
+      "sigla": "FAPESB",
+      "nome": "Fundação de Amparo à Pesquisa do Estado da Bahia",
+      "uf": "BA",
+      "estado": "Bahia",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "http://www.fapesb.ba.gov.br/",
+      "urlEditais": "http://www.fapesb.ba.gov.br/categoria/editais/abertos/",
+      "plataformaSubmissao": "Sistema FAPESB / SIGFAP",
+      "urlPlataforma": "http://www.fapesb.ba.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 130 milhões",
+      "areasFoco": [
+        "Apoio a Soluções Inovadoras",
+        "Incubadoras & Startups Bahia",
+        "Bolsas IC e Pós",
+        "Pesquisa no Semiárido"
+      ],
+      "descricao": "Fundação vinculada à SECTI-BA que fomenta projetos científicos, tecnológicos e de inovação no estado da Bahia.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapesq-pb",
+      "sigla": "FAPESQ",
+      "nome": "Fundação de Apoio à Pesquisa do Estado da Paraíba",
+      "uf": "PB",
+      "estado": "Paraíba",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapesq.rpp.br/",
+      "urlEditais": "https://fapesq.rpp.br/editais",
+      "plataformaSubmissao": "SIGFAP Paraíba",
+      "urlPlataforma": "https://sigfap.fapesq.rpp.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 65 milhões",
+      "areasFoco": [
+        "Desenvolvimento do Semiárido",
+        "Tecnologias Sociais",
+        "Bolsas de Pós-Graduação",
+        "Centelha PB"
+      ],
+      "descricao": "Órgão de fomento da Paraíba com forte atuação no Polo Tecnológico de Campina Grande e interiorização da pesquisa.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapern-rn",
+      "sigla": "FAPERN",
+      "nome": "Fundação de Apoio à Pesquisa do Estado do Rio Grande do Norte",
+      "uf": "RN",
+      "estado": "Rio Grande do Norte",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "http://www.fapern.rn.gov.br/",
+      "urlEditais": "http://www.fapern.rn.gov.br/Conteudo.asp?TRAN=ITEM&TARG=7856",
+      "plataformaSubmissao": "SIGFAP RN",
+      "urlPlataforma": "http://www.fapern.rn.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 42 milhões",
+      "areasFoco": [
+        "Energias Renováveis (Eólica/Solar)",
+        "Gestão Pública",
+        "Apoio a Mestrado e Doutorado"
+      ],
+      "descricao": "Promove o desenvolvimento científico e tecnológico do Rio Grande do Norte, com destaque em energias limpas e inovação pública.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapeal-al",
+      "sigla": "FAPEAL",
+      "nome": "Fundação de Amparo à Pesquisa do Estado de Alagoas",
+      "uf": "AL",
+      "estado": "Alagoas",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fapeal.br/",
+      "urlEditais": "https://www.fapeal.br/editais/",
+      "plataformaSubmissao": "SIGFAP FAPEAL",
+      "urlPlataforma": "https://sigfap.fapeal.br/",
+      "wpApiUrl": "https://www.fapeal.br/wp-json/wp/v2/posts",
+      "tipoConector": "wp_api",
+      "orcamentoAnualEstimado": "R$ 58 milhões",
+      "areasFoco": [
+        "Auxílio Pesquisa",
+        "Bolsas Pós-Graduação",
+        "Inovação em Saúde e Agro"
+      ],
+      "descricao": "Fundação alagoana de amparo à pesquisa científica e tecnológica, parceira frequente da FACEPE em chamadas regionais.",
+      "totalEditaisMonitorados": 5,
+      "editaisAbertos": 5
+    },
+    {
+      "id": "fapitec-se",
+      "sigla": "FAPITEC/SE",
+      "nome": "Fundação de Apoio à Pesquisa e à Inovação Tecnológica do Estado de Sergipe",
+      "uf": "SE",
+      "estado": "Sergipe",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapitec.se.gov.br/",
+      "urlEditais": "https://fapitec.se.gov.br/editais-abertos/",
+      "plataformaSubmissao": "Portal FAPITEC",
+      "urlPlataforma": "https://fapitec.se.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 32 milhões",
+      "areasFoco": [
+        "Pesquisa Aplicada",
+        "Bolsas de Iniciação e Pós",
+        "Popularização da Ciência"
+      ],
+      "descricao": "Gerencia os recursos estaduais de Sergipe destinados ao desenvolvimento científico, tecnológico e de inovação.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapema-ma",
+      "sigla": "FAPEMA",
+      "nome": "Fundação de Amparo à Pesquisa e ao Desenvolvimento Científico e Tecnológico do Maranhão",
+      "uf": "MA",
+      "estado": "Maranhão",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fapema.br/",
+      "urlEditais": "https://www.fapema.br/categoria/editais/abertos/",
+      "plataformaSubmissao": "Plataforma Patronage / FAPEMA",
+      "urlPlataforma": "https://patronage.fapema.br/",
+      "wpApiUrl": "https://www.fapema.br/wp-json/wp/v2/posts",
+      "tipoConector": "wp_api",
+      "orcamentoAnualEstimado": "R$ 68 milhões",
+      "areasFoco": [
+        "Universal",
+        "Bolsas no País e Exterior",
+        "Cidadania & Inclusão",
+        "Inovação Maranhão"
+      ],
+      "descricao": "Fomenta a pesquisa e formação de recursos humanos no Maranhão por meio das linhas Mais Ciência, Mais Inovação e Mais Qualificação.",
+      "totalEditaisMonitorados": 2,
+      "editaisAbertos": 2
+    },
+    {
+      "id": "fapepi-pi",
+      "sigla": "FAPEPI",
+      "nome": "Fundação de Amparo à Pesquisa do Estado do Piauí",
+      "uf": "PI",
+      "estado": "Piauí",
+      "regiao": "Nordeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fapepi.pi.gov.br/",
+      "urlEditais": "https://www.fapepi.pi.gov.br/editais/",
+      "plataformaSubmissao": "SIGFAP Piauí",
+      "urlPlataforma": "https://sigfap.fapepi.pi.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 36 milhões",
+      "areasFoco": [
+        "Transformação Digital",
+        "Agronegócio & Semiárido",
+        "Apoio a Eventos e Publicações"
+      ],
+      "descricao": "Apoia projetos científicos e tecnológicos estratégicos para o desenvolvimento sustentável do Piauí.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapesp-sp",
+      "sigla": "FAPESP",
+      "nome": "Fundação de Amparo à Pesquisa do Estado de São Paulo",
+      "uf": "SP",
+      "estado": "São Paulo",
+      "regiao": "Sudeste",
+      "esfera": "Estadual",
+      "destaque": true,
+      "siteOficial": "https://fapesp.br/",
+      "urlEditais": "https://fapesp.br/oportunidades/",
+      "plataformaSubmissao": "SAGe (Sistema de Apoio à Gestão)",
+      "urlPlataforma": "https://sage.fapesp.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 2,4 bilhões",
+      "areasFoco": [
+        "Auxílio à Pesquisa Regular e Temático",
+        "PIPE (Pesquisa Inovativa em Pequenas Empresas)",
+        "CEPIDs",
+        "Jovens Pesquisadores",
+        "Bolsas IC/MS/DR/PD"
+      ],
+      "descricao": "Uma das maiores agências de fomento da América Latina, com chamadas de fluxo contínuo e editais estratégicos nacionais e internacionais.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "faperj-rj",
+      "sigla": "FAPERJ",
+      "nome": "Fundação Carlos Chagas Filho de Amparo à Pesquisa do Estado do Rio de Janeiro",
+      "uf": "RJ",
+      "estado": "Rio de Janeiro",
+      "regiao": "Sudeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.faperj.br/",
+      "urlEditais": "https://www.faperj.br/?id=28.5.7",
+      "plataformaSubmissao": "SisFAPERJ",
+      "urlPlataforma": "https://sisfaperj.faperj.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 720 milhões",
+      "areasFoco": [
+        "Cientista do Nosso Estado (CNE)",
+        "Jovem Cientista do Nosso Estado (JCNE)",
+        "APQ1",
+        "Pós-Doutorado Nota 10",
+        "Inovação Rio"
+      ],
+      "descricao": "Agência estadual de fomento do Rio de Janeiro com forte apoio a grupos de excelência, infraestrutura laboratorial e startups.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapemig-mg",
+      "sigla": "FAPEMIG",
+      "nome": "Fundação de Amparo à Pesquisa do Estado de Minas Gerais",
+      "uf": "MG",
+      "estado": "Minas Gerais",
+      "regiao": "Sudeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapemig.br/",
+      "urlEditais": "https://fapemig.br/pt/chamadas_abertas_oportunidades_fapemig/",
+      "plataformaSubmissao": "Everest FAPEMIG",
+      "urlPlataforma": "https://everest.fapemig.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 410 milhões",
+      "areasFoco": [
+        "Demanda Universal",
+        "Redes de Pesquisa",
+        "PPM (Pesquisador Mineiro)",
+        "Inovação & Deep Techs MG"
+      ],
+      "descricao": "Financia projetos de pesquisa científica, tecnológica e de inovação nas universidades e centros de pesquisa de Minas Gerais.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapes-es",
+      "sigla": "FAPES",
+      "nome": "Fundação de Amparo à Pesquisa e Inovação do Espírito Santo",
+      "uf": "ES",
+      "estado": "Espírito Santo",
+      "regiao": "Sudeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapes.es.gov.br/",
+      "urlEditais": "https://fapes.es.gov.br/Editais/Abertos",
+      "plataformaSubmissao": "SigFAPES",
+      "urlPlataforma": "https://sigfapes.es.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 150 milhões",
+      "areasFoco": [
+        "Edital Universal ES",
+        "Nossa Bolsa / Pós-Graduação",
+        "Ecossistema de Inovação Capixaba",
+        "Biodiversidade & Clima"
+      ],
+      "descricao": "Agência capixaba de fomento com amplo investimento do Fundo Estadual de Ciência e Tecnologia (Funcitec).",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapergs-rs",
+      "sigla": "FAPERGS",
+      "nome": "Fundação de Amparo à Pesquisa do Estado do Rio Grande do Sul",
+      "uf": "RS",
+      "estado": "Rio Grande do Sul",
+      "regiao": "Sul",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapergs.rs.gov.br/",
+      "urlEditais": "https://fapergs.rs.gov.br/abertos",
+      "plataformaSubmissao": "SigFAPERGS",
+      "urlPlataforma": "https://sig.fapergs.rs.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 165 milhões",
+      "areasFoco": [
+        "ARD / ARC (Recém-Doutor)",
+        "Pesquisador Gaúcho (PqG)",
+        "Resiliência Climática & Reconstrução RS",
+        "Inovação em Saúde e Agro"
+      ],
+      "descricao": "Fomenta a pesquisa no Rio Grande do Sul com forte foco recente em resiliência climática, biotecnologia e parques tecnológicos.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "araucaria-pr",
+      "sigla": "Fundação Araucária",
+      "nome": "Fundação Araucária de Apoio ao Desenvolvimento Científico e Tecnológico do Estado do Paraná",
+      "uf": "PR",
+      "estado": "Paraná",
+      "regiao": "Sul",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fappr.pr.gov.br/",
+      "urlEditais": "https://www.fappr.pr.gov.br/Pagina/Programas-Abertos",
+      "plataformaSubmissao": "Sparkx / SICT Paraná",
+      "urlPlataforma": "https://www.fappr.pr.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 260 milhões",
+      "areasFoco": [
+        "Novos Arranjos de Pesquisa e Inovação (NAPIs)",
+        "Pesquisa Básica e Aplicada",
+        "Bolsas Produtividade e Pós"
+      ],
+      "descricao": "Atua por meio dos Novos Arranjos de Pesquisa e Inovação (NAPIs), conectando pesquisadores paranaenses a demandas estratégicas.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapesc-sc",
+      "sigla": "FAPESC",
+      "nome": "Fundação de Amparo à Pesquisa e Inovação do Estado de Santa Catarina",
+      "uf": "SC",
+      "estado": "Santa Catarina",
+      "regiao": "Sul",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapesc.sc.gov.br/",
+      "urlEditais": "https://fapesc.sc.gov.br/categoria/chamadas-publicas/abertas/",
+      "plataformaSubmissao": "Plataforma SIGFAPESC",
+      "urlPlataforma": "https://sig.fapesc.sc.gov.br/",
+      "wpApiUrl": "https://fapesc.sc.gov.br/wp-json/wp/v2/posts",
+      "tipoConector": "wp_api",
+      "orcamentoAnualEstimado": "R$ 190 milhões",
+      "areasFoco": [
+        "Ecossistema Catarinense de Inovação",
+        "Bolsas de Mestrado e Doutorado",
+        "Pesquisa em TI e Indústria 4.0"
+      ],
+      "descricao": "Impulsiona a ciência e o forte polo tecnológico e de startups de Santa Catarina.",
+      "totalEditaisMonitorados": 13,
+      "editaisAbertos": 5
+    },
+    {
+      "id": "fapdf-df",
+      "sigla": "FAPDF",
+      "nome": "Fundação de Apoio à Pesquisa do Distrito Federal",
+      "uf": "DF",
+      "estado": "Distrito Federal",
+      "regiao": "Centro-Oeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fap.df.gov.br/",
+      "urlEditais": "https://www.fap.df.gov.br/editais-abertos/",
+      "plataformaSubmissao": "SIGFAP DF",
+      "urlPlataforma": "https://sigfap.fap.df.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 210 milhões",
+      "areasFoco": [
+        "Demanda Espontânea",
+        "FAPDF Learning & GovTech",
+        "Startups Brasília",
+        "Participação em Eventos Científicos"
+      ],
+      "descricao": "Agência do Distrito Federal com alto volume de investimento per capita em pesquisa, inovação e transformação digital governamental.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapeg-go",
+      "sigla": "FAPEG",
+      "nome": "Fundação de Amparo à Pesquisa do Estado de Goiás",
+      "uf": "GO",
+      "estado": "Goiás",
+      "regiao": "Centro-Oeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://goias.gov.br/fapeg/",
+      "urlEditais": "https://goias.gov.br/fapeg/chamadas-abertas/",
+      "plataformaSubmissao": "Sparkx FAPEG",
+      "urlPlataforma": "https://opp.fapeg.go.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 125 milhões",
+      "areasFoco": [
+        "Inteligência Artificial (CEIA)",
+        "Bioeconomia do Cerrado",
+        "Agronegócio Sustentável",
+        "Bolsas Pós-Graduação"
+      ],
+      "descricao": "Destaca-se no financiamento à Inteligência Artificial, ciências agrárias e preservação do bioma Cerrado.",
+      "totalEditaisMonitorados": 3,
+      "editaisAbertos": 3
+    },
+    {
+      "id": "fapemat-mt",
+      "sigla": "FAPEMAT",
+      "nome": "Fundação de Amparo à Pesquisa do Estado de Mato Grosso",
+      "uf": "MT",
+      "estado": "Mato Grosso",
+      "regiao": "Centro-Oeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fapemat.mt.gov.br/",
+      "urlEditais": "https://www.fapemat.mt.gov.br/editais-abertos",
+      "plataformaSubmissao": "SIGFAPEMAT",
+      "urlPlataforma": "https://sigfapemat.fapemat.mt.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 85 milhões",
+      "areasFoco": [
+        "Pesquisa no Pantanal, Cerrado e Amazônia",
+        "AgTechs e Biotecnologia",
+        "Extensão Tecnológica"
+      ],
+      "descricao": "Fomenta pesquisas estratégicas nos três biomas mato-grossenses (Amazônia, Cerrado e Pantanal) e inovação agroindustrial.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fundect-ms",
+      "sigla": "FUNDECT",
+      "nome": "Fundação de Apoio ao Desenvolvimento do Ensino, Ciência e Tecnologia do Estado de Mato Grosso do Sul",
+      "uf": "MS",
+      "estado": "Mato Grosso do Sul",
+      "regiao": "Centro-Oeste",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fundect.ms.gov.br/",
+      "urlEditais": "https://www.fundect.ms.gov.br/chamadas-abertas/",
+      "plataformaSubmissao": "SIGFUNDECT",
+      "urlPlataforma": "https://sigfundect.ledes.net/",
+      "wpApiUrl": "https://www.fundect.ms.gov.br/wp-json/wp/v2/posts",
+      "tipoConector": "wp_api",
+      "orcamentoAnualEstimado": "R$ 75 milhões",
+      "areasFoco": [
+        "Bioma Pantanal",
+        "Bioenergia & Rota Bioceânica",
+        "Bolsas Mestrado/Doutorado"
+      ],
+      "descricao": "Promove o desenvolvimento científico em Mato Grosso do Sul com ênfase na Rota Bioceânica, bioeconomia e conservação do Pantanal.",
+      "totalEditaisMonitorados": 3,
+      "editaisAbertos": 3
+    },
+    {
+      "id": "fapeam-am",
+      "sigla": "FAPEAM",
+      "nome": "Fundação de Amparo à Pesquisa do Estado do Amazonas",
+      "uf": "AM",
+      "estado": "Amazonas",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fapeam.am.gov.br/",
+      "urlEditais": "https://www.fapeam.am.gov.br/editais-abertos/",
+      "plataformaSubmissao": "SIGFAPEAM",
+      "urlPlataforma": "https://sig.fapeam.am.gov.br/",
+      "wpApiUrl": "https://www.fapeam.am.gov.br/wp-json/wp/v2/posts",
+      "tipoConector": "wp_api",
+      "orcamentoAnualEstimado": "R$ 175 milhões",
+      "areasFoco": [
+        "Biodiversidade Amazônica",
+        "Iniciativa Amazônia +10",
+        "Fixação de Doutores no Interior",
+        "Mulheres na Ciência"
+      ],
+      "descricao": "Lidera investimentos em CT&I na Região Norte, com dezenas de programas anuais voltados à bioeconomia e ciência na Amazônia.",
+      "totalEditaisMonitorados": 3,
+      "editaisAbertos": 2
+    },
+    {
+      "id": "fapespa-pa",
+      "sigla": "FAPESPA",
+      "nome": "Fundação Amazônia de Amparo a Estudos e Pesquisas (Pará)",
+      "uf": "PA",
+      "estado": "Pará",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.fapespa.pa.gov.br/",
+      "urlEditais": "https://www.fapespa.pa.gov.br/chamadas-e-editais/",
+      "plataformaSubmissao": "SIGFAPESPA",
+      "urlPlataforma": "https://www.fapespa.pa.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 95 milhões",
+      "areasFoco": [
+        "Bioeconomia & Clima (Legado COP30)",
+        "Estudos Socioeconômicos e Ambientais",
+        "Bolsas Pós-Graduação"
+      ],
+      "descricao": "Fundação paraense com papel central em pesquisas sobre mudanças climáticas, bioeconomia amazônica e desenvolvimento sustentável.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapt-to",
+      "sigla": "FAPT",
+      "nome": "Fundação de Amparo à Pesquisa do Tocantins",
+      "uf": "TO",
+      "estado": "Tocantins",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://www.to.gov.br/fapt/",
+      "urlEditais": "https://www.to.gov.br/fapt/editais/",
+      "plataformaSubmissao": "Portal FAPT / SIGFAP",
+      "urlPlataforma": "https://www.to.gov.br/fapt/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 24 milhões",
+      "areasFoco": [
+        "Agropecuária & Matopiba",
+        "Biodiversidade Araguaia-Tocantins",
+        "Apoio a Pós-Graduação"
+      ],
+      "descricao": "Fomenta pesquisas científicas e tecnológicas voltadas ao desenvolvimento regional do Tocantins e da fronteira agrícola sustentável.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapero-ro",
+      "sigla": "FAPERO",
+      "nome": "Fundação Rondônia de Amparo ao Desenvolvimento das Ações Científicas e Tecnológicas e à Pesquisa",
+      "uf": "RO",
+      "estado": "Rondônia",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://rondonia.ro.gov.br/fapero/",
+      "urlEditais": "https://rondonia.ro.gov.br/fapero/institucional/chamadas-publicas/",
+      "plataformaSubmissao": "SIGFAPERO",
+      "urlPlataforma": "https://sigfapero.rondonia.ro.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 30 milhões",
+      "areasFoco": [
+        "Saúde Tropical",
+        "Manejo Florestal & Piscicultura",
+        "Bolsas de Pesquisa"
+      ],
+      "descricao": "Apoia projetos de pesquisa e inovação na Amazônia Ocidental e formação de mestres e doutores em Rondônia.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapac-ac",
+      "sigla": "FAPAC",
+      "nome": "Fundação de Amparo à Pesquisa do Estado do Acre",
+      "uf": "AC",
+      "estado": "Acre",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapac.acre.gov.br/",
+      "urlEditais": "https://fapac.acre.gov.br/editais/",
+      "plataformaSubmissao": "SIGFAPAC",
+      "urlPlataforma": "https://fapac.acre.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 18 milhões",
+      "areasFoco": [
+        "Extrativismo Sustentável",
+        "Biodiversidade & Saúde Indígena",
+        "Iniciação Científica e Pós"
+      ],
+      "descricao": "Promove ações de fomento à pesquisa científica e inovação tecnológica voltadas à socioeconomia florestal do Acre.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "fapeap-ap",
+      "sigla": "FAPEAP",
+      "nome": "Fundação de Amparo à Pesquisa do Estado do Amapá",
+      "uf": "AP",
+      "estado": "Amapá",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://fapeap.portal.ap.gov.br/",
+      "urlEditais": "https://fapeap.portal.ap.gov.br/conteudo/editais",
+      "plataformaSubmissao": "Portal FAPEAP",
+      "urlPlataforma": "https://fapeap.portal.ap.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 16 milhões",
+      "areasFoco": [
+        "Fármacos da Biodiversidade",
+        "Estuário Amazônico",
+        "Apoio a Pesquisadores Locais"
+      ],
+      "descricao": "Incentiva a pesquisa científica e tecnológica no Amapá, com foco em bioeconomia e recursos costeiros/amazônicos.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
+    },
+    {
+      "id": "faperr-rr",
+      "sigla": "FAPERR",
+      "nome": "Fundação de Amparo à Pesquisa do Estado de Roraima",
+      "uf": "RR",
+      "estado": "Roraima",
+      "regiao": "Norte",
+      "esfera": "Estadual",
+      "destaque": false,
+      "siteOficial": "https://faperr.rr.gov.br/",
+      "urlEditais": "https://faperr.rr.gov.br/editais/",
+      "plataformaSubmissao": "SIGFAPERR",
+      "urlPlataforma": "https://faperr.rr.gov.br/",
+      "tipoConector": "monitor_portal",
+      "orcamentoAnualEstimado": "R$ 15 milhões",
+      "areasFoco": [
+        "Agroecologia do Lavrado",
+        "Saúde & Fronteira",
+        "Fixação de Recursos Humanos"
+      ],
+      "descricao": "Órgão estadual de fomento à pesquisa de Roraima, apoiando estudos sobre o ecossistema do Lavrado e desenvolvimento regional.",
+      "totalEditaisMonitorados": 1,
+      "editaisAbertos": 1
     }
   ],
   "favoritos": [
@@ -3121,97 +4587,257 @@
     "notificarProrrogacoesFacepe": true,
     "notificarNovosEditaisNacionais": true
   },
+  "researcherProfile": {
+    "nomePesquisador": "Prof. Dr. Coordenador Principal",
+    "nomeGrupo": "Grupo de Pesquisa & Inovação (PE / Nacional)",
+    "instituicao": "UFPE / UFRPE / UPE / ICT Parceira",
+    "naturezaVinculo": "ICT Pública / Universidade",
+    "ufPrincipal": "PE",
+    "incluirFederais": true,
+    "incluirOutrosEstados": true,
+    "titulacao": "Doutorado",
+    "orcamentoAlvoMax": 500000,
+    "linhaTematicaProjeto": "Soluções Científicas, IA e Inovação Aplicadas ao Desenvolvimento Regional",
+    "areasPrioritarias": [
+      "Pesquisa Científica (APQ / Missões)",
+      "Bolsas & Pós-Graduação",
+      "Inovação & Startups",
+      "Governo & Gestão Pública",
+      "Cooperação Internacional"
+    ],
+    "palavrasChave": [
+      "pesquisa",
+      "bolsas",
+      "pós-graduação",
+      "inovação",
+      "startups",
+      "missões",
+      "cientista",
+      "universal",
+      "tecnologia"
+    ]
+  },
+  "alerts": [
+    {
+      "id": "alert-prazo-facepe-31-2026",
+      "tipo": "vencimento",
+      "severidade": "critica",
+      "editalId": "facepe-31-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "diasRestantes": 14,
+      "titulo": "Encerra em 14 dias: FACEPE (PE) – 31/2026",
+      "mensagem": "Edital nº31/2026 Ciência no Governo: Programa Cientista Arretado (ATUALIZADO). Prazo limite de submissão: 2026-11-23 via AgilFAP.",
+      "prazo": "2026-11-23",
+      "link": "https://agil.facepe.br/"
+    },
+    {
+      "id": "alert-prazo-facepe-30-2026",
+      "tipo": "vencimento",
+      "severidade": "critica",
+      "editalId": "facepe-30-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "diasRestantes": 11,
+      "titulo": "Encerra em 11 dias: FACEPE (PE) – 30/2026",
+      "mensagem": "Edital nº 30/2026 Programa de Desenvolvimento da Pós-Graduação – Redes Nordeste (PDPG Redes). Prazo limite de submissão: 2026-11-20 via AgilFAP.",
+      "prazo": "2026-11-20",
+      "link": "https://agil.facepe.br/"
+    },
+    {
+      "id": "alert-prorrog-facepe-31-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-31-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 31/2026",
+      "mensagem": "Edital nº31/2026 Ciência no Governo: Programa Cientista Arretado (ATUALIZADO) teve submissões prorrogadas (novo prazo estimado: 2026-11-23). Confira os adendos oficiais.",
+      "prazo": "2026-11-23",
+      "link": "https://www2.facepe.br/wp-content/uploads/2026/10/2026.10.22-Cientista-Arretado-Atualizado.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-25-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-25-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 25/2026",
+      "mensagem": "do Edital nº 25/2026-Facepe Projetos Orientados a Missões: Pesquisas em Planejamento teve submissões prorrogadas (novo prazo estimado: 2026-11-25). Confira os adendos oficiais.",
+      "prazo": "2026-11-25",
+      "link": "https://www2.facepe.br/wp-content/uploads/2026/10/2026.10.15-POM-SEPLAG-3.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-28-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-28-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 28/2026",
+      "mensagem": "Edital nº28/2026 – Facepe APQ – Universal (Auxílio a Projetos de Pesquisa) teve submissões prorrogadas (novo prazo estimado: 2026-10-19). Confira os adendos oficiais.",
+      "prazo": "2026-10-19",
+      "link": "https://www2.facepe.br/wp-content/uploads/2026/08/Edital_FACEPE___28_2026___APQ_Universal_Final__2_.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-27-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-27-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 27/2026",
+      "mensagem": "do Edital nº27/2026 Facepe Estudos Étnico-Raciais Solano Trindade teve submissões prorrogadas (novo prazo estimado: 2026-10-21). Confira os adendos oficiais.",
+      "prazo": "2026-10-21",
+      "link": "https://www2.facepe.br/wp-content/uploads/2026/08/2026.08.27-Solano-Trindade.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-16-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-16-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 16/2026",
+      "mensagem": "Edital 16/2026 – Mães Cientistas de Pernambuco teve submissões prorrogadas (novo prazo estimado: 2026-07-19). Confira os adendos oficiais.",
+      "prazo": "2026-07-19",
+      "link": "https://www2.facepe.br/wp-content/uploads/2026/05/Edital-FACEPE-16-2026-APQ-Maes-Cientistas-Pernambucanas_FINAL.docx-1.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-08-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-08-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 08/2026",
+      "mensagem": "Edital nº 08/2026 Compet Mulheres teve submissões prorrogadas (novo prazo estimado: 2026-04-29). Confira os adendos oficiais.",
+      "prazo": "2026-04-29",
+      "link": "https://www.facepe.br/wp-content/uploads/2026/03/2026.03.03-Compet-Mulheres-31.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-07-2026",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-07-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 07/2026",
+      "mensagem": "Edital nº 07/2026 – Pró-Startups: Mulheres que Inovam teve submissões prorrogadas (novo prazo estimado: 2026-04-29). Confira os adendos oficiais.",
+      "prazo": "2026-04-29",
+      "link": "https://www.facepe.br/wp-content/uploads/2026/03/2026.03.03-Pró-Startups-Mulheres-2.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-42-2025",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-42-2025",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 42/2025",
+      "mensagem": "do Edital nº 42/2025 – Compet Soluções teve submissões prorrogadas (novo prazo estimado: 2026-01-22). Confira os adendos oficiais.",
+      "prazo": "2026-01-22",
+      "link": "https://www.facepe.br/wp-content/uploads/2025/11/2025.11.28-Compet-Soluções.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-37-2025",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-37-2025",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 37/2025",
+      "mensagem": "Edital FACEPE nº 37/2025 — Prêmio Naíde Teodósio de Estudos de Gênero Ano XV teve submissões prorrogadas (novo prazo estimado: 2025-12-25). Confira os adendos oficiais.",
+      "prazo": "2025-12-25",
+      "link": "https://www.facepe.br/wp-content/uploads/2025/10/EDITAL_PNT_ANO_XV___03.11.2025-DEFINITIVO1.pdf"
+    },
+    {
+      "id": "alert-prorrog-facepe-34-2025",
+      "tipo": "prorrogacao",
+      "severidade": "alta",
+      "editalId": "facepe-34-2025",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "titulo": "Prazo Prorrogado na FACEPE: Edital 34/2025",
+      "mensagem": "Edital FACEPE nº 34/2025 — Resultado Preliminar- Desafios Gov teve submissões prorrogadas (novo prazo estimado: 2026-01-11). Confira os adendos oficiais.",
+      "prazo": "2026-01-11",
+      "link": "https://www.facepe.br/wp-content/uploads/2025/11/Resultaado_Preliminar_Desafios_Gov.pdf"
+    },
+    {
+      "id": "alert-cert-aviso-cadin-federal-estadual",
+      "tipo": "certidao",
+      "severidade": "alta",
+      "diasRestantes": 5,
+      "titulo": "⏳ Certidão vence em 5 dias: Comprovante de Inexistência de Registro ...",
+      "mensagem": "Vencimento previsto para 2026-11-14 (Banco Central (BACEN) / Tesouro Nacional / SEFAZ). Providencie a renovação online no portal oficial.",
+      "prazo": "2026-11-14",
+      "link": "https://www.bcb.gov.br/"
+    },
+    {
+      "id": "alert-prazo-facepe-32-2026",
+      "tipo": "vencimento",
+      "severidade": "media",
+      "editalId": "facepe-32-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "diasRestantes": 18,
+      "titulo": "Encerra em 18 dias: FACEPE (PE) – 32/2026",
+      "mensagem": "Edital 32/2026 Desafios.Gov (ATUALIZADO). Prazo limite de submissão: 2026-11-27 via AgilFAP.",
+      "prazo": "2026-11-27",
+      "link": "https://agil.facepe.br/"
+    },
+    {
+      "id": "alert-prazo-facepe-25-2026",
+      "tipo": "vencimento",
+      "severidade": "media",
+      "editalId": "facepe-25-2026",
+      "agencia": "FACEPE",
+      "uf": "PE",
+      "diasRestantes": 16,
+      "titulo": "Encerra em 16 dias: FACEPE (PE) – 25/2026",
+      "mensagem": "do Edital nº 25/2026-Facepe Projetos Orientados a Missões: Pesquisas em Planejamento. Prazo limite de submissão: 2026-11-25 via AgilFAP.",
+      "prazo": "2026-11-25",
+      "link": "https://agil.facepe.br/"
+    },
+    {
+      "id": "alert-prazo-funcap-cientista-chefe-2026",
+      "tipo": "vencimento",
+      "severidade": "media",
+      "editalId": "funcap-cientista-chefe-2026",
+      "agencia": "FUNCAP",
+      "uf": "CE",
+      "diasRestantes": 20,
+      "titulo": "Encerra em 20 dias: FUNCAP (CE) – 11/2026",
+      "mensagem": "Edital FUNCAP Nº 11/2026 – Programa Cientista Chefe & Inovação Governamental no Ceará. Prazo limite de submissão: 2026-11-29 via Plataforma Montenegro.",
+      "prazo": "2026-11-29",
+      "link": "https://montenegro.funcap.ce.gov.br/"
+    },
+    {
+      "id": "alert-prazo-fapesq-pb-2026",
+      "tipo": "vencimento",
+      "severidade": "media",
+      "editalId": "fapesq-pb-2026",
+      "agencia": "FAPESQ",
+      "uf": "PB",
+      "diasRestantes": 19,
+      "titulo": "Encerra em 19 dias: FAPESQ (PB) – 19/2026",
+      "mensagem": "Edital FAPESQ-PB Nº 19/2026 – Programa de Pesquisa Aplicada e Tecnologias Digitais da Paraíba. Prazo limite de submissão: 2026-11-28 via SIGFAP Paraíba.",
+      "prazo": "2026-11-28",
+      "link": "https://sigfap.fapesq.rpp.br/"
+    },
+    {
+      "id": "alert-cert-aviso-crf-fgts",
+      "tipo": "certidao",
+      "severidade": "media",
+      "diasRestantes": 15,
+      "titulo": "⏳ Certidão vence em 15 dias: Certificado de Regularidade do FGTS (CRF...",
+      "mensagem": "Vencimento previsto para 2026-11-24 (Caixa Econômica Federal). Providencie a renovação online no portal oficial.",
+      "prazo": "2026-11-24",
+      "link": "https://consulta-crf.caixa.gov.br/consultacrf/pages/consultaEmpregador.jsf"
+    }
+  ],
   "noticiasFacepe": [
-    {
-      "id": "facepe-news-39484",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Facepe anuncia resultado final do edital Mães Cientistas de Pernambuco (nº 16/2026)",
-      "resumo": "Valor global aumentou de R$ 1,2 milhão para R$ 3,8 milhões e a quantidade de projetos contemplados passou de 10 para 33 propostas A Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco (Facepe) divulgou nest",
-      "data": "2026-11-13",
-      "link": "https://www2.facepe.br/facepe-anuncia-resultado-final-do-edital-maes-cientistas-de-pernambuco-no-16-2026/"
-    },
-    {
-      "id": "facepe-news-39477",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Facepe lança edital de fortalecimento aos museus de Pernambuco",
-      "resumo": "Chamada 36/2026 visa contribuir para a valorização de ações de comunicação da ciência, tecnologia e inovação A Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco (Facepe) lançou, hoje(13.11), o edital Ciên",
-      "data": "2026-11-13",
-      "link": "https://www2.facepe.br/facepe-lanca-edital-de-fortalecimento-aos-museus-de-pernambuco/"
-    },
-    {
-      "id": "facepe-news-39463",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Pesquisadora pernambucana é contemplada na chamada Water4All, da União Europeia",
-      "resumo": "Resultado foi divulgado nesta quinta-feira, 12 de novembro, pelo Confap A professora Elainne Christine Souza Gomes, da Fundação Oswaldo Cruz Pernambuco – Instituto Aggeu Magalhães (Fiocruz/IAM) está entre os seis pesquis",
-      "data": "2026-11-12",
-      "link": "https://www2.facepe.br/pesquisadora-pernambucana-e-contemplada-na-chamada-water4all-da-uniao-europeia/"
-    },
-    {
-      "id": "facepe-news-39459",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Submissão de propostas em Fluxo Contínuo está temporariamente suspensa",
-      "resumo": "Pesquisadores e estudantes que desejarem submeter deverão entrar em contato com a Facepe, pelo e-mail fluxo.continuo-2026@facepe.br, até 20 de novembro de 2026 A Fundação de Amparo à Ciência e Tecnologia do Estado de Per",
-      "data": "2026-11-11",
-      "link": "https://www2.facepe.br/submissao-de-propostas-em-fluxo-continuo-esta-temporariamente-suspensa/"
-    },
-    {
-      "id": "facepe-news-39455",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Facepe divulga resultado final do Edital Solano Trindade (nº 27/2026)",
-      "resumo": "Apoiando 20 iniciativas, valor global para esta edição supera a cifra de R$ 2 milhões A Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco (Facepe) comunica a publicação do resultado final da terceira ediç",
-      "data": "2026-11-11",
-      "link": "https://www2.facepe.br/facepe-divulga-resultado-final-do-edital-solano-trindade-no-27-2026/"
-    },
-    {
-      "id": "facepe-news-39439",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Pesquisadora pernambucana é contemplada em chamada de mobilidade acadêmica para a Itália apoiada pela Facepe",
-      "resumo": "Doutoranda da UFPE está entre os 50 estudantes brasileiros selecionados na convocatória Mobility Confap Italy 2026 A doutoranda Maria Clara Falcão Guerra Barreto, da Universidade Federal de Pernambuco (UFPE), está entre ",
-      "data": "2026-11-09",
-      "link": "https://www2.facepe.br/pesquisadora-pernambucana-e-contemplada-em-chamada-de-mobilidade-academica-para-a-italia-apoiada-pela-facepe/"
-    },
-    {
-      "id": "facepe-news-39436",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Sistema AgilFAP está indisponível",
-      "resumo": "Agilfap permanece acessível apenas na rede interna da Facepe. Equipe de TIC trabalha para solucionar o problema e restabelecer o funcionamento. A Facepe informa que o sistema AgilFAP permanece indisponível para o público",
-      "data": "2026-11-06",
-      "link": "https://www2.facepe.br/sistema-agilfap-esta-indisponivel/"
-    },
-    {
-      "id": "facepe-news-39433",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Facepe anuncia prorrogação do edital Projetos Orientados a Missões (POM – nº 25/2026)",
-      "resumo": "Chamada inédita busca estimular projetos voltados ao desenvolvimento de soluções inovadoras para aperfeiçoar o planejamento estadual A Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco (Facepe) anunciou, ",
-      "data": "2026-11-06",
-      "link": "https://www2.facepe.br/facepe-anuncia-prorrogacao-do-edital-projetos-orientados-a-missoes-pom-no-25-2026/"
-    },
-    {
-      "id": "facepe-news-39414",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Facepe informa que pagamento das bolsas de outubro será realizado nesta sexta-feira (6)",
-      "resumo": "Repasse será efetuado dentro do calendário previsto, até o quinto dia útil do mês subsequente A Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco (Facepe) informa que o pagamento das bolsas referentes ao ",
-      "data": "2026-11-05",
-      "link": "https://www2.facepe.br/facepe-informa-que-pagamento-das-bolsas-de-outubro-sera-realizado-nesta-sexta-feira-6/"
-    },
-    {
-      "id": "facepe-news-39405",
-      "agencia": "FACEPE",
-      "uf": "PE",
-      "titulo": "Facepe prorroga inscrições do edital Cientista Arretado (31/2026)",
-      "resumo": "Novo cronograma foi publicado nesta terça-feira (03/11) A Fundação de Amparo à Ciência e Tecnologia do Estado de Pernambuco (Facepe) comunica a prorrogação das inscrições para a 22ª rodada de submissões do edital Cientis",
-      "data": "2026-11-03",
-      "link": "https://www2.facepe.br/facepe-prorroga-inscricoes-do-edital-cientista-arretado-31-2026/"
-    },
     {
       "id": "fapeal-news-160788",
       "agencia": "FAPEAL",
@@ -3267,25 +4893,135 @@
       "link": "https://www.fapeal.br/2026/11/minutos-da-ciencia-fala-sobre-a-relacao-entre-pecas-intimas-e-fertilizacao-do-solo/"
     },
     {
-      "id": "fundect-news-18992",
-      "agencia": "FUNDECT",
-      "uf": "MS",
-      "titulo": "Dia do Meio Ambiente: pesquisas apoiadas pela Fundect buscam soluções para enfrentar mudanças climáticas",
-      "resumo": "Em comemoração ao dia Mundial do Meio Ambiente, celebrado em 5 de junho, a preservação…",
-      "data": "2026-06-03",
-      "link": "https://www.fundect.ms.gov.br/dia-do-meio-ambiente-pesquisas-apoiadas-pela-fundect-buscam-solucoes-para-enfrentar-mudancas-climaticas/"
+      "id": "fapema-news-35299",
+      "agencia": "FAPEMA",
+      "uf": "MA",
+      "titulo": "Diabetes: pesquisa apoiada pela FAPEMA destaca relação entre aleitamento materno e diabetes tipo 1",
+      "resumo": "Estudo desenvolvido por pesquisadora da UFMA aponta associação entre amamentação exclusiva por seis meses ou mais e menor chance de desenvolvimento da doença Neste sábado (14) acontece o Dia Mundial [&hellip;]",
+      "data": "2026-11-13",
+      "link": "https://www.fapema.br/diabetes-pesquisa-apoiada-pela-fapema-destaca-relacao-entre-aleitamento-materno-e-diabetes-tipo-1/"
     },
     {
-      "id": "fundect-news-18940",
-      "agencia": "FUNDECT",
-      "uf": "MS",
-      "titulo": "Agricultores geram renda e perdem o medo da tecnologia com apoio da Fundect",
-      "resumo": "Durante muito tempo, a hidroponia parecia distante da realidade de pequenos produtores rurais de Naviraí….",
-      "data": "2026-06-02",
-      "link": "https://www.fundect.ms.gov.br/agricultores-geram-renda-e-perdem-o-medo-da-tecnologia-com-apoio-da-fundect/"
+      "id": "fapema-news-35276",
+      "agencia": "FAPEMA",
+      "uf": "MA",
+      "titulo": "Novembro Azul: pesquisa apoiada pelo Governo do Maranhão investiga substância natural com potencial contra lesões penianas",
+      "resumo": "Estudo desenvolvido na UFMA e financiado pela FAPEMA analisa os efeitos anti-inflamatórios de composto extraído da planta conhecida como vassourinha e abre perspectivas para novas investigações sobre o câncer de [&hellip;]",
+      "data": "2026-11-12",
+      "link": "https://www.fapema.br/novembro-azul-pesquisa-apoiada-pelo-governo-do-maranhao-investiga-substancia-natural-com-potencial-contra-lesoes-penianas/"
     }
   ],
   "syncHistory": [
+    {
+      "id": "sync-1794839160168",
+      "timestamp": "2026-11-16T14:26:00.168Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 0,
+      "multiFapExtraidosAgora": 14,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "parcial",
+      "detalhe": "The operation was aborted due to timeout"
+    },
+    {
+      "id": "sync-1794838980799",
+      "timestamp": "2026-11-16T14:23:00.799Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 0,
+      "multiFapExtraidosAgora": 12,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "parcial",
+      "detalhe": "The operation was aborted due to timeout"
+    },
+    {
+      "id": "sync-1794838800771",
+      "timestamp": "2026-11-16T14:20:00.771Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 0,
+      "multiFapExtraidosAgora": 12,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "parcial",
+      "detalhe": "The operation was aborted due to timeout"
+    },
+    {
+      "id": "sync-1794838620209",
+      "timestamp": "2026-11-16T14:17:00.209Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 0,
+      "multiFapExtraidosAgora": 14,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "parcial",
+      "detalhe": "The operation was aborted due to timeout"
+    },
+    {
+      "id": "sync-1794838419888",
+      "timestamp": "2026-11-16T14:13:39.888Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 35,
+      "multiFapExtraidosAgora": 10,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "sucesso",
+      "detalhe": "35 editais da FACEPE + 10 chamadas estaduais/nacionais e 34 comunicados sincronizados ao vivo."
+    },
+    {
+      "id": "sync-1794838237845",
+      "timestamp": "2026-11-16T14:10:37.845Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 35,
+      "multiFapExtraidosAgora": 14,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "sucesso",
+      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
+    },
+    {
+      "id": "sync-1794838058919",
+      "timestamp": "2026-11-16T14:07:38.919Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 35,
+      "multiFapExtraidosAgora": 14,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "sucesso",
+      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
+    },
+    {
+      "id": "sync-1794837879089",
+      "timestamp": "2026-11-16T14:04:39.089Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 35,
+      "multiFapExtraidosAgora": 14,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "sucesso",
+      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
+    },
+    {
+      "id": "sync-1794837699284",
+      "timestamp": "2026-11-16T14:01:39.284Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 35,
+      "multiFapExtraidosAgora": 12,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "sucesso",
+      "detalhe": "35 editais da FACEPE + 12 chamadas estaduais/nacionais e 40 comunicados sincronizados ao vivo."
+    },
+    {
+      "id": "sync-1794837520563",
+      "timestamp": "2026-11-16T13:58:40.563Z",
+      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
+      "facepeExtraidosAgora": 35,
+      "multiFapExtraidosAgora": 12,
+      "facepeCount": 41,
+      "totalCount": 98,
+      "status": "sucesso",
+      "detalhe": "35 editais da FACEPE + 12 chamadas estaduais/nacionais e 40 comunicados sincronizados ao vivo."
+    },
     {
       "id": "sync-1794837335737",
       "timestamp": "2026-11-16T13:55:35.737Z",
@@ -3395,116 +5131,6 @@
       "totalCount": 98,
       "status": "parcial",
       "detalhe": "The operation was aborted due to timeout"
-    },
-    {
-      "id": "sync-1794835560532",
-      "timestamp": "2026-11-16T13:26:00.532Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 0,
-      "multiFapExtraidosAgora": 12,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "parcial",
-      "detalhe": "The operation was aborted due to timeout"
-    },
-    {
-      "id": "sync-1794835379347",
-      "timestamp": "2026-11-16T13:22:59.347Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 0,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "parcial",
-      "detalhe": "The operation was aborted due to timeout"
-    },
-    {
-      "id": "sync-1794835178495",
-      "timestamp": "2026-11-16T13:19:38.495Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794834999086",
-      "timestamp": "2026-11-16T13:16:39.086Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 12,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 12 chamadas estaduais/nacionais e 40 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794834817569",
-      "timestamp": "2026-11-16T13:13:37.569Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794834639066",
-      "timestamp": "2026-11-16T13:10:39.066Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 10,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 10 chamadas estaduais/nacionais e 34 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794834458084",
-      "timestamp": "2026-11-16T13:07:38.084Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794834276311",
-      "timestamp": "2026-11-16T13:04:36.311Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794834096218",
-      "timestamp": "2026-11-16T13:01:36.218Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
-    },
-    {
-      "id": "sync-1794833915353",
-      "timestamp": "2026-11-16T12:58:35.353Z",
-      "origem": "Coletor Ao Vivo Multi-FAP (FACEPE + CONFAP + FAPEAM + FAPESC + FAPEAL + FUNDECT)",
-      "facepeExtraidosAgora": 35,
-      "multiFapExtraidosAgora": 14,
-      "facepeCount": 41,
-      "totalCount": 98,
-      "status": "sucesso",
-      "detalhe": "35 editais da FACEPE + 14 chamadas estaduais/nacionais e 45 comunicados sincronizados ao vivo."
     }
   ],
   "certidoes": [
@@ -3605,7 +5231,6 @@
       "id": "user-admin-default",
       "nome": "Administrador do Sistema",
       "email": "admin@radarfap.br",
-      "passwordHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
       "role": "admin",
       "instituicao": "FACEPE / RadarFAP Geral",
       "ativo": true,
@@ -3616,7 +5241,6 @@
       "id": "user-pesquisador-demo",
       "nome": "Prof. Dr. Pesquisador",
       "email": "pesquisador@radarfap.br",
-      "passwordHash": "571928cb17ed2679c5bff1d1195a3f62c16dd64bcef746fe59f2e3ed5277c077",
       "role": "pesquisador",
       "instituicao": "UFPE / Laboratórios Multiusuários",
       "ativo": true,
@@ -3627,13 +5251,9 @@
       "id": "user-1794589854723-w4d5",
       "nome": "Carlos Aluno Bolsista",
       "email": "aluno_1794589854673@ufpe.br",
-      "passwordHash": "54ecc37406dd639fa1d382997102751820fec30b3570578646c508ba54a9f470",
       "role": "estudante",
       "instituicao": "UFPE",
-      "areaAtuacao": "Ciência & Tecnologia",
       "ativo": true,
-      "trialActive": true,
-      "trialExpiresAt": "2026-11-20T17:10:54.722Z",
       "criadoEm": "2026-11-13T17:10:54.723Z",
       "ultimoAcesso": "2026-11-13T17:10:54.763Z"
     },
@@ -3641,13 +5261,9 @@
       "id": "user-1794829977478-kfwl",
       "nome": "Mariana Aluna Bolsista",
       "email": "aluno_real_1794829977414@ufpe.br",
-      "passwordHash": "ad9a9a7a3f3b50517ea96188473807785881db19f96daa551df36d833131a62c",
       "role": "estudante",
       "instituicao": "UFPE",
-      "areaAtuacao": "Ciência & Tecnologia",
       "ativo": true,
-      "trialActive": true,
-      "trialExpiresAt": "2026-11-23T11:52:57.478Z",
       "criadoEm": "2026-11-16T11:52:57.478Z",
       "ultimoAcesso": "2026-11-16T11:53:00.139Z"
     }
