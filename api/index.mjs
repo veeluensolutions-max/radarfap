@@ -1,5 +1,6 @@
 import { hashPassword, generateToken, verifyToken, INITIAL_USERS } from '../src/services/authService.mjs';
 import { DEFAULT_CERTIDOES } from '../src/data/certidoesCatalog.mjs';
+import { syncUserToSupabase, fetchUsersFromSupabase } from '../src/services/supabaseClient.mjs';
 import {
   loadDatabase,
   saveDatabase,
@@ -290,6 +291,13 @@ export default async function handler(req, res) {
       db.users.push(newUser);
       saveDatabase(db);
 
+      // Sincroniza em tempo real com a nuvem do Supabase
+      try {
+        await syncUserToSupabase(newUser);
+      } catch (errSupabase) {
+        console.warn('Aviso de sync com Supabase:', errSupabase.message);
+      }
+
       const token = generateToken(newUser);
       const safeUser = {
         id: newUser.id,
@@ -322,7 +330,35 @@ export default async function handler(req, res) {
         saveDatabase(db);
       }
 
-      const user = db.users.find(u => u.email.toLowerCase() === String(email).trim().toLowerCase());
+      let user = db.users.find(u => u.email.toLowerCase() === String(email).trim().toLowerCase());
+
+      // Se o usuário não estiver no cache local/runtime, busca na nuvem Supabase
+      if (!user) {
+        try {
+          const cloudUsers = await fetchUsersFromSupabase();
+          if (Array.isArray(cloudUsers)) {
+            const foundInCloud = cloudUsers.find(u => u.email?.toLowerCase() === String(email).trim().toLowerCase());
+            if (foundInCloud) {
+              user = {
+                id: foundInCloud.id,
+                nome: foundInCloud.nome,
+                email: foundInCloud.email,
+                passwordHash: foundInCloud.passwordHash,
+                role: foundInCloud.role || 'pesquisador',
+                instituicao: foundInCloud.instituicao || '',
+                ativo: foundInCloud.ativo !== false,
+                trialActive: foundInCloud.trial_active !== false,
+                trialExpiresAt: foundInCloud.trial_expires_at,
+                ultimoAcesso: new Date().toISOString()
+              };
+              db.users.push(user);
+              saveDatabase(db);
+            }
+          }
+        } catch (errCloudSearch) {
+          console.warn('Erro ao consultar usuário no Supabase:', errCloudSearch.message);
+        }
+      }
       if (!user) {
         return sendJson(res, 401, { error: 'Credenciais inválidas ou usuário não encontrado.' });
       }
@@ -397,6 +433,11 @@ export default async function handler(req, res) {
       user.ultimoAcesso = new Date().toISOString();
       saveDatabase(db);
 
+      // Sincroniza senha atualizada no Supabase
+      try {
+        await syncUserToSupabase(user);
+      } catch {}
+
       const token = generateToken(user);
       const safeUser = { id: user.id, nome: user.nome, email: user.email, role: user.role, instituicao: user.instituicao };
       return sendJson(res, 200, { ok: true, message: 'Senha alterada com sucesso!', token, user: safeUser });
@@ -432,6 +473,11 @@ export default async function handler(req, res) {
         };
         db.users.push(newUser);
         saveDatabase(db);
+
+        // Sincroniza usuário criado via admin no Supabase
+        try {
+          await syncUserToSupabase(newUser);
+        } catch {}
         return sendJson(res, 200, { ok: true, message: 'Usuário criado com sucesso!', state: getFullState() });
       }
 

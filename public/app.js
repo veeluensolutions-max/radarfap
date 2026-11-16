@@ -4847,6 +4847,11 @@ document.addEventListener('DOMContentLoaded', () => {
           fb.className = 'text-xs p-2.5 rounded-xl bg-[#b6f53b]/10 text-[#b6f53b] border border-[#b6f53b]/20 block';
         }
         showToast(`Bem-vindo ao RadarFAP, ${data.user.nome}! Seus 7 dias gratuitos foram ativados.`);
+
+        // Sincroniza em background diretamente com o Supabase
+        if (typeof window.syncToSupabaseCloud === 'function') {
+          window.syncToSupabaseCloud('push').catch(() => {});
+        }
       } else {
         if (fb) {
           fb.textContent = data.error || 'Erro ao realizar cadastro.';
